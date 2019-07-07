@@ -1,6 +1,10 @@
-# Ignore all files
-.* 
-!(*.txt && *.c)
+*
+!/**/
+!*.txt
+!*.c
+!.gitignore
+!*.h
+!*.md
 
 # to change global .gitignore file: 
 # git config --global core.excludesfile ~/.gitignore_global
