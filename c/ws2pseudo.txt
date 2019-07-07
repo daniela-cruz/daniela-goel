@@ -1,0 +1,47 @@
+STRCPY RE-IMPLEMENTATION:
+1. receive pointer to a char array
+2. declare counter = 0
+3. while the array in location counter is different than '\0' 
+		--> increment counter by 1
+4. return counter.
+
+
+strcmp re-implementation:
+???
+
+
+STRCPY RE-IMPLEMENTATION:
+1. Get pointer to desired location
+2. get pointer to source string
+3. set index to zero
+?4. get source string length
+5. check if there's enough space:
+	- if location array size is >= source string size: 
+		- as long as index is smaller than source length:
+			copy the character in location index 
+			to the location string in location index
+		- after that return 0
+	- else: return -1
+	
+	
+IsPalindrome:
+1. get a string pointer
+2. get arr length
+3. set a flag to negative 1 (not a palindrom)
+4. Run while 1 is <= to strlen/2:
+	-if str_arr[i] == str_len[strlen-i] --> flag is 0 
+	-else --> return -1
+5. return flag
+
+
+SevenBoom:
+1. Receive a start and end point
+2. calc range size
+3. define a string as "BOOM"
+4. while we're inside the range of numbers:
+	4.1. Check if current number divides by 7 with no residue:
+		- if not, then:
+			- turn number to string
+			- if the string contains '7'
+	b. if it doesn't --> print number
+	- else --> print "BOOM!"
