@@ -1,6 +1,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
+#include <assert.h>
+#include <limits.h>
+#include <string.h>
 
 #define BASE  10.00
 #define DELTA 0.0001
@@ -28,16 +31,15 @@ int main()
 /*EXERCISES:*/
 void HelloWorld()
 {
-	char i = 0, char_arr[] = {0x48, 0x65, 0x6c, 0x6c, 0x6f, 0x20, 0x57, 0x6f, 0x72, 
-						0x6c, 0x64, 0x21, '\0'};
+	char i = 0, char_arr[] = {0x48, 0x65, 0x6c, 0x6c, 0x6f, 0x20, 0x57, 0x6f, 
+		0x72, 0x6c, 0x64, 0x21, 0x00}, *p = char_arr;
 	
-	while (char_arr != '\0')
+	while (*p != '\0')
 	{
-		printf("%c", *(char_arr+i));		
-		i++;
+		printf("%c", *p);		
+		p++;
 	}
 	printf("\n");
-
 }
 
 float Power(int exp)
@@ -47,7 +49,7 @@ float Power(int exp)
 	
 	if (exp < 0)
 	{
-		base = 1/BASE;
+		base = 1 / base;
 		exp = -exp;
 	}
 	
@@ -65,9 +67,9 @@ int Flip(int num)
 
 	while (num != 0)
 	{
-		result *=10;
-		result += num%10;
-		num /=10;
+		result *= 10;
+		result += num % 10;
+		num /= 10;
 	}	
 	
 	return result;
@@ -84,32 +86,27 @@ void Swap(int *ptr_1, int *ptr_2)
 /*TESTS:*/
 void TestPower()
 {
-	int exp_arr[] = {1, 0, -5, 3}, i = 0, size = 4;
+	int exp_arr[] = {1, 0, -5, 3}, *p = exp_arr, i = 0, size = 4;
 	
 	for (i = 0; i < size; i++)
 	{
-		if((pow(BASE, exp_arr[i])) - (Power(exp_arr[i])) <= DELTA)	
-		{
-			printf("GREAT SUCCESS!!\n");
-		}
-
-		else
-		{
-			printf("FAILURE!!\n");
-		}
+		assert(abs((pow(BASE, *p)) - (Power(*p))) <= 0.99 * Power(*p));
 	}
 }
 
 void TestFlip()
 {
-	int num_1 = 1234, num_2 = 01234, num_3 = -9876, num_4 = 7890,
-		num_5 = 7089;
+	int num_arr[] = {1234, -9876, 7890, 1000, 0}, *p = num_arr, size = 5, 
+					flip_arr[] = {4321, -6789, 987, 1, 0}, *pf = flip_arr, i = 0;
 	
-	Flip(num_1);
-	Flip(num_2);
-	Flip(num_3);
-	Flip(num_4);
-	Flip(num_5);
+	while (i < size)
+	{
+		assert (Flip(*p) == *pf);
+		printf("%d to %d\n", *p, *pf);
+		p++;
+		pf++;
+		i++;
+	}
 }
 
 void TestSwap()
