@@ -1,143 +1,124 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include <string.h>
+#include <math.h>
 
-/*STRING LIB RE-IMPLEMENTATIONS:*/
-int MyStrlen(char *str); /*strlen*/
-int MyStrcpy(char *location, char *source);/*strcpy*/
+#define BASE  10.00
+#define DELTA 0.0001
 
-/*OTHER EXERCISES:*/
-int IsPalindrome(const char *str);
-void SevenBoom(int fron, int to);
-void IsPalindromeTest();
+/*EXERCISES:*/
+void HelloWorld(); /*ECERCISE 3- calculate exp*/
+float Power(int exp); /*ECERCISE 4- calculate exp*/
+int Flip(int num); /*ECERCISE 5- flip numbers*/
+void Swap(int *ptr_1, int *ptr_2); /*ECERCISE 6- swap values*/
+
+/*TESTS:*/
+void TestPower(int exp); /*Test exe 4*/
+void TestFlip();  /*Test exe 5*/
 
 int main()
 {
-	char str[] = "word", location[] = {'0', '0', '0', '0', '0', '0', '0', '\0'};
-	
-	printf("I gots da %d characters, yas!\n", MyStrlen(str));
-	MyStrcpy(location, str);
+	int num_1 = 2, num_2 = 190;
 
-/*	IsPalindromeTest();*/
-	exit (0);
+	HelloWorld();
+	TestPower(-5);		
+	TestFlip();
+	Swap(&num_1, &num_2);
+	exit(0);	
 }
 
+/*EXERCISES:*/
 
-/*===EXERCISES:===*/
-
-/*STRING LIBRARY RE-IMPLEMENTATOION:*/
-int MyStrlen(char *str)
+/*===exe 3 - Hello world!===*/
+void HelloWorld()
 {
-/*PSEUDO:*/
-/*
-1. receive pointer to a char array
-2. declare counter = 0
-3. while the array in location counter is different than '\0' 
-		--> increment counter by 1
-4. return counter.
-
-*/
-	int counter = 0;
+	char char_arr[] = {0x48, 0x65, 0x6c, 0x6c, 0x6f, 0x20, 0x57, 0x6f, 0x72, 0x6c, 0x64, 0x21, '\0'};
+	int i = 0;
 	
-	while(*(str+counter) != '\0')
+	while(char_arr[i] != '\0')
 	{
-		counter++;
+		printf("%c", char_arr[i]);		
+		i++;
+	}
+	printf("\n");
+
+}
+/*===exe 4 - Power===*/
+float Power(int exp)
+{
+	float base = BASE, result = 1.00;
+	int i;
+	
+	if (exp < 0)
+	{
+		base = 1/BASE;
+		exp = -exp;
 	}
 	
-	return counter;
-}
-
-int MyStrcpy(char *location, char *source)
-{
-/*PSEUDO:*/
-/*
-1. Get pointer to desired location
-2. get pointer to source string
-3. set index to zero
-?4. get source string length
-5. check if there's enough space:
-	- if location array size is >= source string size: 
-		- as long as index is smaller than source length:
-			copy the character in location index 
-			to the location string in location index
-		- after that return 0
-	- else: return -1
-
-*/
-	int loc_size = strlen(location), i = 0;
-	if(loc_size >= strlen(source))
+	for(i=0; i<exp; i++)
 	{
-		while(*(source+i) != '\0')
-		{
-			*(location+i) = *(source+i);
-			printf("%c", *(location+i));
-			i++;
-		}
-		return 0;
+		result *= base;
 	}
-	return -1;
-}
-
-/*===exe 5 - IsPalindrome===*/
-int IsPalindrome(const char *str)
-{
-	int size = strlen(str), flag = -1, i;
-/*PSEUDO:
-1. get a string pointer
-2. get arr length
-3. set a flag to negative 1 (not a palindrom)
-4. Run while 1 is <= to strlen/2:
-	-if str_arr[i] == str_len[strlen-i] --> flag is 0 
-	-else --> return -1
-5. return flag
-*/	
-
-	for(i=0; i<size/2; i++)
-	{
-	printf("%c", *(str+i));
-		if(*(str+i) == *(str+size-i-1))
-		{
-			flag = 0;
-		}
-		else
-		{
-			break;
-		}
 	
-	}
-	return flag;
+	return result;
 }
 
-/*===exe 6 - SevenBoom===*/
-void SevenBoom(int fron, int to)
+/*===exe 5 - Flip====*/
+int Flip(int num)
 {
-/*PSEUDO:
-1. Receive a start and end point
-2. calc range size
-3. define a string as "BOOM"
-4. while we're inside the range of numbers:
-	4.1. Check if current number divides by 7 with no residue:
-		- if not, then:
-			- turn number to string
-			- if the string contains '7'
-	b. if it doesn't --> print number
-	- else --> print "BOOM!"
+	int result = 0;
 
-*/
-}
-/*===TESTS:===*/
-/*IsPalindromeTest*/
-void IsPalindromeTest()
-{
-	char word_arr[] = {'k', 'a', 'k', 'i'};
-	const char *str = word_arr; 
-	
-	if(IsPalindrome(str) == 0)
+	printf("I used to be just %d but... \n", num);	
+	while(num)
 	{
-		printf("Yasss!\n");
+		result *=10;
+		result += num%10;
+		num /=10;
+	}	
+	printf("I am now %d!\n", result);
+	return result;
+}
+
+/*===exe 6 - Swap===*/
+void Swap(int *ptr_1, int *ptr_2)
+{
+	int temp = *ptr_1;
+	
+	*ptr_1 = *ptr_2;
+	*ptr_2 = temp;
+	
+	printf("Ptr1 = %d and ptr2 = %d\n", *ptr_1, *ptr_2);
+	
+	return;
+}
+
+/*TESTS:*/
+
+/*Test exe 4*/
+void TestPower(int exp)
+{
+	if((pow(BASE, exp)) - (Power(exp)) <= DELTA)	
+	{
+		printf("GREAT SUCCESS!!\n");
 	}
+	
 	else
 	{
-		printf("Ney!\n");
+		printf("FAILURE!!\n");
 	}
+	
+	return;
+}
+/*Test exe 5*/
+void TestFlip()
+{
+	int num_1 = 1234, num_2 = 01234, num_3 = -9876, num_4 = 7890,
+		num_5 = 7089;
+	
+	Flip(num_1);
+	Flip(num_2);
+	Flip(num_3);
+	Flip(num_4);
+	Flip(num_5);
+	
+	return;
 }
