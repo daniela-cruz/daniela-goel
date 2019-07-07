@@ -28,13 +28,12 @@ int main()
 /*EXERCISES:*/
 void HelloWorld()
 {
-	char char_arr[] = {0x48, 0x65, 0x6c, 0x6c, 0x6f, 0x20, 0x57, 0x6f, 0x72, 
+	char i = 0, char_arr[] = {0x48, 0x65, 0x6c, 0x6c, 0x6f, 0x20, 0x57, 0x6f, 0x72, 
 						0x6c, 0x64, 0x21, '\0'};
-	int i = 0;
 	
-	while (char_arr[i] != '\0')
+	while (char_arr != '\0')
 	{
-		printf("%c", char_arr[i]);		
+		printf("%c", *(char_arr+i));		
 		i++;
 	}
 	printf("\n");
@@ -83,7 +82,6 @@ void Swap(int *ptr_1, int *ptr_2)
 }
 
 /*TESTS:*/
-
 void TestPower()
 {
 	int exp_arr[] = {1, 0, -5, 3}, i = 0, size = 4;
