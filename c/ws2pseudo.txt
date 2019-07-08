@@ -1,22 +1,22 @@
 STRLEN RE-IMPLEMENTATION:
 1. receive pointer to a char array
 2. declare counter = 0
-3. while the array in location counter is different than '\0' 
+3. while the pointer points to a location 
+	which contains data that is different than '\0' 
 		--> increment counter by 1
 4. return counter.
 
 
 strcmp re-implementation:
 1. Get 2 pointers for 2 strings
-2. define result = *p1 - *p2;
-3. While both are != '\0' && result == 0:
+2. While both are != '\0' && *p1 - *p2 == 0:
 		p1++;
 		p2++;
-4. return result
+4. return *p1 - *p2
 
 
 STRCPY RE-IMPLEMENTATION:
-1. Get pointer to desired location
+1. Get pointer to new location
 2. get pointer to source string
 3. set index to zero
 ?4. get source string length

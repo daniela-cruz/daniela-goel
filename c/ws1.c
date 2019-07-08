@@ -2,11 +2,29 @@
 #include <stdlib.h>
 #include <math.h>
 #include <assert.h>
-#include <limits.h>
 #include <string.h>
 
-#define BASE  10.00
-#define DELTA 0.0001
+#define BASE  10
+
+/*Logs warning levels:*/
+#define LOG_NONE 0
+#define LOG_ERROR 1
+#define LOG_WARN 2
+#define LOG_INFO 3
+#define LOG_LEVEL LOG_WARN
+
+/* shows msg if allowed by LOG_LEVEL*/
+int log(char *msg, int level)
+{
+  if (LOG_LEVEL >= level)
+  {
+    printf("LOG %d: %s\n", level, msg); /* could also log to file*/
+  }
+
+  return 0;
+}
+
+int WarnMe(int argc, char** argv);
 
 void HelloWorld();
 float Power(int exp); 
@@ -25,26 +43,28 @@ int main()
 	TestFlip();
 	TestSwap();
 	
-	exit(0);	
+	return 0;	
 }
 
 /*EXERCISES:*/
 void HelloWorld()
 {
-	char char_arr[] = {0x48, 0x65, 0x6c, 0x6c, 0x6f, 0x20, 0x57, 0x6f, 0x72, 
-		0x6c, 0x64, 0x21, 0x00}, *p = char_arr;
+	const char char_arr[] = {0x48, 0x65, 0x6c, 0x6c, 0x6f, 0x20, 0x57, 0x6f, 0x72, 
+		0x6c, 0x64, 0x21, 0x00};
+	const char *p = char_arr;
 	
 	while (*p != '\0')
 	{
 		printf("%c", *p);		
 		p++;
 	}
+	
 	printf("\n");
 }
 
 float Power(int exp)
 {
-	float base = BASE, result = 1.00;
+	float base = BASE, result = 1.0;
 	int i = 0;
 	
 	if (exp < 0)
@@ -90,7 +110,7 @@ void TestPower()
 	
 	while (size > 0)
 	{
-		assert(abs((pow(BASE, *p)) - (Power(*p))) <= 0.99 * Power(*p));
+		assert(abs((pow(BASE, *p)) - (Power(*p))) <= 0.99 *Power(*p));
 		p++;
 		size--;
 	}
@@ -99,7 +119,7 @@ void TestPower()
 void TestFlip()
 {
 	int num_arr[] = {1234, -9876, 7890, 1000, 0}, *p = num_arr, size = 5, 
-					flip_arr[] = {4321, -6789, 987, 1, 0}, *pf = flip_arr, i = 0;
+		flip_arr[] = {4321, -6789, 987, 1, 0}, *pf = flip_arr, i = 0;
 	
 	while (i < size)
 	{
@@ -125,3 +145,13 @@ void TestSwap()
 			*ptr_1, *ptr_2);
 }
 
+int WarnMe(int argc, char** argv)
+{
+  printf("Hi there!\n");
+
+  log("Really bad error!", LOG_ERROR);
+  log("Warning, not so serious.", LOG_WARN);
+  log("Just some info, not that important.", LOG_INFO);
+
+  return 0;
+}
