@@ -3,7 +3,7 @@
 #include <string.h>
 
 /*STRING LIB RE-IMPLEMENTATIONS:*/
-int MyStrlen(char *str);
+size_t MyStrlen(char *str);
 void StrlenTest();
 int MyStrcmp(char *str_1, char *str_2);
 void StrcmpTest();
@@ -25,7 +25,7 @@ int main()
 
 /*EXERCISES:*/
 /*STRLEN RE-IMPLEMENTATION:*/
-int MyStrlen(char *str)
+size_t MyStrlen(char *str)
 {
 	int counter = 0;
 	
@@ -34,13 +34,13 @@ int MyStrlen(char *str)
 		counter++;
 	}
 	
-	return counter;
+	return (size_t)counter;
 }
 
 /*strcmp re-implementation:*/
 int MyStrcmp(char *str_1, char *str_2)
 {	
-	while ((*str_1 != '\0' && *str_2 != '\0') && *str_1 - *str_2 == 0)
+	while ((*str_1 != '\0' && *str_2 != '\0') && (*str_1 - *str_2 == 0))
 	{
 		str_1++;
 		str_2++;
@@ -86,7 +86,7 @@ int IsPalindrome(const char *str)
 void StrlenTest()
 {
 	char str[] = "word";
-	printf("I gots da %d characters, yas!\n", MyStrlen(str));
+	printf("I gots da %ld characters, yas!\n", MyStrlen(str));
 }
 
 void StrcmpTest()
