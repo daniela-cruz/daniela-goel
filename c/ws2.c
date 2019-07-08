@@ -23,7 +23,7 @@ int main()
 	exit (0);
 }
 
-/*STRCPY RE-IMPLEMENTATION:*/
+/*STRLEN RE-IMPLEMENTATION:*/
 int MyStrlen(char *str)
 {
 	int counter = 0;
@@ -39,35 +39,14 @@ int MyStrlen(char *str)
 /*strcmp re-implementation:*/
 int MyStrcmp(char *str_1, char *str_2)
 {
-	int i = 0, p1_size = strlen(str_1), p2_size = strlen(str_2), 
-		size = p1_size;
+	int result = *str_1 - *str_2;
 	
-	if (size > p2_size)
+	while (( || ) != '\0' && result == 0)
 	{
-		size = p2_size;
+		
 	}
 	
-	while (i < size)
-	{
-		if ((int)str_1 == (int)str_2)
-		{
-			str_1++;
-			str_2++;
-		}
-		else 
-		{
-			if ((int)str_1 > (int)str_2)
-			{
-				return 1;
-			}
-			else
-			{
-				return -1;
-			}
-		}
-	}
-	
-	reutrn 0;
+	reutrn reuslt;
 }
 /*STRCPY RE-IMPLEMENTATION:*/
 int MyStrcpy(char *location, char *source)
