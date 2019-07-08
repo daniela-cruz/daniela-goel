@@ -12,7 +12,6 @@ void StrcpyTest();
 
 /*OTHER EXERCISES:*/
 int IsPalindrome(const char *str);
-void SevenBoom(int fron, int to);
 void IsPalindromeTest();
 
 int main()
@@ -23,29 +22,7 @@ int main()
 	
 	exit (0);
 }
-/* MyStrlenTest:*/
-void StrlenTest()
-{
-	char str[] = "word";
-	printf("I gots da %d characters, yas!\n", MyStrlen(str));
-}
 
-/**/
-void StrcmpTest()
-{
-	char *p_1 = "word", *p_2 = "woRd"; 
-	int compared = MyStrcmp(p_1, p_2);
-	
-	printf("The result of comparison is: %d\n", compared);
-}
-
-/* MyStrcpyTest:*/
-void StrcpyTest()
-{
-	char str[] = "word", location[] = {'0', '0', '0', '0', '0', '0', '0', '\0'};
-	
-	MyStrcpy(location, str);
-}
 /*EXERCISES:*/
 /*STRLEN RE-IMPLEMENTATION:*/
 int MyStrlen(char *str)
@@ -105,14 +82,28 @@ int IsPalindrome(const char *str)
 	return flag;
 }
 
-/*
-void SevenBoom(int from, int to)
-{
-
-}
-*/
-
 /*===TESTS:===*/
+void StrlenTest()
+{
+	char str[] = "word";
+	printf("I gots da %d characters, yas!\n", MyStrlen(str));
+}
+
+void StrcmpTest()
+{
+	char *p_1 = "word", *p_2 = "woRd"; 
+	int compared = MyStrcmp(p_1, p_2);
+	
+	printf("The result of comparison is: %d\n", compared);
+}
+
+void StrcpyTest()
+{
+	char str[] = "word", location[] = {'0', '0', '0', '0', '0', '0', '0', '\0'};
+	
+	MyStrcpy(location, str);
+}
+
 void IsPalindromeTest()
 {
 	char word_arr[] = {'m', 'a', 'a', 'm'};
