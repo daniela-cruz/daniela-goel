@@ -1,4 +1,4 @@
-STRCPY RE-IMPLEMENTATION:
+STRLEN RE-IMPLEMENTATION:
 1. receive pointer to a char array
 2. declare counter = 0
 3. while the array in location counter is different than '\0' 
@@ -7,7 +7,12 @@ STRCPY RE-IMPLEMENTATION:
 
 
 strcmp re-implementation:
-???
+1. Get 2 pointers for 2 strings
+2. define result = *p1 - *p2;
+3. While both are != '\0' && result == 0:
+		p1++;
+		p2++;
+4. return result
 
 
 STRCPY RE-IMPLEMENTATION:
