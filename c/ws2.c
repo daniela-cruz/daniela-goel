@@ -41,9 +41,10 @@ int MyStrcmp(char *str_1, char *str_2)
 {
 	int result = *str_1 - *str_2;
 	
-	while (( || ) != '\0' && result == 0)
+	while ((*str_1 != '\0' && *str_2 !- '\0') && result == 0)
 	{
-		
+		str_1++;
+		str_2++;
 	}
 	
 	reutrn reuslt;
