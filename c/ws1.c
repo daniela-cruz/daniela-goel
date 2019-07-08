@@ -31,8 +31,8 @@ int main()
 /*EXERCISES:*/
 void HelloWorld()
 {
-	char i = 0, char_arr[] = {0x48, 0x65, 0x6c, 0x6c, 0x6f, 0x20, 0x57, 0x6f, 
-		0x72, 0x6c, 0x64, 0x21, 0x00}, *p = char_arr;
+	char char_arr[] = {0x48, 0x65, 0x6c, 0x6c, 0x6f, 0x20, 0x57, 0x6f, 0x72, 
+		0x6c, 0x64, 0x21, 0x00}, *p = char_arr;
 	
 	while (*p != '\0')
 	{
@@ -86,11 +86,13 @@ void Swap(int *ptr_1, int *ptr_2)
 /*TESTS:*/
 void TestPower()
 {
-	int exp_arr[] = {1, 0, -5, 3}, *p = exp_arr, i = 0, size = 4;
+	int exp_arr[] = {1, 0, -5, 3}, *p = exp_arr, size = 4;
 	
-	for (i = 0; i < size; i++)
+	while (size > 0)
 	{
 		assert(abs((pow(BASE, *p)) - (Power(*p))) <= 0.99 * Power(*p));
+		p++;
+		size--;
 	}
 }
 
