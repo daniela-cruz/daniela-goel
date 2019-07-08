@@ -1,6 +1,6 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
+#include <stdio.h> /*standard input-output*/
+#include <stdlib.h> /*basic functions, allocations, null etc.*/
+#include <string.h> /*string functions*/
 
 /*STRING LIB RE-IMPLEMENTATIONS:*/
 size_t MyStrlen(char *str);
@@ -20,10 +20,10 @@ int main()
 	StrcpyTest();
 	StrcmpTest();
 	
-	exit (0);
+	return 0;
 }
 
-/*EXERCISES:*/
+/*===EXERCISES:===*/
 /*STRLEN RE-IMPLEMENTATION:*/
 size_t MyStrlen(char *str)
 {
@@ -63,6 +63,7 @@ char* MyStrcpy(char *dest, char *source)
 	return dest;
 }
 
+/*Other exercises:*/
 int IsPalindrome(const char *str)
 {
 	int size = strlen(str), flag = -1, i;
@@ -106,7 +107,7 @@ void StrcpyTest()
 
 void IsPalindromeTest()
 {
-	char word_arr[] = {'m', 'a', 'a', 'm'};
+	char word_arr[] = {'m', 'a', 'a', 'm', '\0'};
 	const char *str = word_arr; 
 	
 	if(IsPalindrome(str) == 0)
