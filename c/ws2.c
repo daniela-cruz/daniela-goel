@@ -3,8 +3,12 @@
 #include <string.h>
 
 /*STRING LIB RE-IMPLEMENTATIONS:*/
-int MyStrlen(char *str); /*strlen*/
-int MyStrcpy(char *location, char *source);/*strcpy*/
+int MyStrlen(char *str);
+void StrlenTest();
+int MyStrcmp(char *str_1, char *str_2);
+void StrcmpTest();
+char* MyStrcpy(char *dest, char *source);
+void StrcpyTest();
 
 /*OTHER EXERCISES:*/
 int IsPalindrome(const char *str);
@@ -13,16 +17,36 @@ void IsPalindromeTest();
 
 int main()
 {
-	/* MyStrlenTest + MyStrcpyTest:*/
-	char str[] = "word", location[] = {'0', '0', '0', '0', '0', '0', '0', '\0'};
+	StrlenTest();
+	StrcpyTest();
+	StrcmpTest();
 	
-	printf("I gots da %d characters, yas!\n", MyStrlen(str));
-	MyStrcpy(location, str);
-
-
 	exit (0);
 }
+/* MyStrlenTest:*/
+void StrlenTest()
+{
+	char str[] = "word";
+	printf("I gots da %d characters, yas!\n", MyStrlen(str));
+}
 
+/**/
+void StrcmpTest()
+{
+	char *p_1 = "word", *p_2 = "woRd"; 
+	int compared = MyStrcmp(p_1, p_2);
+	
+	printf("The result of comparison is: %d\n", compared);
+}
+
+/* MyStrcpyTest:*/
+void StrcpyTest()
+{
+	char str[] = "word", location[] = {'0', '0', '0', '0', '0', '0', '0', '\0'};
+	
+	MyStrcpy(location, str);
+}
+/*EXERCISES:*/
 /*STRLEN RE-IMPLEMENTATION:*/
 int MyStrlen(char *str)
 {
@@ -38,31 +62,28 @@ int MyStrlen(char *str)
 
 /*strcmp re-implementation:*/
 int MyStrcmp(char *str_1, char *str_2)
-{
-	int result = *str_1 - *str_2;
-	
-	while ((*str_1 != '\0' && *str_2 !- '\0') && result == 0)
+{	
+	while ((*str_1 != '\0' && *str_2 != '\0') && *str_1 - *str_2 == 0)
 	{
 		str_1++;
 		str_2++;
 	}
 	
-	reutrn reuslt;
+	return *str_1 - *str_2;
 }
+
 /*STRCPY RE-IMPLEMENTATION:*/
-int MyStrcpy(char *location, char *source)
+char* MyStrcpy(char *dest, char *source)
 {
-	int loc_size = strlen(location), i = 0;
-	if (loc_size >= strlen(source))
-	{
+	int i = 0;
+	
 		while (source[i] != '\0')
 		{
-			location[i] = source[i];
+			dest[i] = source[i];
 			i++;
 		}
-		return 0;
-	}
-	return -1;
+	
+	return dest;
 }
 
 int IsPalindrome(const char *str)
@@ -84,11 +105,12 @@ int IsPalindrome(const char *str)
 	return flag;
 }
 
-void SevenBoom(int fron, int to)
+/*
+void SevenBoom(int from, int to)
 {
 
 }
-
+*/
 
 /*===TESTS:===*/
 void IsPalindromeTest()
