@@ -17,7 +17,7 @@ char *MyStrdup(const char *string);
 
 int main()
 {
-	DerUltimateTester();
+	/*DerUltimateTester();*/
 	
 	return 0;
 }
@@ -25,11 +25,12 @@ int main()
 /*===EXERCISES:===*/
 /*STRING.H RE-IMPLEMENTATION:*/
 size_t MyStrlen(char *str)
-{
-	int counter = 0;
+{	
+	size_t counter = 0;
 	
-	while (str[counter] != '\0')
+	while (*str != '\0')
 	{
+		str++;
 		counter++;
 	}
 	
@@ -49,12 +50,11 @@ int MyStrcmp(char *str_1, char *str_2)
 
 char* MyStrcpy(char *dest, char *source)
 {
-	int i = 0;
-	
-		while (source[i] != '\0')
+		while (*source != '\0')
 		{
-			dest[i] = source[i];
-			i++;
+			*dest = *source;
+			dest++;
+			source++;
 		}
 	
 	return dest;
@@ -71,6 +71,7 @@ char *MyStrchr(const char *str, int character)
 	return	(*str == character) ? (char *) str : NULL;
 }
 
+/*No test yet:*/
 char *MyStrdup(const char *string)
 {
 	int size = strlen(string);
@@ -89,11 +90,16 @@ char *MyStrdup(const char *string)
 /*===TESTS:===*/
 void DerUltimateTester()
 {
-	int size = SIZE, i = 0;
+	size_t size = SIZE, i = 0;
 	/*int compared[] = {32, 32, 0, -32};
 	int *com = compared;*/
-	char *p_arr[] = {"word", "Hello", "hello", "hello"};
-	char *p_cmp[] = {"woRd", "HellO", "hello", "hello "};
+	char arr_1[] = {"word"}, arr_2[] = {"Hello"}, arr_3[] = {"hello"}, 
+			arr_4[] = {"hello"};
+	char arr_a[] = {"woRd"}, arr_b[] = {"HellO"}, arr_c[] = {"hello"}, 
+			arr_d[] = {"hello "};
+	char *ptr_arr[] = {arr_1, arr_2, arr_3, arr_4};
+	int cmp_arr[] = {arr_a, arr_b, arr_c, arr_d};
+	char **p_1 = *ptr_arr[i], **p_2 = cmp_arr[i];
 	
 	StrlenTest();
 	
@@ -107,14 +113,9 @@ void StrlenTest() /*MORE CASES NEEDED!! I need to create an array of stirngs!*/
 
 void StrcmpTest()
 {
-	int size = SIZE, i = 0;
-	int compared[] = {32, 32, 0, -32};
-	int *com = compared;
-	char *p_arr[] = {"word", "Hello", "hello", "hello"};
-	char *p_cmp[] = {"woRd", "HellO", "hello", "hello "};
-	char **p1 = p_arr, **p2 = p_cmp; /*the content of the p_ arrays is an array //
-										of pointers*/
-
+	
+	/*char *p1 = p_arr, *p2 = p_cmp; /*points to individual strings*/*/
+/*
 	for (i = 0; i < size; i++)
 	{
 		*p1 = *p_arr[i] ;
@@ -128,6 +129,7 @@ void StrcmpTest()
 			size--;
 		}
 	}
+	*/
 }
 
 void StrcpyTest()
