@@ -83,7 +83,7 @@ void Swap(int **ptr_1, int **ptr_2)
 /*7BOOM Internal function:*/
 int IsDigit(int num, int residue) /*for 7BOOM*/
 {
-	while (num != 0)
+	while (0 != num)
 	{
 		if (num % 10 == residue)
 		{
@@ -99,7 +99,23 @@ int IsDigit(int num, int residue) /*for 7BOOM*/
 }
 
 
-
+void RmSpaces(char *str)
+{
+	char *str_sart = str;
+	char *spaces = "	 "; /*contains both tab and space characters*/
+	size_t is_wspace = strspn(str, spaces);
+	size_t size = strlen(str);
+	
+	while ('\0' != *str)
+	{
+		if ((1 < is_wspace && (str != (str_start && str + size - 1))) || 
+			(0 < is_wspace && (str == ((str_start) || ( str + size - 1)))))
+		{
+			/*move left the string and add 0 at the end*/
+		}
+		
+	}
+}
 
 /*===TESTS:===*/
 void IsPalindromeTest()
