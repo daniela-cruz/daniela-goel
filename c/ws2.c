@@ -1,42 +1,122 @@
-#include <stdio.h> /*standard input-output*/
-#include <stdlib.h> /*basic functions, allocations, null etc.*/
-#include <string.h> /*string functions*/
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <assert.h>
 
-int IsPalindrome(const char *str);
-void IsPalindromeTest();
+#define LSD 10 /*change Least Significant Digit*/
+#define BOOM 7
+#define STR "BOOM"
+
+const char *str = STR;
+
+char *nonsense(char *first, char *last);
+
+static int IsPalindrome(const char *str);
+static void IsPalindromeTest();
+static void SevenBoom(int from, int to);
+static int IsDigit(int num, int residue);
+static void BoomTest();
+static void Swap(int *ptr_1, int *ptr_2);
 
 int main()
-{	
+{
+	
+	/*BoomTest();*/
+	
 	IsPalindromeTest();
 	
 	return 0;
 }
 
 
-/*Other exercises:*/
+/*Exercises:*/
 int IsPalindrome(const char *str)
 {
-	int size = strlen(str), flag = -1, i;
+	int size = strlen(str) -1; 
+	int i = 0;
+	char *start = (char *)str;
+	char *end = start + size;
 
-	for (i=0; i<size/2; i++)
-	{
-		if (str[i] == str[size-i-1])
+	for (i = 0; i < size / 2; i++)
+	{	
+		if(*start == *end)
 		{
-			flag = 0;
+			start++;
+			end--;
 		}
 		else
 		{
-			break;
+			return -1;
 		}
 	}
 	
-	return flag;
+	return 0;
 }
 
-void IsPalindromeTest() /*REQUIRES TEST!!!*/
+
+void SevenBoom(int from, int to)
 {
-	char word_arr[] = {'m', 'a', 'a', 'm', '\0'};
-	char *str = word_arr; 
+	int boom = BOOM;
+	int i = from;
+	
+	if (to < from) /*if user gave wrong input*/
+	{
+		i = to;
+		to = from;
+		from = i;
+	}
+	
+	for (i = from; i <= to; i++)
+	{
+		if ((i % boom == 0) || (IsDigit(i, boom) == boom))
+		{
+			printf("%s! ", STR);
+		}
+		else
+		{
+			printf("%d ", i);
+		}
+	}
+	
+	printf("\n");
+}
+
+
+void Swap(int *ptr_1, int *ptr_2)
+{
+	int *temp = ptr_1;
+	
+	ptr_1 = ptr_2;
+	ptr_2 = temp;
+	
+	return;
+}
+
+
+/*Internal functions:*/
+int IsDigit(int num, int residue) /*for 7BOOM*/
+{
+	while (num != 0)
+	{
+		if (num % LSD == residue)
+		{
+			return residue;
+		}
+		else
+		{
+			num /= LSD;
+		}
+	}
+	
+	return num;
+}
+
+
+/*===TESTS:===*/
+void IsPalindromeTest()
+{
+	char *word = "ABABA";
+	const char *str = word; 
 	
 	if(IsPalindrome(str) == 0)
 	{
@@ -47,4 +127,12 @@ void IsPalindromeTest() /*REQUIRES TEST!!!*/
 		printf("Ney!\n");
 	}
 }
+
+
+void BoomTest()
+{
+	SevenBoom(289, 123);
+}
+
+
 
