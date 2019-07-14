@@ -46,10 +46,9 @@ size_t MyStrlen(const char *str)
 
 int MyStrcmp(const char *src_1, const char *src_2)
 {	
-	assert ((*src_1 && *src_2) != '\0');
+	assert (src_1 != NULL && src_2 != NULL);
 	
-	while (('\0' != (*src_1 && *src_2)) 
-			&& (*src_1 == *src_2))
+	while ('\0' != (*src_1) && (*src_1 == *src_2))
 	{
 		src_1++;
 		src_2++;
@@ -61,10 +60,9 @@ int MyStrcmp(const char *src_1, const char *src_2)
 
 int MyStrcasecmp(const char *src, const char *str)
 {
-	assert((*src && *str) != '\0');
+	assert (src != NULL && str != NULL);
 	
-	while (('\0' != (*src && *str)) 
-			&& (tolower(*src) == tolower(*str)))
+	while ('\0' != *src && (tolower(*src) == tolower(*str)))
 	{		
 		src++;
 		str++;
@@ -75,9 +73,9 @@ int MyStrcasecmp(const char *src, const char *str)
 
 char* MyStrcpy(char *dest, const char *src)
 {
-	char *ptr = dest;
+	char *start = dest;
 	
-	assert(*src != '\0');
+	assert(src != NULL && dest != NULL);
 	
 	while ('\0' != *src)
 	{
@@ -88,45 +86,45 @@ char* MyStrcpy(char *dest, const char *src)
 	
 	*dest = '\0';
 	
-	return ptr;
+	return start;
 }
 
 char *MyStrncpy(char *dest, const char *src, size_t size) 
 {
-	char *dst = dest;
+	char *start = dest;
 	
-	assert(*src != '\0');
+	assert(src != NULL);
 	
 	while (0 < size)
 	{
 		if ('\0' != *src)
 		{
-			*dst = *src;
+			*dest = *src;
 			src++;
 		}
 		else
 		{
-			*dst = '\0';
+			*dest = '\0';
 		}
 		
-		dst++;
+		dest++;
 		size--;	
 	}
 	
-	return dest;
+	return start;
 }
 
 char *MyStrchr(const char *string, int character)
 {	
-	char *str = (char *)string;
+	const char *str = string;
 	
-	assert(*str != '\0');
+	assert(str != NULL);
 	
 	do
 	{
 		if (*str == character)
 		{
-			return str;
+			return (char *)str;
 		}
 		
 		str++;
