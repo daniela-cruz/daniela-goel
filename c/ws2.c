@@ -3,11 +3,7 @@
 #include <string.h>
 #include <assert.h>
 
-#define LSD 10 /*change Least Significant Digit*/
 #define BOOM 7
-#define STR "BOOM"
-
-const char *str = STR;
 
 char *nonsense(char *first, char *last);
 
@@ -31,13 +27,11 @@ int main()
 
 /*Exercises:*/
 int IsPalindrome(const char *str)
-{
-	int size = strlen(str) -1; 
-	int i = 0;
-	char *start = (char *)str;
-	char *end = start + size;
+{ 
+	const char *start = str;
+	const char *end = start + strlen(str) - 1;
 
-	for (i = 0; i < size / 2; i++)
+	while (end > start)
 	{	
 		if(*start == *end)
 		{
@@ -46,11 +40,11 @@ int IsPalindrome(const char *str)
 		}
 		else
 		{
-			return -1;
+			return 0;
 		}
 	}
 	
-	return 0;
+	return 1;
 }
 
 
@@ -59,57 +53,52 @@ void SevenBoom(int from, int to)
 	int boom = BOOM;
 	int i = from;
 	
-	if (to < from) /*if user gave wrong input*/
+	while (from <= to)
 	{
-		i = to;
-		to = from;
-		from = i;
-	}
-	
-	for (i = from; i <= to; i++)
-	{
-		if ((i % boom == 0) || (IsDigit(i, boom) == boom))
+		if ((from % boom == 0) || (IsDigit(from, boom) == 1))
 		{
-			printf("%s! ", STR);
+			printf("BOOM! ");
 		}
 		else
 		{
-			printf("%d ", i);
+			printf("%d ", from);
 		}
+		
+		from++;
 	}
 	
 	printf("\n");
 }
 
 
-void Swap(int *ptr_1, int *ptr_2)
+void Swap(int **ptr_1, int **ptr_2)
 {
-	int *temp = ptr_1;
+	int *temp = *ptr_1;
 	
-	ptr_1 = ptr_2;
-	ptr_2 = temp;
-	
-	return;
+	*ptr_1 = *ptr_2;
+	*ptr_2 = temp;
 }
 
 
-/*Internal functions:*/
+/*7BOOM Internal function:*/
 int IsDigit(int num, int residue) /*for 7BOOM*/
 {
 	while (num != 0)
 	{
-		if (num % LSD == residue)
+		if (num % 10 == residue)
 		{
-			return residue;
+			return 1;
 		}
 		else
 		{
-			num /= LSD;
+			num /= 10;
 		}
 	}
 	
-	return num;
+	return 0;
 }
+
+
 
 
 /*===TESTS:===*/
