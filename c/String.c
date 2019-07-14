@@ -2,21 +2,24 @@
 #include <stdlib.h> /*basic functions, allocations, null etc.*/
 #include <string.h> /*string functions*/
 #include <assert.h> /*assert*/
+#include <ctype.h> /*lower case strings*/
 
 #include "String.h" /*This file's declarations*/
 
 #define SIZE 4
 
-void DerUltimateTester();
-void StrchrTest();
-void StrlenTest();/*need to correct test*/
-void StrcmpTest();/*need to correct test*/
-void StrcpyTest();/*need to correct test*/
-void StrdupTest();/*TEST NOT WORKING!!!*/
-char *MyStrcat(char *dest, const char *src);/**/
-void CatTest();/*in progress*/
-char *Mystrstr(const char *haystack, const char *needle);/**/
-void StrstrTest();/*in progress*/
+static void DerUltimateTester();
+static void StrchrTest();
+static void StrlenTest();
+static void StrcmpTest();
+static void StrcpyTest();
+static void StrnTest();
+static void StrdupTest();
+static void CatTest();
+static void CatnTest();
+static void StrstrTest();
+static void CaseTest();
+
 
 int main()
 {
@@ -25,13 +28,14 @@ int main()
 	return 0;
 }
 
-/*===EXERCISES:===*/
 /*STRING.H RE-IMPLEMENTATION:*/
 size_t MyStrlen(const char *str)
 {	
 	size_t counter = 0;
 	
-	while (*str != '\0')
+	assert(str != NULL);
+	
+	while ('\0' != *str)
 	{
 		str++;
 		counter++;
@@ -40,24 +44,42 @@ size_t MyStrlen(const char *str)
 	return counter;
 }
 
-int MyStrcmp(const char *str_1, const char *str_2)
+int MyStrcmp(const char *src_1, const char *src_2)
 {	
-	while ((*str_1 != '\0' && *str_2 != '\0') && (*str_1 - *str_2 == 0))
+	assert ((*src_1 && *src_2) != '\0');
+	
+	while (('\0' != (*src_1 && *src_2)) 
+			&& (*src_1 == *src_2))
 	{
-		str_1++;
-		str_2++;
+		src_1++;
+		src_2++;
 	}
 	
-	return *str_1 - *str_2;
+	return *src_1 - *src_2;
+}
+
+
+int MyStrcasecmp(const char *src, const char *str)
+{
+	assert((*src && *str) != '\0');
+	
+	while (('\0' != (*src && *str)) 
+			&& (tolower(*src) == tolower(*str)))
+	{		
+		src++;
+		str++;
+	}	
+	
+	return tolower(*src) - tolower(*str);
 }
 
 char* MyStrcpy(char *dest, const char *src)
 {
 	char *ptr = dest;
 	
-	assert((dest && src));
+	assert(*src != '\0');
 	
-	while (*src != '\0')
+	while ('\0' != *src)
 	{
 		*dest = *src;
 		dest++;
@@ -69,24 +91,47 @@ char* MyStrcpy(char *dest, const char *src)
 	return ptr;
 }
 
-char *MyStrchr(const char *str, int character)
+char *MyStrncpy(char *dest, const char *src, size_t size) 
+{
+	char *dst = dest;
+	
+	assert(*src != '\0');
+	
+	while (0 < size)
+	{
+		if ('\0' != *src)
+		{
+			*dst = *src;
+			src++;
+		}
+		else
+		{
+			*dst = '\0';
+		}
+		
+		dst++;
+		size--;	
+	}
+	
+	return dest;
+}
+
+char *MyStrchr(const char *string, int character)
 {	
-	int size = MyStrlen(str);
-	char *ptr = (char *)malloc((size + 1)*sizeof(char));
+	char *str = (char *)string;
 	
-	MyStrcpy(ptr, str);
+	assert(*str != '\0');
 	
-	assert(ptr != NULL);
-	
-	while ((*ptr != '\0') && (*ptr != (char)character))
+	do
 	{
-		ptr++;
-	}
-	
-	if (*ptr == character)
-	{
-		return ptr;
-	}
+		if (*str == character)
+		{
+			return str;
+		}
+		
+		str++;
+		
+	} while ('\0' != *str);
 	
 	return NULL;
 }
@@ -94,50 +139,59 @@ char *MyStrchr(const char *str, int character)
 char *MyStrdup(const char *str)
 {
 	int size = strlen(str);
-	char *p = (char *)malloc((size * sizeof(char))+1);
+	char *p = "";
+	
+	assert(str != NULL && size != 0);
+	
+	p = (char *)malloc(((size + 1) * sizeof(char)));
 	
 	return MyStrcpy(p, str);
 }
 
 char *MyStrcat(char *dest, const char *src)
 {
-	int size = MyStrlen(src);
-	char *new_dest = dest;
-	char *source = (char*)malloc(size * sizeof(char));
+	size_t size = strlen(dest);
 	
-	while (*dest != '\0')
-	{
-		dest++;
-		new_dest++;
-	}
+	MyStrcpy(dest + size, src);
 	
-	MyStrcpy(dest, source);
-	
-	return new_dest;
+	return dest;
 }
 
-char *Mystrstr(const char *haystack, const char *needle)
-{
-	int hay_size = MyStrlen(haystack);
-	int nee_size = MyStrlen(needle);
-	char p = haystack;
-	
-	while (hay_size >= nee_size)
-	{	
-		p = haystack;
 
-		while (MyStrcmp(haystack, needle) == 0)
+char *MyStrncat(char *dest, const char *src, size_t size)
+{
+	char *p = dest;
+	
+	assert(size > (size_t)0 && *src != '\0');
+	
+	while ('\0' != *dest)
+	{
+		dest++;
+		size--;
+	}
+	
+	if(MyStrncpy(dest, src, size) == dest)
+	{
+		return p;
+	}
+	
+	return NULL;
+}
+
+char *MyStrstr(const char *haystack, const char *needle)
+{
+	size_t size = strlen(needle);
+	
+	assert((needle != NULL) && (haystack != NULL));
+	
+	while (*haystack != '\0') 
+	{	
+		if (strncmp(haystack, needle, size) == 0)
 		{
-			needle++;
-			nee_size--;	
-			haystack++;	
-			
-			if (hay_size - nee_size == 0)
-			{
-				return p;
-			}
+			return (char *)haystack;
 		}
-		hay_size--;
+		
+		haystack++;
 	}
 	
 	return NULL;
@@ -146,6 +200,22 @@ char *Mystrstr(const char *haystack, const char *needle)
 /*===TESTS:===*/
 void DerUltimateTester()
 {	
+	/*CaseTest();
+	
+	CatnTest();
+
+	StrdupTest();
+	
+	StrcmpTest();
+	
+	StrcpyTest();
+	
+	StrchrTest();
+	
+	StrnTest();
+
+	CatTest();*/
+	
 	StrstrTest();
 	
 	StrlenTest();
@@ -153,66 +223,106 @@ void DerUltimateTester()
 
 void StrlenTest()
 {
-	char *str_2 = "";
-	size_t size = 7;
+	char arr[SIZE] = {'a', 'b', 'c','\0'}, *str_2 = arr;
+	size_t size = 1;
 	
-	assert((strlen(str_2)) != (size_t)NULL);
+	assert((MyStrlen(str_2)) != (size_t)NULL);
+	
 	if (size == (MyStrlen(str_2)))
 	{
 		printf("Success, ladies and gent's! It's: %lx\n", MyStrlen(str_2));
 	}
 	else
 	{
-		printf("This is a failure, I repeat - your code's broken! Add one!");
+		printf("This is a failure, I repeat - your code's broken!\t"); 
+		printf("Add %ld more space(s)!\n", MyStrlen(str_2) - size);
 	}
 }
 
-/*
+
 void StrcmpTest()
 {
-	
-	size_t size = SIZE, i = 0;
-	int compared[] = {32, 32, 0, -32};
-	int *com = compared;
-	char arr_1[] = {"word"}; , arr_2[] = {"Hello"}, arr_3[] = {"hello"}, 
-			arr_4[] = {"hello"};
-	char arr_a[] = {"woRd"}, arr_b[] = {"HellO"}, arr_c[] = {"hello"}, 
-			arr_d[] = {"hello "};
-	char *src = arr_1;
-	char *dest = arr_a;
-
-	for (i = 0; i < size; i++)
-	{
-		*p1 = *p_arr[i] ;
-		*p2 = *p_cmp[i];
-		while (size > 0)
-		{
-			assert (MyStrcmp(p1, p2) == compared);
-			p1++;
-			p2++;
-			com++;
-			size--;
-		}
-	}
-	
-}
-*/
-void StrcpyTest()
-{
-	char *src = "word"; 
+	const char *src = "word"; 
 	char arr[] = {'0', '0', '0', '0', '0', '0', '0', '\0'}, *dest = arr;
-	
-	dest = MyStrcpy(dest, src);
 	
 	if(MyStrcmp(src, dest) == 0)
 	{
-		printf("Successful comparison!\n");
+		printf("Successful comparison");
 	}
 	else
 	{
-		printf("Failed comparison :(\n");
+		printf("Unequal: %d\n", MyStrcmp(src, dest));
 	}
 }
+
+
+void CaseTest()
+{
+	char *src = "Hell";
+	char *str = "hello";
+	int result = MyStrcasecmp(src, str);
+	
+	if (result > 0)
+	{
+		printf("Source is higher: %d\n", result);
+	}
+	
+	else
+	{
+		printf("String is either higher or same as source: %d\n", result);
+	}
+}
+
+void StrcpyTest()
+{
+	const char *src = "word"; 
+	char arr[7], *dest = arr;
+	
+	if(dest == MyStrcpy(dest, src))
+	{
+		printf("%s\n", MyStrcpy(dest, src));
+	}
+	else
+	{
+		printf("Failed copy :(\n");
+	}
+}
+
+
+void StrnTest()
+{
+	const char *src = "loolah";
+	char dest[6] = {0};
+	size_t size = SIZE;
+
+	if(MyStrncpy(dest, src, size) != NULL)
+	{
+		printf("%s\n", MyStrncpy(dest, src, size));
+	}
+	else
+	{
+		printf("Not enough roon in destination :(\n");
+	}
+}
+
+
+void StrdupTest()
+{
+	const char *str = "Duplicated!";
+	char *p = MyStrdup(str);
+	
+	if (MyStrlen(str) >= 1)
+	{
+		printf("%s\n", p);
+	}
+	else
+	{
+		printf("Empty array\n");
+	}
+	
+	free(p);
+}
+
 
 void StrchrTest()
 {
@@ -222,37 +332,41 @@ void StrchrTest()
 	assert(MyStrchr(str, letter) == strchr(str, letter));
 }
 
-void StrdupTest()
-{
-	const char *str = "this is a test";
-	char *p = MyStrdup(str);
-	
-	assert(strcmp(str, p) == strcmp(str, p));
-	
-	free(p);
-}
-
 void CatTest()
 {
 	char *source = " Satan!";
-	char *destination = "Hello again,";
+	char destination[100] = "Hello again,";
 	char *new_ptr = MyStrcat(destination, source);
 	
-	printf("%c", *new_ptr);
+	printf("%s\n", new_ptr);
+}
+
+void CatnTest()
+{
+	const char *source = "Satan!";
+	char destination[30] = "Heya, ";
+	char *dest = destination;
+	size_t location = 6;
+	
+	printf("%s\n", MyStrncat(dest, source, location));
 }
 
 void StrstrTest()
 {
-	const char *hay = "jvbhjhbSatanfghfkjghk";
-	const char *needle = "Satan";
-	char *p = MyStrstr(hay, needle);
+	const char *str = "da daniela";
+	const char *sub = "dan";
+	const char *str_2 = "bbba";
+	const char *sub_2 = "bba";
+	char *p = MyStrstr(str, sub);
 	
 	if (p != NULL)
 	{
 		printf("SUCCESS!!!\n");
+		printf("%s\n", MyStrstr(str, sub));
 	}
 	else
 	{
 		printf("Failure\n");
 	}
 }
+
