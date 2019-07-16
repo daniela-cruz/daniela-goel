@@ -9,9 +9,9 @@ static void ShowEnvironment(const char **envp);/**/
 size_t GetEnvironmentLength(const char **envp);/**/
 static char **AllocateEmptyEnvitonment(const char **envp, size_t envp_length);/**/
 static char **CopyLowerEnvironment(const char **envp, char **lower_case_envp, 
-								   size_t envp_length);/**/
-static void PrintEnvironment(const char **lower_case_envp, size_t string_number);/**/
-void FreeLowerEnvironment(char **lower_case_envp, size_t string_number);/**/
+			size_t envp_length);/**/
+static void PrintEnvironment(const char **lower_case_envp, size_t envp_length);/**/
+void FreeLowerEnvironment(char **lower_case_envp, size_t envp_length);/**/
 
 /*EXERCISE 2:*/
 static size_t SwordStory(size_t soldiers_number);
@@ -24,6 +24,9 @@ int main(int argc, char *argv[], char **envp)
 	
 	/*TestSwordStory();*/
 	
+	(void)argc;
+	(void)argv;
+	
 	return 0;
 }
 
@@ -34,109 +37,110 @@ static void ShowEnvironment(const char **envp)
 	char **lower_case_envp = NULL;
 	
 	assert(envp != NULL);
-	
-	/*1. get envp's number of strings*/
+
 	envp_length = GetEnvironmentLength(envp);
 	
-	/*2. allocate proper space*/
 	lower_case_envp = AllocateEmptyEnvitonment(envp, envp_length);
 	
-	/*3. go over each string and copy + to lower each char*/
-	lower_case_envp = CopyLowerEnvironment(envp, lower_case_envp, envp_length);
+	lower_case_envp = 	CopyLowerEnvironment(envp, lower_case_envp, 
+						envp_length);
 	
-	/*4. print strings*/
 	PrintEnvironment((const char **)lower_case_envp, envp_length);
 	
-	/*5. free each string*/
+	
 	FreeLowerEnvironment(lower_case_envp, envp_length);
+	
 
-}
-
-
-void FreeLowerEnvironment(char **lower_case_envp, size_t string_number)
-{
-	while (0 < string_number)
-	{
-		free(*lower_case_envp);
-		lower_case_envp = NULL;
-		lower_case_envp++;
-		string_number--;
-	}
-}
-
-static char **AllocateEmptyEnvitonment(const char **envp, size_t envp_length)
-{
-	char **buffer = NULL;
-	
-	buffer = (char **)malloc(envp_length * sizeof(char *));
-	
-	while (0 < envp_length)
-	{
-		*buffer = (char *)malloc((strlen(*envp) + 1) * sizeof(char));
-		envp++;
-		buffer++;
-		envp_length--;
-	}
-	
-	return buffer;
-}
-
-static void PrintEnvironment(const char **lower_case_envp, size_t string_number)
-{
-	assert(lower_case_envp != NULL);
-	
-	while (0 < string_number)
-	{
-		while ('\0' != *lower_case_envp)
-		{
-			printf("%s", *lower_case_envp);
-			*lower_case_envp++;
-		}
-		
-		printf("\n");
-		lower_case_envp++;
-		string_number--;
-	}	
-}
-
-static char **CopyLowerEnvironment(const char **envp, char **lower_case_envp, 
-								   size_t envp_length)
-{
-	/*char **start_of_lower_envp = lower_case_envp;*/
-	assert(lower_case_envp != NULL);
-	
-	while (0 < envp_length)
-	{
-		while ('\0' != *envp)
-		{
-			**lower_case_envp = tolower(**envp);
-			*lower_case_envp++;
-			*envp++;
-		}
-		
-		**lower_case_envp = '\0';
-		envp++;
-		envp_length--;
-	}
-	
-	*lower_case_envp = '\0';
-	
-	return lower_case_envp -= envp_length;
 }
 
 size_t GetEnvironmentLength(const char **envp)
 {
 	size_t num_of_strings = 0;
 	
-	assert(envp != NULL);
-	
-	while ('\0' != envp)
+	while ('\0' != *envp)
 	{	
 		num_of_strings++;
 		envp++;
 	}
 	
 	return num_of_strings;
+}
+
+
+static char **AllocateEmptyEnvitonment(const char **envp, 
+			size_t envp_length)
+{
+	char **buffer_start = NULL;
+	char **buffer = NULL;
+	
+	assert(0 < envp_length);
+	
+	buffer = (char **)malloc(envp_length * sizeof(char *));
+	buffer_start = buffer;
+	
+	assert(buffer != NULL);
+	
+	while ('\0' != envp)
+	{
+		*buffer = (char *)malloc(strlen((*envp) + 1) * sizeof(char));
+		envp++;
+		buffer++;
+	}
+	
+	return buffer_start;
+}
+
+static void PrintEnvironment(const char **lower_case_envp, size_t envp_length)
+{
+	assert(lower_case_envp != NULL);
+	
+	/*envp_length = 3;*/
+	
+	while ('\0' != lower_case_envp)
+	{
+		printf("%s\n", *lower_case_envp);
+		lower_case_envp++;
+	}	
+	
+	printf("\n");
+}
+
+static char **CopyLowerEnvironment(const char **envp, char **lower_case_envp, size_t envp_length)
+{
+	size_t i = 0, j = 0;
+	
+	assert(lower_case_envp != NULL);
+	
+	envp_length = 3; /*TEST*/
+	
+	for (i = 0; i < envp_length; i++)
+	{
+		while ('\0' != envp[i][j])
+		{
+			lower_case_envp[i][j] = tolower(envp[i][j]);
+			j++;
+		}
+		
+		lower_case_envp[i][j] = '\0';
+		envp_length--;
+	}
+	
+	lower_case_envp[i][j] = '\0';
+	
+	return lower_case_envp;
+}
+
+void FreeLowerEnvironment(char **lower_case_envp, size_t envp_length)
+{
+	while (0 < envp_length)
+	{
+		free(*lower_case_envp);
+		lower_case_envp = NULL;
+		lower_case_envp++;
+		envp_length--;
+	}
+	
+	free(lower_case_envp);
 }
 
 /*EXERCISE 2:*/
