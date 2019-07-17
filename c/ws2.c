@@ -9,17 +9,24 @@ char *nonsense(char *first, char *last);
 
 static int IsPalindrome(const char *str);
 static void IsPalindromeTest();
+
 static void SevenBoom(int from, int to);
 static int IsDigit(int num, int residue);
 static void BoomTest();
-static void Swap(int *ptr_1, int *ptr_2);
+
+static void Swap(int **ptr_1, int **ptr_2);
+
+static char *RmSpaces(char *str);
+char *MoveRmSpaces(char *dest, char *src, size_t spaces_number);
+static void TestRmSpaces();
 
 int main()
 {
+	TestRmSpaces();
 	
 	/*BoomTest();*/
 	
-	IsPalindromeTest();
+	/*IsPalindromeTest();*/
 	
 	return 0;
 }
@@ -51,7 +58,6 @@ int IsPalindrome(const char *str)
 void SevenBoom(int from, int to)
 {
 	int boom = BOOM;
-	int i = from;
 	
 	while (from <= to)
 	{
@@ -71,7 +77,7 @@ void SevenBoom(int from, int to)
 }
 
 
-void Swap(int **ptr_1, int **ptr_2)
+static void Swap(int **ptr_1, int **ptr_2)
 {
 	int *temp = *ptr_1;
 	
@@ -99,22 +105,47 @@ int IsDigit(int num, int residue) /*for 7BOOM*/
 }
 
 
-void RmSpaces(char *str)
+char *RmSpaces(char *str)
 {
-	char *str_sart = str;
-	char *spaces = "	 "; /*contains both tab and space characters*/
-	size_t is_wspace = strspn(str, spaces);
-	size_t size = strlen(str);
+	char *start_str = NULL;
+	char *dest = NULL;
+	size_t is_wspace = 0;
+	
+	assert(NULL != str);
+	start_str = str;
+	dest = str;
 	
 	while ('\0' != *str)
-	{
-		if ((1 < is_wspace && (str != (str_start && str + size - 1))) || 
-			(0 < is_wspace && (str == ((str_start) || ( str + size - 1)))))
+	{	
+		if ('\t' == *str || ' ' == *str)/*count spaces*/
 		{
-			/*move left the string and add 0 at the end*/
+			is_wspace++;
+			
+			if (start_str == str)
+			{
+				is_wspace++;
+			}
+			
+			*dest = 
 		}
 		
+		is_wspace--;
+		str++;
 	}
+	
+	*str = '\0';
+	
+	return start_str;
+}
+
+char *MoveRmSpaces(char *dest, char *src, size_t spaces_number)
+{
+	assert(NULL != dest);
+	assert(NULL != src);
+	
+	dest = strncpy(dest, src, spaces_number);
+
+	return dest;
 }
 
 /*===TESTS:===*/
@@ -139,5 +170,16 @@ void BoomTest()
 	SevenBoom(289, 123);
 }
 
-
+void TestRmSpaces()
+{
+	char *str = "asdf adfafdga";
+	char *str2 = "asdf  adfafdga";
+	char *str3 = "asdf 	adfafdga";
+	char *str4 = "	asdf adfafdga  ";
+	
+	printf("%s", RmSpaces(str));
+	printf("%s", RmSpaces(str2));
+	printf("%s", RmSpaces(str3));
+	printf("%s", RmSpaces(str4));
+}
 
