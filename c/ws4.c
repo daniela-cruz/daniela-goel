@@ -32,18 +32,7 @@ int main()
 	return 0;
 }
 
-void GetInputKey(void (**FunctionsForLookupTable)(void))
-{
-	int user_input = 0;
-	
-	printf("Enter character: \n");
-	
-	while (1)
-	{
-		user_input = getchar();
-		FunctionsForLookupTable[user_input]();
-	}
-}
+
 
 void PrintOrDieIfElse()
 {
@@ -120,6 +109,19 @@ void InitFuncArray(void (**FunctionsForLookupTable)(void))
 	FunctionsForLookupTable[ESC] = &EscapeFunction;
 	FunctionsForLookupTable[A] = &PrintA;
 	FunctionsForLookupTable[T] = &PrintT;
+}
+
+void GetInputKey(void (**FunctionsForLookupTable)(void))
+{
+	int user_input = 0;
+	
+	printf("Enter character: \n");
+	
+	while (1)
+	{
+		user_input = getchar();
+		FunctionsForLookupTable[user_input]();
+	}
 }
 
 void PrintA()
