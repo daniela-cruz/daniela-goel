@@ -6,18 +6,18 @@
 #define T 84
 #define ESC 27
 
-#define ALL_FUNCTIONS 256 /*for the array of functions*/
+#define ALL_FUNCTIONS 256 /*for the LUT array of functions*/
 
-void PrintOrDieIfElse();
-void PrintOrDieSwitchCase();
-void PrintOrDieLookUpTable();
+static void PrintOrDieIfElse();
+static void PrintOrDieSwitchCase();
+static void PrintOrDieLookUpTable();
 /*LUT initializations & sub functions:*/
-void GetInputKey(void (**FunctionsForLookupTable)(void));
-void InitFuncArray(void (**FunctionsForLookupTable)(void));
-void DummyFunction(); /*dummy function for initializer*/
-void PrintA();
-void PrintT();
-void EscapeFunction();
+static void GetInputKey(void (**FunctionsForLookupTable)(void));
+static void InitFuncArray(void (**FunctionsForLookupTable)(void));
+static void DummyFunction(); /*dummy function for initializer*/
+static void PrintA();
+static void PrintT();
+static void EscapeFunction();
 
 int main()
 {
