@@ -7,11 +7,6 @@
 
 enum log_function {APPEND, COUNT, REMOVE, PUSHANDAPPEND, EXIT, ERROR};
 
-void Logger(const char *file_name);
-int CompareString(const char *user_string, const char *string);
-int CompareChar(const char *user_string, const char *string);
-int TrueFunction(const char *new_file, const char *string);
-
 struct module
 {
 	const char *string;
@@ -19,8 +14,12 @@ struct module
 	enum log_function (*operation)(const char *new_file, const char *string);
 };
 
+void Logger(const char *file_name);
+int CompareString(const char *user_string, const char *string);
+int CompareChar(const char *user_string, const char *string);
+int TrueFunction(const char *new_file, const char *string);
 enum log_function WriteToFile(const char *new_file, const char *string);
-enum log_function CountLines(const char *new_file, const char *string);
+enum log_function CountLines(const char *file_name, const char *string);
 enum log_function RemoveFile(const char *new_file, const char *string);
 enum log_function PushAndWriteToFile(const char *new_file, const char *string);
 enum log_function EscapeFunction(const char *new_file, const char *string);
@@ -37,7 +36,6 @@ void Logger(const char *file_name)
 	
 	size_t modules_number = 0; /*sizeof(operation_arr) / sizeof(OPERATION);*/
 	char user_string[MAX] = {0};
-	FILE *new_file = fopen(file_name, "a+");
 	
 	struct module log_function[] =	{{"-count\n", CompareString, CountLines},
 										{"-remove\n", CompareString, RemoveFile},
@@ -60,6 +58,7 @@ void Logger(const char *file_name)
 			if (log_function[i].compare(user_string, log_function[i].string))
 			{
 				log_function[i].operation(file_name, user_string);
+				break;
 			}
 			
 			i++;
@@ -87,7 +86,7 @@ int CompareChar(const char *user_string, const char *string)
 {
 	int is_equal = 0;
 	
-	if (60 == *user_string)
+	if (*string == *user_string)
 	{
 		is_equal = 1;
 	}
@@ -106,7 +105,7 @@ enum log_function WriteToFile(const char *new_file, const char *string)
 	
 	if(file_name == NULL)
 	{
-	  printf("Error!");
+	  printf("Error! Unable to write to file\n");
 	  exit(1);
 	}
 
@@ -116,33 +115,39 @@ enum log_function WriteToFile(const char *new_file, const char *string)
 	return APPEND;
 }
 
-enum log_function CountLines(const char *new_file, const char *string)
+enum log_function CountLines(const char *file_name, const char *string)
 {
 	int lines_counter = 0;
 	int ch = 0;
 	FILE *file_ptr = NULL;
-	int return_value = COUNT;
+/*	int return_value = COUNT;*/
 	
-	assert(NULL != new_file);
-	file_ptr = fopen(new_file, "r");
+	assert(NULL != file_name);
+	file_ptr = fopen(file_name, "r");
 	
-	while(!feof(file_ptr))
+	if(file_name == NULL)
 	{
-		ch = fgetc(file_ptr);
-		
+	  printf("Error! Unable to read file\n");
+	  exit(1);
+	}
+	
+	ch = fgetc(file_ptr);
+	
+	while(ch != EOF)
+	{	
 		if(ch == '\n')
 		{
 			lines_counter++;
 		}
+		
+		ch = fgetc(file_ptr);
 	}
 	
 	fclose(file_ptr);
 	
 	printf("The file contains %d lines.\n", lines_counter);
 	
-	Logger(new_file);
-	
-	return return_value;
+	return COUNT;
 }
 
 
@@ -194,9 +199,12 @@ enum log_function PushAndWriteToFile(const char *new_file, const char *string)
 		{
 			break;
 		}
-		putc(ch, beginning_of_file);
+		putc(ch, beginning_of_temp);
 	} 
 
+	RemoveFile(new_file, "-remove");
+	rename("temp_file", new_file);
+	fclose(beginning_of_temp);
 	
 	return PUSHANDAPPEND;
 }
