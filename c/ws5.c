@@ -9,6 +9,7 @@ enum log_function {APPEND, COUNT, REMOVE, PUSHANDAPPEND, EXIT, ERROR};
 
 void Logger(const char *file_name);
 int CompareString(const char *user_string, const char *string);
+int CompareChar(const char *user_string, const char *string);
 int TrueFunction(const char *new_file, const char *string);
 
 struct module
@@ -40,7 +41,7 @@ void Logger(const char *file_name)
 	
 	struct module log_function[] =	{{"-count\n", CompareString, CountLines},
 										{"-remove\n", CompareString, RemoveFile},
-									 	{"<", CompareString, PushAndWriteToFile},
+									 	{"<", CompareChar, PushAndWriteToFile},
 									 	{"-exit\n", CompareString, EscapeFunction},
 									 	{"", TrueFunction, WriteToFile}};
 	
@@ -82,6 +83,18 @@ int CompareString(const char *user_string, const char *string)
 }
 
 
+int CompareChar(const char *user_string, const char *string)
+{
+	int is_equal = 0;
+	
+	if (60 == *user_string)
+	{
+		is_equal = 1;
+	}
+	
+	return is_equal;
+}
+
 int TrueFunction(const char *new_file, const char *string)
 {
 	return 1;
@@ -107,8 +120,11 @@ enum log_function CountLines(const char *new_file, const char *string)
 {
 	int lines_counter = 0;
 	int ch = 0;
-	FILE *file_ptr = fopen(new_file, "r");
+	FILE *file_ptr = NULL;
 	int return_value = COUNT;
+	
+	assert(NULL != new_file);
+	file_ptr = fopen(new_file, "r");
 	
 	while(!feof(file_ptr))
 	{
@@ -148,13 +164,17 @@ enum log_function RemoveFile(const char *new_file, const char *string)
 	return REMOVE;
 }
 
+
 enum log_function PushAndWriteToFile(const char *new_file, const char *string)
 {
-	const char *start = NULL;
 	FILE *beginning_of_file = NULL;
+	FILE *beginning_of_temp = NULL;
+	char ch = 0;
 	
 	assert(NULL != string);
-	start = string++; /*remove the < sign*/
+	string++;
+	beginning_of_file = fopen(new_file, "a+");
+	beginning_of_temp = fopen("temp_file", "w");
 	
 	if(new_file == NULL)
 	{
@@ -162,11 +182,25 @@ enum log_function PushAndWriteToFile(const char *new_file, const char *string)
 	  exit(1);
 	}
 	
-	/*go to the beginnig of the file and send back a pointer*/
-	WriteToFile(new_file, start);
+	/*go to the beginnig of the file and send back a pointer*/	
+	WriteToFile("temp_file", string);
+	beginning_of_temp = fopen("temp_file", "a+");
+	
+	while(1)
+	{
+		ch = fgetc(beginning_of_file);
+
+		if (ch == EOF)
+		{
+			break;
+		}
+		putc(ch, beginning_of_file);
+	} 
+
 	
 	return PUSHANDAPPEND;
 }
+
 
 enum log_function EscapeFunction(const char *new_file, const char *string)
 {
