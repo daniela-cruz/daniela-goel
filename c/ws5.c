@@ -194,9 +194,12 @@ enum log_function PushAndWriteToFile(const char *new_file, const char *string)
 		{
 			break;
 		}
-		putc(ch, beginning_of_file);
+		putc(ch, beginning_of_temp);
 	} 
 
+	RemoveFile(new_file, "-remove");
+	rename("temp_file", new_file);
+	fclose(beginning_of_temp);
 	
 	return PUSHANDAPPEND;
 }
