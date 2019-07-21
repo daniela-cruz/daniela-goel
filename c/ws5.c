@@ -1,62 +1,111 @@
-#include <stdio.h>
-#include <string.h>
+#include <stdio.h> /*stdin*/
+#include <stdlib.h> /*printf*/
+#include <string.h> /*strcmp*/
+#include <assert.h> /*assert*/
 
-static void Logger(); 
-static FILE *OpenFile();/*CORRECT THE PATH TO UBUNTU'S!!!*/
-static FILE *WriteToFile(FILE *new_file, char *string);/*CHECK WHEN TO FCLOSE!!*/
-int CountLines(FILE *new_file);
-void Infrastructure();
+#define MAX 100
 
-enum functions_array = {Remove, Count, Exit, MoveUp, ERROR};
+enum logfunc {APPEND, COUNT, REMOVE, PUSHANDAPPEND, EXIT, ERROR};
 
+void Logger(char *file_name);
+int CompareString(const char *user_string, const char *string);
+int TrueFunction(const char *new_file, const char *string);
 
+struct module
+{
+	const char *string;
+	int (*compare)(const char *, const char *);
+	enum logfunc (*operation)(const char *new_file, const char *string);
+};
+
+enum logfunc WriteToFile(const char *new_file, const char *string);
+enum logfunc CountLines(const char *new_file, const char *string);
+enum logfunc RemoveFile(const char *new_file, const char *string);
+enum logfunc PushAndWriteToFile(const char *new_file, const char *string);
+enum logfunc EscapeFunction(const char *new_file, const char *string);
 
 int main()
 {
-	Logger();
-	
+	Logger("new_file");
+		
 	return 0;
 }
 
-void Logger()
+void Logger(char *file_name)
 {
-	struct logger_module 
-	{
-		char *string; 
-		int strcmp(string, const char *input);
-		int functions_array;
-	};
 	
-	Infrastructure();
-}
-
-void Infrastructure()
-{
-	char *string = "";
-	/*Get input from user*/
+	size_t modules_number = 0; /*sizeof(operation_arr) / sizeof(OPERATION);*/
+	char user_string[MAX] = {0};
+	FILE *new_file = fopen(file_name, "w");
+	
+	struct module logfunc[] =	{{"-count", strcmp, CountLines},
+ 									 	{"", TrueFunction, WriteToFile}, 
+										{"-remove", strcmp, RemoveFile},
+									 	{"<", strcmp, PushAndWriteToFile},
+									 	{"-exit", strcmp, EscapeFunction}};
+	
+	modules_number = 5;
+	
 	while (1)
 	{
-		FILE *new_file = OpenFile();
+		size_t i = 0;
 		
-		while (RemoveFile)
+		fgets(user_string, MAX, stdin);
+		i = CompareString(user_string, logfunc[i].string);
+		
+		while (i < modules_number)
 		{
-			/*write to file*/
-			WriteToFile(new_file, string);
-			CountLines(new_file);
+			logfunc[i].operation(file_name, user_string);
+			break;
 		}
-	}
+    }
+
 }
 
-int CountLines(FILE *new_file)
+/*File handling:*/
+int CompareString(const char *user_string, const char *string)
+{
+	int is_equal = 0;
+	
+	if (0 == strcmp(user_string, string))
+	{
+		is_equal = 1;
+	}
+	
+	return is_equal;
+}
+
+
+int TrueFunction(const char *new_file, const char *string)
+{
+	return 1;
+}
+
+enum logfunc WriteToFile(const char *new_file, const char *string)
+{
+	FILE *file_name = fopen(new_file, "a");	
+	
+	if(file_name == NULL)
+	{
+	  printf("Error!");
+	  exit(1);
+	}
+
+	fprintf(file_name,"%s", string);
+	fclose(file_name);
+	
+	return APPEND;
+}
+
+enum logfunc CountLines(const char *new_file, const char *string)
 {
 	int lines_counter = 0;
 	int ch = 0;
+	FILE *file_ptr = fopen(new_file, "r");
 	
-	assert(NULL != string);
-	
-	while(!feof(new_file))
+	while(!feof(file_ptr))
 	{
-		ch = fgetc(new_file);
+		ch = fgetc(file_ptr);
 		
 		if(ch == '\n')
 		{
@@ -64,32 +113,54 @@ int CountLines(FILE *new_file)
 		}
 	}
 	
-	return lines_counter;
+	fclose(file_ptr);
+	
+	return COUNT;
 }
 
-/*File handling:*/
-FILE *OpenFile()
+
+
+enum logfunc RemoveFile(const char *new_file, const char *string)
 {
-	int num;
-	FILE *new_file;
+	int status = remove(new_file);
 	
-	new_file = fopen("C:\\program.txt","w");
-   	
-   	if(new_file == NULL)
+	if (status == 0)
 	{
-		printf("Error!");   
-		exit(1);             
+		printf("%s file deleted successfully.\n", new_file);
 	}
-   
-   return new_file;
+	else
+	{
+		printf("Unable to delete the file\n");
+		/*ERROR NEEDED HERE*/
+	}
+ 
+	return REMOVE;
 }
 
-FILE *WriteToFile(FILE *new_file, char *string)
+enum logfunc PushAndWriteToFile(const char *new_file, const char *string)
 {
-	assert(NULL != string);
+	const char *start = NULL;
+	FILE *beginning_of_file = NULL;
 	
-   	fprintf(new_file,"%s",string);
-   	fclose(new_file);
-   
-   return new_file;
+	assert(NULL != string);
+	start = string++; /*remove the < sign*/
+	
+	if(new_file == NULL)
+	{
+	  printf("Error! Can't open file!\n");
+	  exit(1);
+	}
+	
+	/*go to the beginnig of the file and send back a pointer*/
+	WriteToFile(new_file, start);
+	
+	return PUSHANDAPPEND;
 }
+
+enum logfunc EscapeFunction(const char *new_file, const char *string)
+{
+	printf("G'bye!\n");
+	
+	exit(0);
+}
+
