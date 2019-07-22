@@ -1,12 +1,10 @@
-#include <stdio.h>
+#include <stdio.h> /*print*/
 #include <stdlib.h>
-#include <string.h>
-#include <assert.h>
+#include <string.h> /*strlen*/
+#include <assert.h> /*assert*/
 #include <ctype.h> /*isspace*/
 
 #define BOOM 7
-
-char *nonsense(char *first, char *last);
 
 static int IsPalindrome(const char *str);
 static void IsPalindromeTest();
@@ -21,11 +19,6 @@ static char *RmSpaces(char *str);
 char *MoveRmSpaces(char *dest, char *src, size_t spaces_number);
 static void TestRmSpaces();
 
-/*ONLINE SOLUTIONS:*/
-char *LeftTrim(char *string);
-char *RightTrim(char *string);
-char *Trim(char *string);
-/**/
 int main()
 {
 	/*TestRmSpaces();*/
@@ -34,74 +27,15 @@ int main()
 	
 	/*IsPalindromeTest();*/
 	
-	Trim("  lalala fdgjfdg	ffkjdlfkgjd  ");
+	char *test = "  lalala fdgjfdg	ffkjdlfkgjd  ";
+	char *clean_string = NULL;
+	
+	clean_string = RmSpaces(test);
+	
+	printf("%s", clean_string);
 	
 	return 0;
 }
-/*
-
-WHITE SPACES REMOVER ONLINE:
-
-*/
-
-char *LeftTrim(char *string)
-{
-	size_t string_length = 0;
-	char *current_char = NULL;
-
-	assert(NULL != string);
-	current_char = string;
-	string_length = strlen(string);
-	
-	while ('\0' != *string) 
-	{
-		string_length = strlen(string);
-		current_char = string;
-
-		while('\0' != *current_char && isspace(*current_char))
-		{
-			++current_char, --string_length;
-		}
-
-		if(string != current_char)
-		{
-			memmove(string, current_char, string_length + 1);
-		}
-	}
-
-	return string;
-}
-
-/* Remove trailing whitespaces */
-char *RightTrim(char *string)
-{
-        size_t string_length;
-        char *current_char;
-
-        if(string && *string) {
-                string_length = strlen(string);
-                current_char = string + string_length - 1;
-
-                while(current_char != string && isspace(*current_char))
-                        --current_char, --string_length;
-
-                current_char[isspace(*current_char) ? 0 : 1] = '\0';
-        }
-
-        return string;
-}
-
-/* Remove leading and trailing whitespaces */
-char *Trim(char *string)
-{
-        RightTrim(string);
-        LeftTrim(string);
-
-        return string;
-}
-
-
-/**/
 
 
 /*Exercises:*/
@@ -179,35 +113,39 @@ int IsDigit(int num, int residue) /*for 7BOOM*/
 
 char *RmSpaces(char *str)
 {
-	char *start_str = NULL;
 	char *dest = NULL;
-	size_t is_wspace = 0;
+	char *dest_start = NULL;
 	
 	assert(NULL != str);
-	start_str = str;
+	dest_start = str;
 	dest = str;
 	
-	while ('\0' != *str)
+	while ('\0' != *(str + 1)) /*rewrite if more than one white space from current char*/
 	{	
-		if ('\t' == *str || ' ' == *str)/*count spaces*/
-		{
-			is_wspace++;
-			
-			if (start_str == str)
-			{
-				is_wspace++;
-			}
-			
-			*dest = *str;
+		if (('\t' || ' ') == (*str && *(str + 1)))
+		{	
+			str++;
+			dest = strcpy(dest, str);
+			dest = dest_start;
+			dest += strlen(dest);
+			*dest = '\0';
 		}
-		
-		is_wspace--;
+		str = dest_start;
+		dest = str;
 		str++;
 	}
 	
-	*str = '\0';
+	while ('\0' != *(dest + 1))
+	{
+		if (('\t' || ' ') == *dest)
+		{
+			dest_start = strcpy(dest_start, dest);
+		}
+		
+		dest++;
+	}
 	
-	return start_str;
+	return dest_start;
 }
 
 char *MoveRmSpaces(char *dest, char *src, size_t spaces_number)
