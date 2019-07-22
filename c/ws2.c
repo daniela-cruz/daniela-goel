@@ -28,11 +28,10 @@ int main()
 	/*IsPalindromeTest();*/
 	
 	char *test = "  lalala fdgjfdg	ffkjdlfkgjd  ";
-	char *clean_string = NULL;
 	
-	clean_string = RmSpaces(test);
+	test = RmSpaces(test);
 	
-	printf("%s", clean_string);
+	printf("%s", test);
 	
 	return 0;
 }
@@ -115,36 +114,38 @@ char *RmSpaces(char *str)
 {
 	char *dest = NULL;
 	char *dest_start = NULL;
+	size_t dest_length = 0;
 	
 	assert(NULL != str);
-	dest_start = str;
+	dest_length = strlen(str);
 	dest = str;
+	dest_start = str;
+	str += 1;
 	
-	while ('\0' != *(str + 1)) /*rewrite if more than one white space from current char*/
+	while ('\0' != *str) /*rewrite if more than one white space from current char*/
 	{	
-		if (('\t' || ' ') == (*str && *(str + 1)))
+		if   (0 != ((isspace(*dest)) && (isspace(*str))))
 		{	
-			str++;
-			dest = strcpy(dest, str);
-			dest = dest_start;
-			dest += strlen(dest);
-			*dest = '\0';
+			dest_start = strcpy(dest, str);
+			dest_length--;
 		}
-		str = dest_start;
-		dest = str;
+		
+		dest++;
 		str++;
 	}
 	
-	while ('\0' != *(dest + 1))
+	/*use dest length to get back to the beginning of the string*/
+	
+	while ('\0' != *dest)
 	{
-		if (('\t' || ' ') == *dest)
+		if (0 != isspace(*dest_start))
 		{
 			dest_start = strcpy(dest_start, dest);
 		}
 		
 		dest++;
 	}
-	
+
 	return dest_start;
 }
 
