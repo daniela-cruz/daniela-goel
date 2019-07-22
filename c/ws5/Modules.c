@@ -1,12 +1,13 @@
 #include <stdio.h> /*stdin*/
 #include <stdlib.h> /*printf*/
 #include <string.h> /*strcmp*/
+#include <assert.h> /*assert*/
 
 #define MAX 100
 
-enum logfunc {APPEND, COUNT, REMOVE, PUSHANDAPPEND, EXIT, ERROR};
+enum log_function {APPEND, COUNT, REMOVE, PUSHANDAPPEND, EXIT, ERROR};
 
-void Logger(char *file_name);
+void Logger(const char *file_name);
 int CompareString(const char *user_string, const char *string);
 int TrueFunction(const char *new_file, const char *string);
 
@@ -14,14 +15,14 @@ struct module
 {
 	const char *string;
 	int (*compare)(const char *, const char *);
-	enum logfunc (*operation)(const char *new_file, const char *string);
+	enum log_function (*operation)(const char *new_file, const char *string);
 };
 
-enum logfunc WriteToFile(const char *new_file, const char *string);
-enum logfunc CountLines(const char *new_file, const char *string);
-enum logfunc RemoveFile(const char *new_file, const char *string);
-enum logfunc PushAndWriteToFile(const char *new_file, const char *string);
-enum logfunc EscapeFunction(const char *new_file, const char *string);
+enum log_function WriteToFile(const char *new_file, const char *string);
+enum log_function CountLines(const char *new_file, const char *string);
+enum log_function RemoveFile(const char *new_file, const char *string);
+enum log_function PushAndWriteToFile(const char *new_file, const char *string);
+enum log_function EscapeFunction(const char *new_file, const char *string);
 
 int main()
 {
@@ -30,33 +31,39 @@ int main()
 	return 0;
 }
 
-void Logger(char *file_name)
+void Logger(const char *file_name)
 {
 	
 	size_t modules_number = 0; /*sizeof(operation_arr) / sizeof(OPERATION);*/
 	char user_string[MAX] = {0};
-	FILE *new_file = fopen(file_name, "w");
+	FILE *new_file = fopen(file_name, "a+");
 	
-	struct module logfunc[] =	{{"-count", strcmp, CountLines},
- 									 	{"", TrueFunction, WriteToFile}, 
-										{"-remove", strcmp, RemoveFile},
-									 	{"<", strcmp, PushAndWriteToFIle},
-									 	{"-exit", strcmp, EscapeFunction}};
+	struct module log_function[] =	{{"-count\n", CompareString, CountLines},
+										{"-remove\n", CompareString, RemoveFile},
+									 	{"<", CompareString, PushAndWriteToFile},
+									 	{"-exit\n", CompareString, EscapeFunction},
+									 	{"", TrueFunction, WriteToFile}};
 	
 	modules_number = 5;
 	
 	while (1)
 	{
-		size_t i = 0;
+		size_t i = 0;	
 		
+		printf("type your command here:\n");
 		fgets(user_string, MAX, stdin);
-		i = CompareString(user_string, logfunc[i].string);
+		
 		
 		while (i < modules_number)
 		{
-			logfunc[i].operation(file_name, user_string);
-			break;
+			if (log_function[i].compare(user_string, log_function[i].string))
+			{
+				log_function[i].operation(file_name, user_string);
+			}
+			
+			i++;
 		}
+		
     }
 
 }
@@ -80,9 +87,9 @@ int TrueFunction(const char *new_file, const char *string)
 	return 1;
 }
 
-enum logfunc WriteToFile(const char *new_file, const char *string)
+enum log_function WriteToFile(const char *new_file, const char *string)
 {
-	FILE *file_name = fopen(new_file, "a");	
+	FILE *file_name = fopen(new_file, "a+");	
 	
 	if(file_name == NULL)
 	{
@@ -96,11 +103,12 @@ enum logfunc WriteToFile(const char *new_file, const char *string)
 	return APPEND;
 }
 
-enum logfunc CountLines(const char *new_file, const char *string)
+enum log_function CountLines(const char *new_file, const char *string)
 {
 	int lines_counter = 0;
 	int ch = 0;
 	FILE *file_ptr = fopen(new_file, "r");
+	int return_value = COUNT;
 	
 	while(!feof(file_ptr))
 	{
@@ -114,12 +122,16 @@ enum logfunc CountLines(const char *new_file, const char *string)
 	
 	fclose(file_ptr);
 	
-	return COUNT;
+	printf("The file contains %d lines.\n", lines_counter);
+	
+	Logger(new_file);
+	
+	return return_value;
 }
 
 
 
-enum logfunc RemoveFile(const char *new_file, const char *string)
+enum log_function RemoveFile(const char *new_file, const char *string)
 {
 	int status = remove(new_file);
 	
@@ -136,7 +148,7 @@ enum logfunc RemoveFile(const char *new_file, const char *string)
 	return REMOVE;
 }
 
-enum logfunc PushAndWriteToFile(const char *new_file, const char *string)
+enum log_function PushAndWriteToFile(const char *new_file, const char *string)
 {
 	const char *start = NULL;
 	FILE *beginning_of_file = NULL;
@@ -156,7 +168,7 @@ enum logfunc PushAndWriteToFile(const char *new_file, const char *string)
 	return PUSHANDAPPEND;
 }
 
-enum logfunc EscapeFunction(const char *new_file, const char *string)
+enum log_function EscapeFunction(const char *new_file, const char *string)
 {
 	printf("G'bye!\n");
 	
