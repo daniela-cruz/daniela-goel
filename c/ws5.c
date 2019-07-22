@@ -15,6 +15,7 @@ struct module
 };
 
 void Logger(const char *file_name);
+int IsOpen(const char *file_name);
 int CompareString(const char *user_string, const char *string);
 int CompareChar(const char *user_string, const char *string);
 int TrueFunction(const char *new_file, const char *string);
@@ -37,10 +38,10 @@ void Logger(const char *file_name)
     size_t modules_number = 0; /*sizeof(operation_arr) / sizeof(OPERATION);*/
     char user_string[MAX] = {0};
     
-    struct module log_function[] =    {{"-count\n", strcmp, CountLines},
-                                        {"-remove\n", strcmp, RemoveFile},
+    struct module log_function[] =    {{"-count\n", CompareString, CountLines},
+                                        {"-remove\n", CompareString, RemoveFile},
                                          {"<", CompareChar, PushAndWriteToFile},
-                                         {"-exit\n", strcmp, EscapeFunction},
+                                         {"-exit\n", CompareString, EscapeFunction},
                                          {"", TrueFunction, WriteToFile}};
     
     modules_number = 5;
@@ -68,8 +69,7 @@ void Logger(const char *file_name)
 
 }
 
-/*File handling:*/
-/*
+
 int CompareString(const char *user_string, const char *string)
 {
     int is_equal = 0;
@@ -82,7 +82,24 @@ int CompareString(const char *user_string, const char *string)
     return is_equal;
 }
 
-*/
+
+int IsOpen(const char *file_name)
+{
+	int is_open = 1;
+	FILE *opened_file = NULL;
+	
+	assert(NULL != file_name);
+	opened_file = fopen(file_name, "a+"); 
+	
+	if(opened_file == NULL)
+    {
+      printf("Error! Unable to open file\n");
+      is_open = 0;
+    }
+	
+	return is_open;
+}
+
 int CompareChar(const char *user_string, const char *string)
 {
     int is_equal = 0;
@@ -104,10 +121,10 @@ enum log_function WriteToFile(const char *new_file, const char *string)
 {
     FILE *file_name = fopen(new_file, "a+");    
     
-    if(file_name == NULL)
+    if(!IsOpen(new_file))
     {
-      printf("Error! Unable to write to file\n");
-      exit(1);
+      printf("Error! Unable to write to file.\n");
+      exit(1); /*return -APPEND*/
     }
 
     fprintf(file_name,"%s", string);
@@ -121,15 +138,14 @@ enum log_function CountLines(const char *file_name, const char *string)
     int lines_counter = 0;
     int ch = 0;
     FILE *file_ptr = NULL;
-/*    int return_value = COUNT;*/
     
     assert(NULL != file_name);
     file_ptr = fopen(file_name, "r");
     
-    if(file_name == NULL)
+    if(!IsOpen(file_name))
     {
-      printf("Error! Unable to read file\n");
-      exit(1);
+      printf("Error! Unable to count lines on file\n");
+      exit(1); /*return -COUNT*/
     }
     
     ch = fgetc(file_ptr);
@@ -164,30 +180,30 @@ enum log_function RemoveFile(const char *new_file, const char *string)
     else
     {
         printf("Unable to delete the file\n");
-        /*ERROR NEEDED HERE*/
+        /*return -REMOVE*/
     }
  
     return REMOVE;
 }
 
 
-enum log_function PushAndWriteToFile(const char *new_file, const char *string)
+enum log_function PushAndWriteToFile(const char *file_name, const char *string)
 {
     FILE *beginning_of_file = NULL;
     FILE *beginning_of_temp = NULL;
     char ch = 0;
     
     assert(NULL != string);
-    string++;
-    beginning_of_file = fopen(new_file, "a+");
-    beginning_of_temp = fopen("temp_file", "w");
     
-    if(new_file == NULL)
+    if(!IsOpen(file_name))
     {
-      printf("Error! Can't open file!\n");
-      exit(1);
+      printf("Error! Can't push string up!\n");
+      exit(1); /*return -PUSHANDAPPEND*/
     }
     
+    string++;
+    beginning_of_file = fopen(file_name, "a+");
+    beginning_of_temp = fopen("temp_file", "w");
     /*go to the beginnig of the file and send back a pointer*/    
     WriteToFile("temp_file", string);
     beginning_of_temp = fopen("temp_file", "a+");
@@ -203,8 +219,8 @@ enum log_function PushAndWriteToFile(const char *new_file, const char *string)
         putc(ch, beginning_of_temp);
     }
 
-    RemoveFile(new_file, "-remove");
-    rename("temp_file", new_file);
+    RemoveFile(file_name, "-remove");
+    rename("temp_file", file_name);
     fclose(beginning_of_temp);
     
     return PUSHANDAPPEND;
