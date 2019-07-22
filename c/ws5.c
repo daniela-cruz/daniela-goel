@@ -37,10 +37,10 @@ void Logger(const char *file_name)
 	size_t modules_number = 0; /*sizeof(operation_arr) / sizeof(OPERATION);*/
 	char user_string[MAX] = {0};
 	
-	struct module log_function[] =	{{"-count\n", CompareString, CountLines},
-										{"-remove\n", CompareString, RemoveFile},
+	struct module log_function[] =	{{"-count\n", strcmp, CountLines},
+										{"-remove\n", strcmp, RemoveFile},
 									 	{"<", CompareChar, PushAndWriteToFile},
-									 	{"-exit\n", CompareString, EscapeFunction},
+									 	{"-exit\n", strcmp, EscapeFunction},
 									 	{"", TrueFunction, WriteToFile}};
 	
 	modules_number = 5;
@@ -69,6 +69,7 @@ void Logger(const char *file_name)
 }
 
 /*File handling:*/
+/*
 int CompareString(const char *user_string, const char *string)
 {
 	int is_equal = 0;
@@ -81,7 +82,7 @@ int CompareString(const char *user_string, const char *string)
 	return is_equal;
 }
 
-
+*/
 int CompareChar(const char *user_string, const char *string)
 {
 	int is_equal = 0;
