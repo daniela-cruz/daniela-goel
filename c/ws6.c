@@ -1,18 +1,22 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h> /*pow*/
+#include <assert.h> /*assert*/
 
 double Pow2(unsigned int x, int y);
-int IsPow2(unsigned int n);
-int IsPowBoolean(unsigned int n)
+/*int IsPow2(unsigned int n);*/
+int IsPowBoolean(unsigned int n);
 int AddBitwise (unsigned int x);
-void PrintIf3BitsOn(unsigned int *numbers_array);
+void PrintIf3BitsOn(unsigned int *numbers_array, unsigned int numbers_arr_length);
+unsigned int Is2and6(unsigned char ch);
+unsigned int Is2or6(unsigned char ch);
+unsigned int Swap3and5(unsigned char ch);
 
 int main()
 {
-	unsigned int x = 32;
-	int y = -2;
+	unsigned char x = 0x22;
 	
+	printf("%u\n", Is2and6(x));
 	/*printf("%f", Pow2(x, y));*/
 	/*printf("%d",IsPow2(x));*/ 
 	
@@ -20,38 +24,35 @@ int main()
 } 
 
 double Pow2(unsigned int x, int y)
-{
-	double result = x;
-	
+{	
 	if (0 > y)
 	{
 		y = -y;
-		
-		result = x >> y;
+		x >> y;
 	}
 	else
 	{
-		result = x << y;
+		x << y;
 	}
 	
-	return result;
+	return x;
 }
 
-
+/*
 int IsPow2(unsigned int n)
 {
 	int is_exp = 0;
-	int base = 2;
-	double power = 0;
-	double exp = 1;
-	int bitwise = 1;
+	unsigned int base = 2;
+	unsigned int power = 0;
+	double exp = 1.;
+	unsigned int bitwise = 1;
 	
 	bitwise = n;
 	exp = n;
 	
-	while (0 < n)
+	while (0 < (n >> power))
 	{
-		if ((exp / (pow(2, power))) == (bitwise >> power))
+		if ((exp / (pow(base, power))) == (bitwise >> power))
 		{
 			is_exp = 1;
 			power++;
@@ -60,14 +61,12 @@ int IsPow2(unsigned int n)
 		{
 			return 0;
 		}
-		
-		exp = (exp / (pow(2, power)));
 	}
 		
 	return is_exp;
 }
 
-
+*/
 int IsPowBoolean(unsigned int n)
 {
 	return n && (!(n & (n-1)));
@@ -76,38 +75,69 @@ int IsPowBoolean(unsigned int n)
 
 int AddBitwise (unsigned int x)
 {
-  unsigned int y = 1;
-
-  x = x ^ y;
-  y << 1;
-  x = x | y;
-
-  return x;
+  unsigned int carry = 1;
+  int is_in_loop = 0;
+  
+	while (0 != (x & carry))
+	{
+		carry <<= 1;
+		is_in_loop = 1;
+	}
+	
+	if (is_in_loop)
+	{
+		
+		x |= carry;
+	}
+	
+	carry = 1;
+	  
+  return x ^ carry;
 }
 
-void PrintIf3BitsOn(unsigned int *numbers_array)
-{
-    unsigned int array_length = sizeof(numbers_aray) / sieof(*numbers_array);
-    unsigned int *number = numbers_array;
-    unsigned mask = 0000 0111, moving_mask = 0;
+void PrintIf3BitsOn(unsigned int *numbers_array, 
+	unsigned int numbers_arr_length)
+{ 
+    unsigned int *number = NULL;
+    unsigned int mask = 7, moving_mask = 7;
     
-    moving_mask = mask;
+    assert(NULL != numbers_array);
+	number = numbers_array;	
     
-    while (number - numbers_array < array_length)
+    while (number - numbers_array < numbers_arr_length) 
+    /*the numbers of elements reviewed has to be smaller than the array length*/
     {
         moving_mask = mask;
         
-        while (0 != *number >> 2)
+        while (0 != (*number & moving_mask))
         {
-            if (*number ^ mask == mask)   
+            if ((*number & mask) == mask)   
             {
-                printf("%ul", *number);
+                printf("%u", *number);
                 break;
             }
             
-            moving mask <<1;  
+            moving_mask <<1;  
         }
         
         number++;   
     }
+}
+
+unsigned int Is2and6(unsigned char ch)
+{
+	
+	return ((ch >> 0x01) & (ch >> 0x05) & 0x01);
+}
+
+
+unsigned int Is2or6(unsigned char ch)
+{
+	return ~(((ch >> 1) | (ch >> 5))  &  0x01);
+}
+
+unsigned int Swap3and5(unsigned char ch)
+{
+	
+	return (ch & 0xEB) | (((ch & 0x04) << 2) | ((ch & 0x1) >> 2));
 }

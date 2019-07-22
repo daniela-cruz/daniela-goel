@@ -1,6 +1,6 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
+#include <stdio.h> /*printf*/
+#include <stdlib.h> /*escape*/
+#include <string.h> /*getchar*/
 
 #define A 65
 #define T 84
@@ -25,9 +25,9 @@ int main()
 	
 	/*PrintOrDieIfElse();*/
 	
-	/*PrintOrDieSwitchCase();*/
+	PrintOrDieSwitchCase();
 	
-	PrintOrDieLookUpTable();
+	/*PrintOrDieLookUpTable();*/
 	
 	return 0;
 }
@@ -51,7 +51,11 @@ void PrintOrDieIfElse()
 		{
 			PrintT();
 		}
-		else
+		else if (ESC == user_input)
+		{
+			break;
+		}
+		else 
 		{
 			DummyFunction();
 		}
@@ -77,6 +81,9 @@ void PrintOrDieSwitchCase()
 		
 			case T:
 				PrintT();
+				break;
+				
+			case ESC:
 				break;
 		
 			default:
@@ -146,4 +153,3 @@ void DummyFunction() /*empty function to initialize function array with*/
 {
 	printf("Wrong key!\n");
 }
-
