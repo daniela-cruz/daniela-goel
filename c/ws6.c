@@ -5,14 +5,16 @@
 
 double Pow2(unsigned int base, int power);/*tested*/
 static void TestPow2(); 
-int IsPow2(unsigned int n); /*tested*/
+int IsPow2(unsigned int number); /*tested*/
 static void TestIsPow();
-int IsPowBoolean(unsigned int n); /*tested*/
+int IsPowBoolean(unsigned int number); /*tested*/
 static void TestIsPowBoolean();
 unsigned int AddBitwise (unsigned int x); /*tested*/
 static void TestAddBitwise();
+unsigned int MirrorNumberLoop(unsigned int number);
+static void TestMirrorNumberLoop();
 void PrintIf3BitsOn(unsigned int *numbers_array,
-	 size_t numbers_arr_length); /*NOT TESTED YET*/
+	 size_t numbers_arr_length); /*tested*/
 static void TestPrintIs3BitsOn();
 unsigned int Is2and6(unsigned char ch); /*tested*/
 static void TestIs2and6();
@@ -29,10 +31,11 @@ static void TestCountSetBits();
 
 int main()
 {
-	TestPow2();
+	/*TestPow2();*/
 	/*TestIsPow();*/
 	/*TestIsPowBoolean();*/
 	/*TestAddBitwise();*/
+	TestMirrorNumberLoop();
 	/*TestPrintIs3BitsOn();*/
 	/*TestIs2and6();*/
 	/*TestIs2or6();*/
@@ -238,15 +241,13 @@ static void TestIsPowBoolean()
 unsigned int AddBitwise (unsigned int x)
 {
 	unsigned int carry = 1;
-	unsigned int shifted_number = 0;	
-	
-	shifted_number = x;
+	unsigned int shifted_number = x;	
 	
 	while (0 != (shifted_number & carry))
 	{
 		x ^= carry;
 		carry <<= 1;
-		shifted_number >>= carry;
+		/*shifted_number >>= carry;*/
 		shifted_number = x;
 	}
 
@@ -308,34 +309,19 @@ void PrintIf3BitsOn(unsigned int *numbers_array,
 	size_t numbers_arr_length)
 { 
     unsigned int *number = NULL;
-    unsigned int mask = 7;
-    int is_equal_to_mask = 0;
     
     assert(NULL != numbers_array);
 	number = numbers_array;	
     
-    while (0 < numbers_arr_length) 
-    /*the numbers of elements reviewed has to be smaller than the array length*/
-    {   
-        while (0 < *number)
-        {
-            if (0 == ((*number & mask) ^ mask))   
-            {
-                is_equal_to_mask = 1;
-                
-            }
-            
-            *number >> 1;
-        }
-        
-        if (is_equal_to_mask)
-        {
-        	printf("%u", *number);
-        	is_equal_to_mask = 0;
-        }
-        
-        number++;  
-        numbers_arr_length--; 
+    while (0 < numbers_arr_length)
+    {
+		if (3 == CountSetBits(*number))
+		{
+			printf("%u\n", *number);
+		}
+    		
+    	number++;
+    	numbers_arr_length--;
     }
 }
 
@@ -345,6 +331,39 @@ static void TestPrintIs3BitsOn()
 	unsigned int numbers[] = {0, 1, 2, 7, 13};
 	PrintIf3BitsOn(numbers, 5);
 }
+
+unsigned int MirrorNumberLoop(unsigned int number)
+{
+	size_t mask = 0x01;
+	size_t mirror = 0x00;
+	size_t shift_bit = 0x01;
+	
+	while (0 < number)
+	{
+		mirror |= (mask & number);
+		mirror <<= shift_bit;
+		number >>= shift_bit;
+	}
+	
+	return mirror;
+}
+/*TODO*/
+static void TestMirrorNumberLoop()
+{
+	unsigned int numbers[] = {0x00, 0x01, 0x02, 0x09, 0x07, 0x10};
+	unsigned int expected[] = {0x00, 0x01, 0x01, 0x09, 0x07, 0x05};	
+	size_t numbers_array_size = 6;
+	size_t i = 0;
+	
+	for (; i < numbers_array_size; i++)
+	{
+		printf("Index is: %u\n", i);
+		printf("Mirror output is: %u\n", MirrorNumberLoop(numbers[i]));
+		assert(MirrorNumberLoop(numbers[i]) == expected[i]);
+		printf("SUCCESS!\n");
+	}
+}
+
 
 unsigned int Is2and6(unsigned char ch)
 {
