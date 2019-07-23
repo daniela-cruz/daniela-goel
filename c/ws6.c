@@ -37,9 +37,9 @@ int main()
 	/*TestIs2and6();*/
 	/*TestIs2or6();*/
 	/*TestSwap();*/
-	/*TestClosestNumberTo16();*/
+	TestClosestNumberTo16();
 	/*TestSwap();*/
-	TestCountSetBits();
+	/*TestCountSetBits();*/
 	
 	return 0;
 } 
@@ -466,14 +466,14 @@ static void TestSwap3and5()
 
 unsigned int ClosestNumberTo16(unsigned int number)
 {
-	unsigned int shifted = 1;
+	unsigned int sifted_sixteen = 16;
 	
-	while (number >= shifted)
+	while (number >= (sifted_sixteen << 1))
 	{
-		shifted <<= 4;
+		sifted_sixteen <<= 1;
 	}
 	
-	return (shifted <= number)? shifted : 0;
+	return (sifted_sixteen <= number)? sifted_sixteen : 0;
 }
 
 static void TestClosestNumberTo16()
@@ -484,32 +484,41 @@ static void TestClosestNumberTo16()
 	unsigned int expected_1 = 32;
 	unsigned int expected_2 = 32;
 	unsigned int expected_3 = 0;
+	/*
+	assert(32 == ClosestNumberTo16(32));
+	assert(32 == ClosestNumberTo16(33));
+	assert(0 == ClosestNumberTo16(0));
+	assert(0 == ClosestNumberTo16(1));
+	assert(64 == ClosestNumberTo16(65));*/
 	
-	if (ClosestNumberTo16(number_1) == expected_1)
+	if (ClosestNumberTo16(65) == 64)
 	{
 		printf("SUCCESS!\n");
 	}
 	else
 	{
 		printf ("\033[0;31mFAILURE!\n\033[0m");
+		printf ("\033[0;31m%u\n\033[0m", ClosestNumberTo16(65));
 	}
 	
-	if (ClosestNumberTo16(number_2) == expected_2)
+	if (ClosestNumberTo16(32) == 32)
 	{
 		printf("SUCCESS!\n");
 	}
 	else
 	{
-		printf("FAILURE!\n");
+		printf ("\033[0;31mFAILURE!\n\033[0m");
+		printf ("\033[0;31m%u\n\033[0m", ClosestNumberTo16(32));
 	}
 	
-	if (ClosestNumberTo16(number_3) == expected_3)
+	if (ClosestNumberTo16(33) == 32)
 	{
 		printf("SUCCESS!\n");
 	}
 	else
 	{
-		printf("FAILURE!\n");
+		printf ("\033[0;31mFAILURE!\n\033[0m");
+		printf ("\033[0;31m%u\n\033[0m", ClosestNumberTo16(33));
 	}
 }
 
