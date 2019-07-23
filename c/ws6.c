@@ -3,7 +3,7 @@
 #include <math.h> /*pow*/
 #include <assert.h> /*assert*/
 
-double Pow2(unsigned int x, int y);/*tested*/
+double Pow2(unsigned int base, int power);/*tested*/
 static void TestPow2(); 
 int IsPow2(unsigned int n); /*tested*/
 static void TestIsPow();
@@ -29,7 +29,7 @@ static void TestCountSetBits();
 
 int main()
 {
-	/*TestPow2();*/
+	TestPow2();
 	/*TestIsPow();*/
 	/*TestIsPowBoolean();*/
 	/*TestAddBitwise();*/
@@ -37,34 +37,34 @@ int main()
 	/*TestIs2and6();*/
 	/*TestIs2or6();*/
 	/*TestSwap();*/
-	TestClosestNumberTo16();
+	/*TestClosestNumberTo16();*/
 	/*TestSwap();*/
 	/*TestCountSetBits();*/
 	
 	return 0;
 } 
 
-double Pow2(unsigned int x, int y)
+double Pow2(unsigned int base, int power)
 {	
-	if (0 > y)
+	if (0 > power)
 	{
-		y = -y;
-		x >>= (y - 1);
+		power = -power;
+		base >>= power;
 	}
 	else
 	{
-		x <<= y;
+		base <<= power;
 	}
 	
-	return x;
+	return base;
 }
 
 
 static void TestPow2()
 {
-	unsigned int expected_5 = 0.25;	
+	unsigned int expected_5 = 0.125;	
 	
-	if (Pow2(0, 2) == 0)
+	if (Pow2(1, -3) == expected_5)
 	{
 		printf("SUCCESS!\n");
 	}
@@ -103,7 +103,7 @@ static void TestPow2()
 		printf ("\033[0;31m%u\n\033[0m", Pow2(3,2));
 	}
 	
-	if (Pow2(2, -3) == expected_5)
+	if (Pow2(1024, -3) == 128)
 	{
 		printf("SUCCESS!\n");
 	}
@@ -114,14 +114,14 @@ static void TestPow2()
 	}
 }
 
-int IsPow2(unsigned int n)
+int IsPow2(unsigned int number)
 {
 	unsigned int power = 0;
 	unsigned int bitwise = 1;
 	
-	while (n >= (bitwise << power))
+	while (number >= (bitwise << power))
 	{
-		if (n == bitwise << power)
+		if (number == bitwise << power)
 		{
 			return 1;
 		}
@@ -186,9 +186,9 @@ static void TestIsPow()
 	}
 }
 
-int IsPowBoolean(unsigned int n)
+int IsPowBoolean(unsigned int number)
 {
-	return n && (!(n & (n-1)));
+	return number && (!(number & (number-1)));
 }
 
 
