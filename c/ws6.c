@@ -4,7 +4,7 @@
 #include <assert.h> /*assert*/
 
 double Pow2(unsigned int x, int y);
-/*int IsPow2(unsigned int n);*/
+int IsPow2(unsigned int n);
 int IsPowBoolean(unsigned int n);
 int AddBitwise (unsigned int x);
 void PrintIf3BitsOn(unsigned int *numbers_array, unsigned int numbers_arr_length);
@@ -14,9 +14,9 @@ unsigned int Swap3and5(unsigned char ch);
 
 int main()
 {
-	unsigned char x = 0x22;
+	unsigned int x = 32;
 	
-	printf("%u\n", Is2and6(x));
+	printf("%u\n", IsPowBoolean(x));
 	/*printf("%f", Pow2(x, y));*/
 	/*printf("%d",IsPow2(x));*/ 
 	
@@ -38,35 +38,26 @@ double Pow2(unsigned int x, int y)
 	return x;
 }
 
-/*
+
 int IsPow2(unsigned int n)
 {
-	int is_exp = 0;
-	unsigned int base = 2;
 	unsigned int power = 0;
-	double exp = 1.;
 	unsigned int bitwise = 1;
 	
-	bitwise = n;
-	exp = n;
-	
-	while (0 < (n >> power))
+	while (n >= (bitwise << power))
 	{
-		if ((exp / (pow(base, power))) == (bitwise >> power))
+		if (n == bitwise << power)
 		{
-			is_exp = 1;
-			power++;
+			return 1;
 		}
-		else
-		{
-			return 0;
-		}
+		
+		power++;
 	}
 		
-	return is_exp;
+	return 0;
 }
 
-*/
+
 int IsPowBoolean(unsigned int n)
 {
 	return n && (!(n & (n-1)));
