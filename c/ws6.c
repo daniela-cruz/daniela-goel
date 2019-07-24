@@ -3,6 +3,8 @@
 #include <math.h> /*pow*/
 #include <assert.h> /*assert*/
 
+#define BITS_IN_BYTE 8
+
 double Pow2(unsigned int base, int power);/*tested*/
 static void TestPow2(); 
 int IsPow2(unsigned int number); /*tested*/
@@ -16,9 +18,9 @@ static void TestMirrorNumberLoop();
 void PrintIf3BitsOn(unsigned int *numbers_array,
 	 size_t numbers_arr_length); /*tested*/
 static void TestPrintIs3BitsOn();
-unsigned int Is2and6(unsigned char binary_number); /*tested*/
+unsigned int Is2And6(unsigned char binary_number); /*tested*/
 static void TestIs2and6();
-unsigned int Is2or6(unsigned char binary_number); /*tested*/
+unsigned int Is2Or6(unsigned char binary_number); /*tested*/
 static void TestIs2or6();
 unsigned int Swap3and5(unsigned char binary_number); /*tested*/
 static void TestSwap3and5(); 
@@ -35,13 +37,13 @@ int main()
 	/*TestIsPow();*/
 	/*TestIsPowBoolean();*/
 	/*TestAddBitwise();*/
-	TestMirrorNumberLoop();
+	/*TestMirrorNumberLoop();*/
 	/*TestPrintIs3BitsOn();*/
 	/*TestIs2and6();*/
 	/*TestIs2or6();*/
 	/*TestSwap();*/
 	/*TestClosestNumberTo16();*/
-	/*TestSwap();*/
+	TestSwap();
 	/*TestCountSetBits();*/
 	
 	return 0;
@@ -332,40 +334,45 @@ static void TestPrintIs3BitsOn()
 	PrintIf3BitsOn(numbers, 5);
 }
 
-unsigned int MirrorNumberLoop(unsigned int number)
-{
-	size_t mask = 0x01;
-	size_t mirror = 0x00;
-	size_t shift_bit = 0x01;
-	
-	while (0 < number)
-	{
-		mirror |= (mask & number);
-		mirror <<= shift_bit;
-		number >>= shift_bit;
-	}
-	
-	return mirror;
-}
-/*TODO*/
+
+unsigned int MirrorNumberLoop(unsigned int binary_number) 
+{ 
+    unsigned char number_of_system_bits = BITS_IN_BYTE; 
+    unsigned int mirrored_number = 0; 
+    unsigned char i = 0; /*also used as a moving mask*/
+     
+    for (; i < number_of_system_bits; i++) 
+    { 
+    	/* 
+    	If the original number AND'ed with mask moved by i bits left:
+    	OR mirrored number with moving mask*/
+        if ((binary_number & (1 << i))) 
+        {
+	        mirrored_number |= 1 << ((number_of_system_bits - 1) - i);
+        }
+   } 
+   
+    return mirrored_number; 
+} 
+
 static void TestMirrorNumberLoop()
 {
-	unsigned int numbers[] = {0x00, 0x01, 0x02, 0x09, 0x07, 0x10};
-	unsigned int expected[] = {0x00, 0x01, 0x01, 0x09, 0x07, 0x05};	
+	unsigned int numbers[] = {128, 0x01, 0x02, 0x09, 0x07, 0x10};	
 	size_t numbers_array_size = 6;
 	size_t i = 0;
 	
 	for (; i < numbers_array_size; i++)
 	{
+		size_t mirrored = MirrorNumberLoop(numbers[i]);
 		printf("Index is: %u\n", i);
-		printf("Mirror output is: %u\n", MirrorNumberLoop(numbers[i]));
-		assert(MirrorNumberLoop(numbers[i]) == expected[i]);
+		printf("Unmirror output is: %u\n", mirrored);
+		assert(numbers[i] == MirrorNumberLoop(mirrored));
 		printf("SUCCESS!\n");
 	}
 }
 
 
-unsigned int Is2and6(unsigned char binary_number)
+unsigned int Is2And6(unsigned char binary_number)
 {
 	size_t bits_to_shift_a = 2;
 	size_t bits_to_shift_b = 6;	
@@ -377,38 +384,38 @@ unsigned int Is2and6(unsigned char binary_number)
 
 static void TestIs2and6()
 {	
-	if (Is2and6(68) == 1)
+	if (Is2And6(68) == 1)
 	{
 		printf("SUCCESS!\n");
 	}
 	else
 	{
 		printf ("\033[0;31mFAILURE!\n\033[0m");
-		printf ("\033[0;31m%u\n\033[0m", Is2and6(68));
+		printf ("\033[0;31m%u\n\033[0m", Is2And6(68));
 	}
 	
-	if (Is2and6(4) == 0)
+	if (Is2And6(4) == 0)
 	{
 		printf("SUCCESS!\n");
 	}
 	else
 	{
 		printf ("\033[0;31mFAILURE!\n\033[0m");
-		printf ("\033[0;31m%u\n\033[0m", Is2and6(4));
+		printf ("\033[0;31m%u\n\033[0m", Is2And6(4));
 	}
 	
-	if (Is2and6(5) == 0)
+	if (Is2And6(5) == 0)
 	{
 		printf("SUCCESS!\n");
 	}
 	else
 	{
 		printf ("\033[0;31mFAILURE!\n\033[0m");
-		printf ("\033[0;31m%u\n\033[0m", Is2and6(5));
+		printf ("\033[0;31m%u\n\033[0m", Is2And6(5));
 	}
 }
 
-unsigned int Is2r6(unsigned char binary_number)
+unsigned int Is2Or6(unsigned char binary_number)
 {
 	size_t bits_to_shift_a = 2;
 	size_t bits_to_shift_b = 6;	
@@ -420,34 +427,34 @@ unsigned int Is2r6(unsigned char binary_number)
 
 static void TestIs2or6()
 {
-	if (Is2or6(68) == 1)
+	if (Is2Or6(68) == 1)
 	{
 		printf("SUCCESS!\n");
 	}
 	else
 	{
 		printf ("\033[0;31mFAILURE!\n\033[0m");
-		printf ("\033[0;31m%u\n\033[0m", Is2or6(68));
+		printf ("\033[0;31m%u\n\033[0m", Is2Or6(68));
 	}
 	
-	if (Is2or6(4) == 1)
+	if (Is2Or6(4) == 1)
 	{
 		printf("SUCCESS!\n");
 	}
 	else
 	{
 		printf ("\033[0;31mFAILURE!\n\033[0m");
-		printf ("\033[0;31m%u\n\033[0m", Is2or6(4));
+		printf ("\033[0;31m%u\n\033[0m", Is2Or6(4));
 	}
 	
-	if (Is2and6(8) == 0)
+	if (Is2And6(8) == 0)
 	{
 		printf("SUCCESS!\n");
 	}
 	else
 	{
 		printf ("\033[0;31mFAILURE!\n\033[0m");
-		printf ("\033[0;31m%u\n\033[0m", Is2or6(8));
+		printf ("\033[0;31m%u\n\033[0m", Is2Or6(8));
 	}
 }
 
@@ -510,18 +517,6 @@ unsigned int ClosestNumberTo16(unsigned int number)
 
 static void TestClosestNumberTo16()
 {
-	unsigned int number_1 = 32;
-	unsigned int number_2 = 33;
-	unsigned int number_3 = 0;
-	unsigned int expected_1 = 32;
-	unsigned int expected_2 = 32;
-	unsigned int expected_3 = 0;
-	/*
-	assert(32 == ClosestNumberTo16(32));
-	assert(32 == ClosestNumberTo16(33));
-	assert(0 == ClosestNumberTo16(0));
-	assert(0 == ClosestNumberTo16(1));
-	assert(64 == ClosestNumberTo16(65));*/
 	
 	if (ClosestNumberTo16(65) == 64)
 	{
@@ -556,9 +551,12 @@ static void TestClosestNumberTo16()
 
 void SwapBitwise(unsigned int *num1, unsigned int *num2)
 {
-	*num1 = *num1 ^ *num2; 
-    *num2 = *num1 ^ *num2;
-    *num1 = *num1 ^ *num2;
+	if (num1 != num2)
+	{
+		*num1 = *num1 ^ *num2; 
+		*num2 = *num1 ^ *num2;
+		*num1 = *num1 ^ *num2;
+	}
 }
 
 static void TestSwap()
@@ -566,11 +564,11 @@ static void TestSwap()
 	unsigned int num1 = 5;
 	unsigned int num2 = 3;
 	
-	SwapBitwise(&num1, &num2);
+	SwapBitwise(&num1, &num1);
 	
-	if (3 == num1 && 5 == num2)
+	if (5 == num1 && 3 == num2)
 	{
-		printf("SUCCESS!\n");
+		printf("GRRREAT SUCCESS!\n");
 	}
 	else
 	{
