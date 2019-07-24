@@ -115,16 +115,7 @@ char *RmSpaces(char *str)
 	start_dest = dest;
 	start_source = str;
 	
-	/*FIX EXESS WS AT THE BEGINNING OF THE STRING:*/
-	while ( 0 != (isspace(*dest)))
-	{
-	    if (start_dest == dest)
-	    {
-			start_dest = strcpy(start_dest, (start_dest + 1));
-	    }
-	    
-	    start_dest++;
-	}
+	
 	
 	/*FIX EXESS WS MID STRING:*/
 	while ('\0' != *start_source)
@@ -143,6 +134,17 @@ char *RmSpaces(char *str)
 	}
 	
 	start_dest = dest;
+	
+	/*FIX EXESS WS AT THE BEGINNING OF THE STRING:*/
+	while ( 0 != (isspace(*start_dest)))
+	{
+	    if (start_dest == dest)
+	    {
+			start_dest = strcpy(start_dest, (start_dest + 1));
+	    }
+	    
+	    start_dest++;
+	}
 	
 	/*FIX EXESS WS AT THE END OF THE STRING:*/
 	while ('\0' != *start_dest)
