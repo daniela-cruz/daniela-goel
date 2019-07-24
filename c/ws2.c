@@ -115,8 +115,18 @@ char *RmSpaces(char *str)
 	start_dest = dest;
 	start_source = str;
 	
+	/*FIX EXESS WS AT THE BEGINNING OF THE STRING:*/
+	while ( 0 != (isspace(*dest)))
+	{
+	    if (start_dest == dest)
+	    {
+			start_dest = strcpy(start_dest, (start_dest + 1));
+	    }
+	    
+	    start_dest++;
+	}
 	
-	
+	/*FIX EXESS WS MID STRING:*/
 	while ('\0' != *start_source)
 	{	
 		if (0 != ((isspace(*start_source) && isspace(*(start_source + 1)))))
@@ -134,27 +144,13 @@ char *RmSpaces(char *str)
 	
 	start_dest = dest;
 	
-	/*FIX EXESS WS AT THE BEGINNING OF THE STRING:*/
-	while ( 0 != (isspace(*dest)))
-	{
-	    if (start_dest == dest)
-	    {
-			start_dest = strcpy(start_dest, (start_dest + 1));
-	    }
-	    
-	    start_dest++;
-	}
-	
-	start_dest = dest;
-	
 	/*FIX EXESS WS AT THE END OF THE STRING:*/
 	while ('\0' != *start_dest)
 	{
-		if (isspace(*start_source) && ('\0' == *(start_dest++)))
+		if (isspace(*start_dest) && ('\0' == *(start_dest + 1)))
 		{
-			start_dest--;
+			/*start_dest--;*/
 			*start_dest = '\0';	
-			start_dest = dest;
 		}
 		
 		start_dest++;
@@ -165,6 +161,7 @@ char *RmSpaces(char *str)
 	return start_dest;
 }
 
+
 static void TestRmWhiteSpaces()
 {
 	char *test1 = "		lalala	fdgjfdg		ffkjdlfkgjd		";
@@ -173,17 +170,17 @@ static void TestRmWhiteSpaces()
 	char buff[100] = {0};
 	char *post_removed_spaces = buff;
 	
-	printf("%s - before\n", test1);
+	printf("%s- before\n", test1);
 	post_removed_spaces = RmSpaces(test1);
-	printf("%s - after\n", post_removed_spaces);
+	printf("%s- after\n", post_removed_spaces);
 	
-	printf("%s - before\n", test2);
+	printf("%s- before\n", test2);
 	post_removed_spaces = RmSpaces(test2);
-	printf("%s - after\n", post_removed_spaces);
+	printf("%s- after\n", post_removed_spaces);
 	
-	printf("%s - before\n", test3);
+	printf("%s- before\n", test3);
 	post_removed_spaces = RmSpaces(test3);
-	printf("%s - after\n", post_removed_spaces);
+	printf("%s- after\n", post_removed_spaces);
 }
 
 /*===TESTS:===*/
@@ -206,18 +203,5 @@ void IsPalindromeTest()
 void BoomTest()
 {
 	SevenBoom(289, 123);
-}
-
-void TestRmSpaces()
-{
-	char *str = "asdf adfafdga";
-	char *str2 = "asdf  adfafdga";
-	char *str3 = "asdf 	adfafdga";
-	char *str4 = "	asdf adfafdga  ";
-	
-	printf("%s", RmSpaces(str));
-	printf("%s", RmSpaces(str2));
-	printf("%s", RmSpaces(str3));
-	printf("%s", RmSpaces(str4));
 }
 
