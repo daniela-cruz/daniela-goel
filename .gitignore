@@ -5,6 +5,7 @@
 !.gitignore
 !*.h
 !*.md
+!*.odt
 
 # to change global .gitignore file: 
 # git config --global core.excludesfile ~/.gitignore_global
