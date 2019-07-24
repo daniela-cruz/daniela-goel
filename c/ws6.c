@@ -11,16 +11,16 @@ int IsPowBoolean(unsigned int number); /*tested*/
 static void TestIsPowBoolean();
 unsigned int AddBitwise (unsigned int x); /*tested*/
 static void TestAddBitwise();
-unsigned int MirrorNumberLoop(unsigned int number);
+unsigned int MirrorNumberLoop(unsigned int number);/**/
 static void TestMirrorNumberLoop();
 void PrintIf3BitsOn(unsigned int *numbers_array,
 	 size_t numbers_arr_length); /*tested*/
 static void TestPrintIs3BitsOn();
-unsigned int Is2and6(unsigned char ch); /*tested*/
+unsigned int Is2and6(unsigned char binary_number); /*tested*/
 static void TestIs2and6();
-unsigned int Is2or6(unsigned char ch); /*tested*/
+unsigned int Is2or6(unsigned char binary_number); /*tested*/
 static void TestIs2or6();
-unsigned int Swap3and5(unsigned char ch); /*tested*/
+unsigned int Swap3and5(unsigned char binary_number); /*tested*/
 static void TestSwap3and5(); 
 unsigned int ClosestNumberTo16(unsigned int number);/*tested*/
 static void TestClosestNumberTo16();
@@ -247,7 +247,7 @@ unsigned int AddBitwise (unsigned int x)
 	{
 		x ^= carry;
 		carry <<= 1;
-		/*shifted_number >>= carry;*/
+		shifted_number >>= carry;
 		shifted_number = x;
 	}
 
@@ -365,10 +365,13 @@ static void TestMirrorNumberLoop()
 }
 
 
-unsigned int Is2and6(unsigned char ch)
+unsigned int Is2and6(unsigned char binary_number)
 {
+	size_t bits_to_shift_a = 2;
+	size_t bits_to_shift_b = 6;	
 	
-	return ((ch >> 2) & (ch >> 6) & 1);
+	return ((binary_number >> bits_to_shift_a) & 
+			(binary_number >> bits_to_shift_b) & 1);
 }
 
 
@@ -405,9 +408,13 @@ static void TestIs2and6()
 	}
 }
 
-unsigned int Is2or6(unsigned char ch)
+unsigned int Is2r6(unsigned char binary_number)
 {
-	return (((ch >> 2) | (ch >> 6))  &  1);
+	size_t bits_to_shift_a = 2;
+	size_t bits_to_shift_b = 6;	
+	
+	return (((binary_number >> bits_to_shift_a) | 
+			(binary_number >> bits_to_shift_b))  &  1);
 }
 
 
@@ -444,10 +451,16 @@ static void TestIs2or6()
 	}
 }
 
-unsigned int Swap3and5(unsigned char ch)
+unsigned int Swap3and5(unsigned char binary_number)
 {
+	size_t mask = 0xD7;
+	size_t right_mask = 8;
+	size_t left_mask = 32;
+	size_t bits_shifter = 2;
 	
-	return (ch & 0xD7) | (((ch & 8) << 2) | ((ch & 32) >> 2));
+	return (binary_number & mask) | 
+			(((binary_number & right_mask) << bits_shifter) | 
+			((binary_number & left_mask) >> bits_shifter));
 }
 
 static void TestSwap3and5()
@@ -485,14 +498,14 @@ static void TestSwap3and5()
 
 unsigned int ClosestNumberTo16(unsigned int number)
 {
-	unsigned int sifted_sixteen = 16;
+	unsigned int sixteen_denomenator = 16;
 	
-	while (number >= (sifted_sixteen << 1))
+	while (number >= (sixteen_denomenator << 1))
 	{
-		sifted_sixteen <<= 1;
+		sixteen_denomenator <<= 1;
 	}
 	
-	return (sifted_sixteen <= number)? sifted_sixteen : 0;
+	return (sixteen_denomenator <= number) ? sixteen_denomenator : 0;
 }
 
 static void TestClosestNumberTo16()
