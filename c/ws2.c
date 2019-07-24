@@ -5,6 +5,7 @@
 #include <ctype.h> /*isspace*/
 
 #define BOOM 7
+#define MAX_ARR_SIZE 100
 
 static int IsPalindrome(const char *str);
 static void IsPalindromeTest();
@@ -16,22 +17,16 @@ static void BoomTest();
 static void Swap(int **ptr_1, int **ptr_2);
 
 static char *RmSpaces(char *str);
-char *MoveRmSpaces(char *dest, char *src, size_t spaces_number);
-static void TestRmSpaces();
+static void TestRmWhiteSpaces();
 
 int main()
 {
-	/*TestRmSpaces();*/
+	TestRmWhiteSpaces();
 	
 	/*BoomTest();*/
 	
 	/*IsPalindromeTest();*/
 	
-	char *test = "  lalala fdgjfdg	ffkjdlfkgjd  ";
-	
-	test = RmSpaces(test);
-	
-	printf("%s", test);
 	
 	return 0;
 }
@@ -112,51 +107,83 @@ int IsDigit(int num, int residue) /*for 7BOOM*/
 
 char *RmSpaces(char *str)
 {
-	char *dest = NULL;
-	char *dest_start = NULL;
-	size_t dest_length = 0;
+	char *start_dest = NULL;
+	char *start_source = NULL;
+	char dest[100] = {0};
 	
 	assert(NULL != str);
-	dest_length = strlen(str);
-	dest = str;
-	dest_start = str;
-	str += 1;
+	start_dest = dest;
+	start_source = str;
 	
-	while ('\0' != *str) /*rewrite if more than one white space from current char*/
+	
+	
+	while ('\0' != *start_source)
 	{	
-		if   (0 != ((isspace(*dest)) && (isspace(*str))))
-		{	
-			dest_start = strcpy(dest, str);
-			dest_length--;
-		}
-		
-		dest++;
-		str++;
-	}
-	
-	/*use dest length to get back to the beginning of the string*/
-	
-	while ('\0' != *dest)
-	{
-		if (0 != isspace(*dest_start))
+		if (0 != ((isspace(*start_source) && isspace(*(start_source + 1)))))
 		{
-			dest_start = strcpy(dest_start, dest);
+			start_source++;
+			*start_dest = *start_source;
+		}
+		else
+		{
+		    *start_dest = *start_source;
+		}
+		start_dest++;
+		start_source++;
+	}
+	
+	start_dest = dest;
+	
+	/*FIX EXESS WS AT THE BEGINNING OF THE STRING:*/
+	while ( 0 != (isspace(*dest)))
+	{
+	    if (start_dest == dest)
+	    {
+			start_dest = strcpy(start_dest, (start_dest + 1));
+	    }
+	    
+	    start_dest++;
+	}
+	
+	start_dest = dest;
+	
+	/*FIX EXESS WS AT THE END OF THE STRING:*/
+	while ('\0' != *start_dest)
+	{
+		if (isspace(*start_source) && ('\0' == *(start_dest++)))
+		{
+			start_dest--;
+			*start_dest = '\0';	
+			start_dest = dest;
 		}
 		
-		dest++;
+		start_dest++;
 	}
-
-	return dest_start;
+	
+	start_dest = dest;
+	
+	return start_dest;
 }
 
-char *MoveRmSpaces(char *dest, char *src, size_t spaces_number)
+static void TestRmWhiteSpaces()
 {
-	assert(NULL != dest);
-	assert(NULL != src);
+	char *test1 = "		lalala	fdgjfdg		ffkjdlfkgjd		";
+	char *test2 = "lalala		fdgjfdg	ffkjdlfkgjd  ";
+	char *test3 = "		lalala		fdgjfdg		ffkjdlfkgjd";
+	char buff[100] = {0};
+	char *post_removed_spaces = buff;
 	
-	dest = strncpy(dest, src, spaces_number);
-
-	return dest;
+	printf("%s - before\n", test1);
+	post_removed_spaces = RmSpaces(test1);
+	printf("%s - after\n", post_removed_spaces);
+	
+	printf("%s - before\n", test2);
+	post_removed_spaces = RmSpaces(test2);
+	printf("%s - after\n", post_removed_spaces);
+	
+	printf("%s - before\n", test3);
+	post_removed_spaces = RmSpaces(test3);
+	printf("%s - after\n", post_removed_spaces);
 }
 
 /*===TESTS:===*/
