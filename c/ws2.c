@@ -16,7 +16,9 @@ static void BoomTest();
 
 static void Swap(int **ptr_1, int **ptr_2);
 
-static char *RmSpaces(char *str);
+char *RmSpaces(const char *source);
+char *RemoveSpaceFromEnd(char *source);
+char *RemoveExtraSpacesFromMid(char *destination);
 static void TestRmWhiteSpaces();
 
 int main()
@@ -105,84 +107,111 @@ int IsDigit(int num, int residue) /*for 7BOOM*/
 }
 
 
-char *RmSpaces(char *str)
+char *RmSpaces(const char *source)
 {
-	char *start_dest = NULL;
-	char *start_source = NULL;
-	char dest[100] = {0};
-	
-	assert(NULL != str);
-	start_dest = dest;
-	start_source = str;
-	
-	
-	
-	/*FIX EXESS WS MID STRING:*/
-	while ('\0' != *start_source)
-	{	
-		if (0 != ((isspace(*start_source) && isspace(*(start_source + 1)))))
-		{
-			start_source++;
-			*start_dest = *start_source;
-		}
-		else
-		{
-		    *start_dest = *start_source;
-		}
-		start_dest++;
-		start_source++;
-	}
-	
-	start_dest = dest;
-	
-	/*FIX EXESS WS AT THE BEGINNING OF THE STRING:*/
-	while ( 0 != (isspace(*start_dest)))
-	{
-	    if (start_dest == dest)
-	    {
-			start_dest = strcpy(start_dest, (start_dest + 1));
-	    }
-	    
-	    start_dest++;
-	}
-	
-	/*FIX EXESS WS AT THE END OF THE STRING:*/
-	while ('\0' != *start_dest)
-	{
-		if (isspace(*start_dest) && ('\0' == *(start_dest + 1)))
-		{
-			/*start_dest--;*/
-			*start_dest = '\0';	
-		}
-		
-		start_dest++;
-	}
-	
-	start_dest = dest;
-	
-	return start_dest;
+    char *destination;
+    char *destination_start;
+    
+    assert(NULL != source);
+
+    destination = (char *)malloc((strlen(source) + 1) * sizeof(char));
+    destination = strcpy(destination, source);
+    destination_start = destination;
+    
+    while ('\0' != *destination && (0 != (isspace(*destination))))
+    {
+        destination++;
+    }
+    
+    /*destination_start = strcpy(destination_start, destination);*/
+    destination = RemoveSpaceFromEnd(destination);
+    destination = destination_start;
+    
+    while ('\0' != *destination)
+    {
+        if (0 != (isspace(*destination) && isspace(*(destination + 1))))
+        {
+            destination = RemoveExtraSpacesFromMid(destination);
+        }
+        
+        destination++;
+    }
+    
+    return destination_start;
+}
+
+
+char *RemoveExtraSpacesFromMid(char *destination)
+{
+    char *next_char;
+    char *destination_start;
+    
+    assert(NULL != destination);
+    destination_start = destination;
+    next_char = destination + 1;
+    
+    while ('\0' != *next_char)
+    {
+        *destination = *next_char;
+        destination++;
+        next_char++;
+    }
+    
+    *destination = '\0';
+    
+    return destination_start;
+}
+
+char *RemoveSpaceFromEnd(char *source)
+{
+    size_t string_length;
+    char *end;
+    
+    assert(NULL != source);
+    string_length = strlen(source);
+
+    if (!string_length)
+    {
+        return source;
+    }
+
+    end = source + string_length - 1;
+    
+    while (end >= source && 0 != isspace(*end))
+    {
+        end--;
+    }
+    
+    end++;
+    *end = '\0';
+
+    while ('\0' != *source && 0 != isspace(*source))
+    {
+        source++;
+    }
+
+    return source;
 }
 
 
 static void TestRmWhiteSpaces()
 {
-	char *test1 = "		lalala	fdgjfdg		ffkjdlfkgjd		";
-	char *test2 = "lalala		fdgjfdg	ffkjdlfkgjd  ";
-	char *test3 = "		lalala		fdgjfdg		ffkjdlfkgjd";
-	char buff[100] = {0};
-	char *post_removed_spaces = buff;
-	
-	printf("%s- before\n", test1);
-	post_removed_spaces = RmSpaces(test1);
-	printf("%s- after\n", post_removed_spaces);
-	
-	printf("%s- before\n", test2);
-	post_removed_spaces = RmSpaces(test2);
-	printf("%s- after\n", post_removed_spaces);
-	
-	printf("%s- before\n", test3);
-	post_removed_spaces = RmSpaces(test3);
-	printf("%s- after\n", post_removed_spaces);
+	char test_length = 3;
+    char *test[] = {"      word  longer word     encyclopedia        ",
+                     " word     longer word encyclopedia    ",
+                      "        word    longer word     encyclopedia", '\0'};
+    char *post_removed_spaces;
+    char i = 0;
+
+    for (; i < test_length; i++)
+    {
+        printf("%s- before\n", *(test + i));
+        post_removed_spaces = RmSpaces(test[i]);
+        printf("%s- after\n", post_removed_spaces);
+        free(post_removed_spaces);
+        
+    }
+    
 }
 
 /*===TESTS:===*/
