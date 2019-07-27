@@ -1,74 +1,88 @@
-#include <stdio.h> /*realloc*/
-#include <stdlib.h> /*printf*/
-#include <string.h> /*strcat*/
+#include <stdio.h> /* printf */
+#include <stdlib.h> /* alloc */
+#include <string.h> /* strlen */
 
-#define DUMMY_VALUE 10
+enum {Failure, Success};
 
-typedef struct add_data 
-{ 
-	void *data();
-	void (*add_f)(void);
-	void (*print)(void);
-	void (*free_memory)(void);
-} Add_Data;
-
-int *AddInt(int *number);
-float *AddFloat(float *number);
-
-void PrintInt(int  *number);
-void PrintFloat(float  *number);
-void PrintString(char  *string);
-
-FreeString;
-
-int main() 
+typedef struct DateOfBirth 
 {
-    return 0;
-}
+	size_t day;
+	size_t month;
+	size_t year;
+} dob_t;
 
-Add_Data *InitializeDAtaStruct(char struct_elements_number) 
+typedef struct contact 
 {
-    Add_Data type_functions = 
-					{{(int *)number, (int *)AddInt, PrintInt, FreeNumber}, 
-					{(float *)number, (float *)AddFloat, PrintFloat, FreeNumber},
-					{(char *)string, (char *)strcat, PrintString, FreeString}};
-    
+	char f_name[50];
+	char l_name[50];
+	dob_t date;
+	size_t id;
+} contact_t;
 
-    return type_functions;
-}
+void CreateContactsFile();
+contact_t *ReadFileToNewStruct(const char *name);
 
-/*Addition functions:*/
-int *AddInt(int *number)
+int main()
 {
-	*number += DUMMY_VALUE;
+	CreateContactsFile();
 	
-	return  number;	
+	return 0;
 }
 
-float *AddFloat(float *number)
+void CreateContactsFile()
 {
-	*number += DUMMY_VALUE;
+	contact_t contacts[] = {
+							{"Daniela ",  "Goel",  {5, 3, 1984}, 39456314},
+							{"Daniel",  "Soifer",  {1, 1, 1998}, 318651643},
+							{"Alex ",  "Burstein", {9, 12, 1985}, 307558114},
+							{"Nitzan",  "Izhaki",  {1, 1, 1991}, 201630225},
+							{"Hay ",  "Hoffman",  {1, 1, 1992}, 203265186},
+							{"Mai ",  "Aloni",  {14, 7, 1993}, 309651107},
+							{"Dor ",  "Tambour",  {15, 4, 1992}, 203516208},
+							{"Omri ",  "Roimi",  {1, 1,1986}, 301722864}};
+	contact_t *contacts_2;
+	FILE *file_name;
+	const char *name = "infinity_contacts.txt";
 	
-	return  number;	
+	file_name = fopen(name, "w+");
+	
+	if (NULL != file_name)
+	{
+		fwrite(contacts, sizeof(contact_t), sizeof(contacts), file_name);
+		fclose(file_name);
+	}
+	else
+	{
+		printf("Error: unable to open file.");
+	}
+	
+	contacts_2 = ReadFileToNewStruct(name);
+	printf("Name: %s \n", contacts_2->f_name);
+	
+	free(contacts_2);
 }
 
-/*Print functions:*/
-void PrintInt(int  *number)
+contact_t *ReadFileToNewStruct(const char *name)
 {
-	printf("%d", *number);
-}
-
-void PrintFloat(float  *number)
-{
-	printf("%f", *number);
-}
-
-void PrintString(char  *string)
-{
-	printf("%s", string);
-}
-
-FreeString
-{
-	free(string);
+	contact_t contacts_2[8];
+	contact_t *new_contacts;
+	FILE *file_name;
+	
+	new_contacts = (contact_t *)malloc(sizeof(contacts_2) * sizeof(contact_t));
+	
+	if (NULL != name)
+	{
+		file_name = fopen(name, "r");
+		fread(contacts_2, sizeof(contact_t), sizeof(contacts_2), file_name);
+		printf("Name: %s \n", contacts_2[7].f_name);
+		fclose(file_name);
+	}
+	else
+	{
+		printf("Error: unable to open file.");
+	}
+	
+	new_contacts = contacts_2;
+	
+	return new_contacts;
 }
