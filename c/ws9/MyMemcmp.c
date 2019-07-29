@@ -1,5 +1,4 @@
 #include <stdio.h> /*printf*/
-#include <stdlib.h> 
 #include <inttypes.h> /*uint8_t*/
 
 int MyMemcmp(const void *str_1, const void *str_2, size_t char_amount);
