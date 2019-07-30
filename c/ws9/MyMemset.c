@@ -2,6 +2,7 @@
 #include <stdlib.h> /*atoi*/
 #include <assert.h> /*assert*/
 #include <stdint.h> /*uintptr_t*/
+#include <limits.h> /*MAX_INT*/
 
 typedef unsigned char byte;
 
@@ -27,26 +28,23 @@ return string
 
 void *MyMemset_2(void *str, int ch, size_t n)
 {
-	size_t word_char = (size_t)ch;
-	byte moved_ch = (byte)ch;
-	size_t mask = 1;
+	size_t mask = INT_MAX;
 	byte bit_shifter = 1;
-	byte *destination = NULL;
+	byte *destination;
 	
 	assert(NULL != str);
 	destination = str;
 	
-	mask <<= (n * sizeof(byte));
+	mask <<= n;
 	*destination &= mask;
+	printf("%s", destination);
 	/*Shift left by word size until string can't be moved:*/
 	while (0 < n--)
 	{
 		 /*prepare repeated char n times*/
-		 moved_ch <<= bit_shifter;
-		 word_char |= (size_t)moved_ch;
+		 *destination |= (size_t)ch;
+		  ch <<= bit_shifter;
 	}
-	
-	*destination |= *(char *)word_char;
 		
 	return str;
 }
