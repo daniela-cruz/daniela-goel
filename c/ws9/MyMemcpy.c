@@ -1,10 +1,11 @@
 #include <string.h>
-#include <stdint.h>
+#include <stdint.h> /*uintptr_t*/
+#include <inttypes.h> /*uint8_t*/
+
+typedef int word;
 
 #define	WORD_SIZE sizeof(word)
 #define	WORD_MASK	(WORD_SIZE - 1)
-
-typedef int word;
 
 void *MyMemcpy(void *destination, const void *source, size_t length);
 void *memmove(void *s1, const void *s2, size_t n);
