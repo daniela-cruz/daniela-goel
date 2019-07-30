@@ -28,25 +28,25 @@ return string
 void *MyMemset_2(void *str, int ch, size_t n)
 {
 	size_t word_char = (size_t)ch;
-	byte *word_runner;/*?*/
-	byte *byte_runner;/*?*/
+	byte moved_ch = (byte)ch;
 	size_t mask = 1;
-	byte bit_shifter = 3;
+	byte bit_shifter = 1;
 	byte *destination = NULL;
 	
 	assert(NULL != str);
 	destination = str;
 	
+	mask <<= (n * sizeof(byte));
+	*destination &= mask;
 	/*Shift left by word size until string can't be moved:*/
 	while (0 < n--)
 	{
-		 word_char |= word_char << bit_shifter;/*prepare repeated char n times*/
-		 mask <<= bit_shifter;
+		 /*prepare repeated char n times*/
+		 moved_ch <<= bit_shifter;
+		 word_char |= (size_t)moved_ch;
 	}
 	
-	
-	*destination &= mask;
-	*destination |= word_char;
+	*destination |= *(char *)word_char;
 		
 	return str;
 }
