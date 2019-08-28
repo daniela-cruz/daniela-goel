@@ -79,10 +79,10 @@ int Flip(int num)
 {
 	int result = 0;
 
-	while (num != 0)
+	while (0 != num)
 	{
-		result *= 10;
-		result += num % 10;
+		int units = num % 10;
+		result = result * 10 + units;
 		num /= 10;
 	}	
 	
