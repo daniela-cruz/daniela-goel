@@ -7,7 +7,7 @@ static void StrLenTest();
 
 int main()
 {
-	StrLenTest();
+	/*StrLenTest();*/
 	
 	return 0;
 }
@@ -29,5 +29,18 @@ static void StrLenTest()
 		{
 			printf("FAILURE! Received size is %ld\n", StrLen(str[i]));
 		}
+	}
+}
+
+static void StrCmpTest()
+{
+	char *str1 = "hello";
+	char *str2[] = {"hello", "heLlo", " hello"};
+	size_t test_num = 3;
+	size_t i = 0;
+	
+	for (; i < test_num; i++)
+	{
+		
 	}
 }
