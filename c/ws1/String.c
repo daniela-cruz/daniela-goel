@@ -1,7 +1,7 @@
 #include <stdio.h> /*printf*/
 #include <assert.h> /*assert*/
 
-size_t StrLen(const char *str);
+#include "String.h" /*StrLen*/
 
 int main()
 {
