@@ -1,4 +1,5 @@
 #include <stdio.h> /*printf*/
+#include <stdlib.h> /*linkage*/
 #include <assert.h> /*assert*/
 
 #include "String.h" /*StrLen*/
@@ -22,10 +23,14 @@ int StrCmp(const char *str1, const char *str2)
 {
 	int difference = 0;
 	
-	assert((NULL != str1) && (NULL != str2));
-	while ((('\0' != *str1) && ('\0' != *str2)) && (0 == difference))
+	assert(NULL != str1);
+	assert(NULL != str2);
+	
+	while (('\0' != *str1) && ('\0' != *str2) && (0 == difference)) 
 	{
 		difference = *str1 - *str2;
+		str1++;
+		str2++;
 	}
 	
 	return difference;

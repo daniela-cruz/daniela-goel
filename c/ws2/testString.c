@@ -1,13 +1,16 @@
 #include <stdio.h> /*printf*/
+#include <stdlib.h> /*link String.h*/
 #include <assert.h> /*assert*/
 
 #include "String.h" /*string reimplementation*/
 
 static void StrLenTest();
+void StrCmpTest();
 
 int main()
 {
 	/*StrLenTest();*/
+	StrCmpTest();
 	
 	return 0;
 }
@@ -32,15 +35,26 @@ static void StrLenTest()
 	}
 }
 
-static void StrCmpTest()
+void StrCmpTest()
 {
 	char *str1 = "hello";
-	char *str2[] = {"hello", "heLlo", " hello"};
-	size_t test_num = 3;
+	char *str2[] = {"hello", "heLlo"};
+	int expected_result[] = {0, 32};
+	size_t test_num = 2;
 	size_t i = 0;
+	
+	
+	printf("string 1 is: %s and string 2 is: %s\n", str1, *str2);
 	
 	for (; i < test_num; i++)
 	{
-		
+		if (expected_result[i] == StrCmp(str1, str2[i]))
+		{
+			printf("SUCCESS!\n");
+		}
+		else
+		{
+			printf("FAILURE! Received size is %d\n", StrCmp(str1, str2[i]));
+		}
 	}
 }
