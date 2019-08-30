@@ -5,7 +5,7 @@
 #include "String.h" /*string reimplementation*/
 
 static void StrLenTest();
-void StrCmpTest();
+static void StrCmpTest();
 
 int main()
 {
@@ -35,7 +35,7 @@ static void StrLenTest()
 	}
 }
 
-void StrCmpTest()
+static void StrCmpTest()
 {
 	char *str1 = "hello";
 	char *str2[] = {"hello", "heLlo"};
