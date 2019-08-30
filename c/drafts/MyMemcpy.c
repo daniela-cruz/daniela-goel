@@ -49,18 +49,15 @@ void *MyMemcpy(void *destination, const void *source, size_t length)
 		 * Copy whole words, then mop up any trailing bytes.
 		 */
 		src_to_size = length / WORD_SIZE;
-		TLOOP(*(word *)dst = *(word *)src; src += WORD_SIZE; dst += WORD_SIZE);
+		TLOOP(*(word *)dst = *(word *)src; 
+		src += WORD_SIZE; 
+		dst += WORD_SIZE);
 		src_to_size = length & WORD_MASK;
 		TLOOP(*dst++ = *src++);
 	} 
 	else 
 	{
-		/*
-		 * Copy backwards.  Otherwise essentially the same.
-		 * Alignment works as before, except that it takes
-		 * (src_to_size&WORD_MASK) bytes to align, not WORD_SIZE 			
-		 * (src_to_size&WORD_MASK).
-		 */
+		/* Copy backwards*/
 		src += length;
 		dst += length;
 		src_to_size = (uintptr_t)src;
@@ -87,7 +84,7 @@ void *MyMemcpy(void *destination, const void *source, size_t length)
 		TLOOP(*--dst = *--src);
 	}
 	
-done:
+	done:
 	return (destination);
 }
 /*

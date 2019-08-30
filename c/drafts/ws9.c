@@ -6,7 +6,3 @@ int main()
 	return 0;
 }
 
-void *MyMemset(void *source, int char_to_insert, size_t repitition_number)
-{
-	
-}
