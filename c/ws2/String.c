@@ -35,3 +35,27 @@ int StrCmp(const char *str1, const char *str2)
 	
 	return difference;
 }
+
+char *StrCpy(char *destination, const char *source)
+{
+	char *dest_start = NULL;
+	char *src = NULL;
+	
+	assert(NULL != source);
+	assert(NULL != destination);
+	
+	dest_start = destination;
+	src = (char *)source;
+	
+	while ('\0' != *src)
+	{
+		*destination = *src;
+		src++;
+		destination++;
+	}
+	
+	*destination = '\0';
+	
+	return dest_start;
+}
+

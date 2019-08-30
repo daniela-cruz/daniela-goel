@@ -1,16 +1,19 @@
 #include <stdio.h> /*printf*/
 #include <stdlib.h> /*link String.h*/
 #include <assert.h> /*assert*/
+#include <string.h> /*strlen*/
 
 #include "String.h" /*string reimplementation*/
 
 static void StrLenTest();
 static void StrCmpTest();
+static void StrCpyTest();
 
 int main()
 {
 	/*StrLenTest();*/
-	StrCmpTest();
+	/*StrCmpTest();*/
+	StrCpyTest();
 	
 	return 0;
 }
@@ -57,4 +60,21 @@ static void StrCmpTest()
 			printf("FAILURE! Received size is %d\n", StrCmp(str1, str2[i]));
 		}
 	}
+}
+
+static void StrCpyTest()
+{
+	const char *source = "hello";
+	char *destination = NULL;
+	size_t string_len = 0;
+	
+	string_len = strlen(source);
+	destination = (char *)malloc((string_len + 1) * sizeof(char));
+	
+	assert(NULL != destination);
+	destination = StrCpy(destination, source);
+	
+	printf("Destination is %s\n", destination);
+	
+	free(destination); destination = NULL;
 }
