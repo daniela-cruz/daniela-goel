@@ -59,3 +59,33 @@ char *StrCpy(char *destination, const char *source)
 	return dest_start;
 }
 
+char *StrNcpy(char *destination, const char *source, size_t n)
+{
+	char *dest_start = NULL;
+	char *src = NULL;
+	
+	assert(NULL != source);
+	assert(NULL != destination);
+	dest_start = destination;
+	src = (char *)source;
+	
+	while (0 < n)
+	{
+		if ('\0' != *src)
+		{
+			*destination = *src;
+			src++;
+		}
+		else
+		{
+			*destination = '\0';
+		}
+		
+		destination++;
+		n--;
+	}
+	
+	*destination = '\0';
+	
+	return dest_start;
+}

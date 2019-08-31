@@ -8,12 +8,14 @@
 static void StrLenTest();
 static void StrCmpTest();
 static void StrCpyTest();
+static void StrNcpyTest();
 
 int main()
 {
 	/*StrLenTest();*/
 	/*StrCmpTest();*/
-	StrCpyTest();
+	/*StrCpyTest();*/
+	StrNcpyTest();
 	
 	return 0;
 }
@@ -73,8 +75,49 @@ static void StrCpyTest()
 	
 	assert(NULL != destination);
 	destination = StrCpy(destination, source);
-	
 	printf("Destination is %s\n", destination);
 	
 	free(destination); destination = NULL;
+}
+
+static void StrNcpyTest()
+{
+	const char *source = "hello";
+	char destination[100];
+	char *dest = NULL;
+	char *expected_string[] = {"hel", "h", "", "hello", '\0'};
+	char *expected = NULL;
+	size_t i = 1;
+	size_t length_arr[] = {3, 1, 0, 7, 0};
+	size_t *length = NULL;
+	
+	dest = destination;
+	expected = *expected_string;
+	length = length_arr;
+	
+	assert(NULL != dest);
+	assert(NULL != expected);
+	
+	printf("Source is: %s and expected is: %s\n", source, expected);
+	
+	for (; 5 > i; i++)
+	{
+		printf("Expected string is: %s\n", expected);
+		
+		dest = StrNcpy(dest, source, *length);
+		
+		if(0 == strcmp(dest, expected))
+		{
+			printf("SUCCESS! Destination is: %s\n", dest);
+		}
+		else
+		{
+			printf("Failure! Destination is: %s\n", dest);
+		}
+		
+		expected = expected_string[i];
+		length++;
+		dest = destination;
+	}
+	
 }
