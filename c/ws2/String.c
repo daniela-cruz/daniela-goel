@@ -145,3 +145,46 @@ char *StrChr(const char *str, int c)
 	
 	return (char *)str;
 }
+
+char *StrDup(const char *source)
+{
+	char *duplicant = NULL;
+	char *dup_start = NULL;
+	size_t str_length = 0;
+	
+	assert(NULL != source);
+	str_length = StrLen(source) ;
+	
+	duplicant = (char *)malloc((str_length + 1) * sizeof(char));
+	dup_start = duplicant;
+	
+	while ('\0' != *source)
+	{
+		*duplicant = *source;
+		
+		source++;
+		duplicant++;
+	}
+	
+	*duplicant = '\0';
+	
+	return dup_start;
+}
+
+char *StrCat(char *destination, const char *source)
+{
+	char *dest_start = NULL;
+	
+	assert(NULL != source);
+	assert(NULL != destination);
+	dest_start = destination;
+	
+	while ('\0' != *destination)
+	{
+		destination++;
+	}
+	
+	destination = StrCpy(destination, source);
+	
+	return dest_start;
+}

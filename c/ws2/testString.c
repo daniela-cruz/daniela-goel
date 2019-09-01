@@ -11,6 +11,8 @@ static void StrCpyTest();
 static void StrNcpyTest();
 static void StrCaseCmpTest();
 static void StrChrTest();
+static void StrDupTest();
+static void StrCatTest();
 
 int main()
 {
@@ -19,7 +21,9 @@ int main()
 	/*StrCpyTest();*/
 	/*StrNcpyTest();*/
 	/*StrCaseCmpTest();*/
-	StrChrTest();
+	/*StrChrTest();*/
+	/*StrDupTest();*/
+	StrCatTest();
 	
 	return 0;
 }
@@ -172,4 +176,30 @@ static void StrChrTest()
 				printf("Failure, received value is not found!\n");
 		}
 	}
+}
+
+static void StrDupTest()
+{
+	const char *source = "Hell oh!";
+	char *destination = NULL;
+	
+	destination = StrDup(source);
+	
+	printf("Duplicant is: %s\n", destination);
+	
+	free(destination);
+}
+
+static void StrCatTest()
+{
+	char *source = " Yes! I'm added!";
+	char *destination = "Am I added?";
+	char buffer[100];
+	char *dest = NULL;
+	
+	dest = buffer;
+	dest = strcpy(dest, destination);
+	destination = StrCat(dest, source);
+	
+	printf("Concatinated string is: %s\n", destination);
 }

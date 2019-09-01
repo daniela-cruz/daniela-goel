@@ -12,3 +12,7 @@ extern char *StrNcpy(char *destination, const char *source, size_t n);
 extern int StrCaseCmp(const char *s1, const char *s2);
 
 extern char *StrChr(const char *str, int c);
+
+extern char *StrDup(const char *source);
+
+extern char *StrCat(char *dest, const char *src);
