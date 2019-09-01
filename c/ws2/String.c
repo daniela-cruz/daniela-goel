@@ -126,3 +126,23 @@ int StrCaseCmp(const char *s1, const char *s2)
 	
 	return ch1 - ch2;
 }
+
+char *StrChr(const char *str, int c)
+{
+	char *find_ch = NULL;
+	
+	assert(NULL != str);
+	find_ch = (char *)str;
+	
+	while ('\0' != *find_ch)
+	{
+		if (c == *find_ch)
+		{
+			return find_ch;
+		}
+		
+		find_ch++;
+	}
+	
+	return find_ch;
+}

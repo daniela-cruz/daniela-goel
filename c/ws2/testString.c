@@ -10,6 +10,7 @@ static void StrCmpTest();
 static void StrCpyTest();
 static void StrNcpyTest();
 static void StrCaseCmpTest();
+static void StrChrTest();
 
 int main()
 {
@@ -145,6 +146,11 @@ static void StrCaseCmpTest()
 		{
 			printf("Failure, received value is: %d!\n", StrCaseCmp(s1, s2));
 		}
-		
 	}	
+}
+
+static void StrChrTest()
+{
+	const char *str = "bbab";
+	char c = 'b';
 }
