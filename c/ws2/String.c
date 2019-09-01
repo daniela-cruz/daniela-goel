@@ -188,3 +188,28 @@ char *StrCat(char *destination, const char *source)
 	
 	return dest_start;
 }
+
+char *StrNcat(char *dest, const char *src, size_t n)
+{
+	char *dest_start = NULL;
+	
+	assert(NULL != src);
+	dest_start = dest;
+	
+	while ('\0' != *dest)
+	{
+		dest++;
+	}
+	
+	while ((0 < n) && ('\0' != *src))
+	{
+		*dest = *src;
+		dest++;
+		src++;
+		n--;
+	}
+	
+	*dest = '\0';
+	
+	return dest_start;
+}

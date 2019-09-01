@@ -16,3 +16,5 @@ extern char *StrChr(const char *str, int c);
 extern char *StrDup(const char *source);
 
 extern char *StrCat(char *dest, const char *src);
+
+extern char *StrNcat(char *dest, const char *src, size_t n);

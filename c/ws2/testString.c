@@ -13,6 +13,7 @@ static void StrCaseCmpTest();
 static void StrChrTest();
 static void StrDupTest();
 static void StrCatTest();
+static void StrNcatTest();
 
 int main()
 {
@@ -23,7 +24,8 @@ int main()
 	/*StrCaseCmpTest();*/
 	/*StrChrTest();*/
 	/*StrDupTest();*/
-	StrCatTest();
+	/*StrCatTest();*/
+	StrNcatTest();
 	
 	return 0;
 }
@@ -202,4 +204,18 @@ static void StrCatTest()
 	destination = StrCat(dest, source);
 	
 	printf("Concatinated string is: %s\n", destination);
+}
+
+static void StrNcatTest()
+{
+	char *src = " I am the added string!";
+	char *destination = "Are you the added string?";
+	char buffer[100];
+	char *dest = NULL;
+	size_t chr_amount = 30;
+	
+	dest = strcpy(buffer, destination);
+	dest = StrNcat(dest, src, chr_amount);
+	
+	printf("Concatinated string is: %s\n", dest);
 }
