@@ -18,7 +18,8 @@ int main()
 	/*StrCmpTest();*/
 	/*StrCpyTest();*/
 	/*StrNcpyTest();*/
-	StrCaseCmpTest();
+	/*StrCaseCmpTest();*/
+	StrChrTest();
 	
 	return 0;
 }
@@ -152,5 +153,23 @@ static void StrCaseCmpTest()
 static void StrChrTest()
 {
 	const char *str = "bbab";
-	char c = 'b';
+	char *found_ptr = NULL;
+	int c[] = {0x61, 0x41};
+	char ch = 0;
+	size_t i = 0;
+	
+	for (; 2 > i; i++)
+	{
+		found_ptr = StrChr(str, *c);
+		ch = (char)c[i];
+		
+		if (ch == *found_ptr)
+			{
+				printf("SUCCESS!\n");
+			}
+			else
+			{
+				printf("Failure, received value is not found!\n");
+		}
+	}
 }

@@ -95,7 +95,6 @@ int StrCaseCmp(const char *s1, const char *s2)
 	char ch1 = 0, ch2 = 0;
 	char *str1 = NULL, *str2 = NULL;
 	char case_convert = 0x20;
-	int diff = 0;
 	
 	assert(NULL != s1);
 	assert(NULL != s2);
@@ -129,20 +128,20 @@ int StrCaseCmp(const char *s1, const char *s2)
 
 char *StrChr(const char *str, int c)
 {
-	char *find_ch = NULL;
+	char ch = 0x00;
 	
 	assert(NULL != str);
-	find_ch = (char *)str;
+	ch = (char)c;
 	
-	while ('\0' != *find_ch)
+	while ('\0' != *str)
 	{
-		if (c == *find_ch)
+		if (ch == *str)
 		{
-			return find_ch;
+			return (char *)str;
 		}
 		
-		find_ch++;
+		str++;
 	}
 	
-	return find_ch;
+	return (char *)str;
 }
