@@ -8,3 +8,5 @@ int StrCmp(const char *str1, const char *str2);
 char *StrCpy(char *destination, const char *source);
 
 char *StrNcpy(char *destination, const char *source, size_t n);
+
+int StrCaseCmp(const char *s1, const char *s2);

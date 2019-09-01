@@ -115,7 +115,7 @@ int StrCaseCmp(const char *s1, const char *s2)
 			ch2 += case_convert;
 		}
 		/*exit loop when difference is found:*/
-		if (ch1 != ch2)
+		if (0 != ch1 - ch2)
 		{
 			break;
 		}

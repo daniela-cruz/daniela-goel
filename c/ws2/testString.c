@@ -9,13 +9,15 @@ static void StrLenTest();
 static void StrCmpTest();
 static void StrCpyTest();
 static void StrNcpyTest();
+static void StrCaseCmpTest();
 
 int main()
 {
 	/*StrLenTest();*/
 	/*StrCmpTest();*/
 	/*StrCpyTest();*/
-	StrNcpyTest();
+	/*StrNcpyTest();*/
+	StrCaseCmpTest();
 	
 	return 0;
 }
@@ -119,5 +121,30 @@ static void StrNcpyTest()
 		length++;
 		dest = destination;
 	}
+}
+
+static void StrCaseCmpTest()
+{
+	const char *s1 = "Hello";
+	const char *str2[] = {"HeLlo", " hello", "hello ", "kello"};
+	char *s2 = NULL;
+	int expected_result[] = {0, 72, 0, -3};
+	size_t i = 0;
 	
+	
+	
+	for (; 4 > i; i++)
+	{
+		s2 = (char *)str2[i];
+		
+		if (expected_result[i] == StrCaseCmp(s1, s2))
+		{
+			printf("SUCCESS!\n");
+		}
+		else
+		{
+			printf("Failure, received value is: %d!\n", StrCaseCmp(s1, s2));
+		}
+		
+	}	
 }
