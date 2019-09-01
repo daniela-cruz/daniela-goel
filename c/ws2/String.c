@@ -214,4 +214,43 @@ char *StrNcat(char *dest, const char *src, size_t n)
 	return dest_start;
 }
 
-
+extern char *StrStr (const char *s1, const char *s2)
+{
+	size_t s2_len = 0;
+	size_t same_chars = 0;
+	char *s2_start = NULL;
+	char *sub_str = NULL;
+	
+	assert(NULL != s1);
+	assert(NULL != s2);
+	s2_start = (char *)s2;
+	s2_len = strlen((char *)s2);
+	
+	while ('\0' != *s1)
+	{
+		if (*s1 == *s2)
+		{
+			if (1 == same_chars)
+			{
+				sub_str = (char *)s1;
+			}
+			
+			same_chars++;
+			s2++;
+		}
+		else
+		{
+			same_chars = 0;
+			s2 = s2_start;
+		}
+		
+		s1++;
+	}
+	
+	if (s2_len != same_chars)
+	{
+		sub_str = NULL;
+	}
+	
+	return sub_str;
+}

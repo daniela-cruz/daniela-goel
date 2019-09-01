@@ -15,6 +15,7 @@ static void StrChrTest();
 static void StrDupTest();
 static void StrCatTest();
 static void StrNcatTest();
+static void StrStrTest();
 
 int main()
 {
@@ -27,6 +28,7 @@ int main()
 	StrDupTest();
 	StrCatTest();
 	StrNcatTest();
+	StrStrTest();
 	
 	return 0;
 }
@@ -233,7 +235,7 @@ static void StrDupTest()
 
 static void StrCatTest()
 {
-	char *source = " Yes! I'm added!";
+	const char *source = " Yes! I'm added!";
 	char *destination = "Am I added?";
 	char buffer[100];
 	char *dest = NULL;
@@ -257,4 +259,22 @@ static void StrNcatTest()
 	dest = StrNcat(dest, src, chr_amount);
 	
 	printf("\nConcatinated N string is: %s\n", dest);
+}
+
+static void StrStrTest()
+{
+	const char *long_string = "I am a long string, can you find my substring?";
+	const char *sub_string[] = {"I", "am", " am!", "!", ""};
+	char *sub = NULL;
+	size_t sub_len = 0;
+	size_t i = 0;
+	
+	printf("\nStrStr test:\n");
+	sub = (char *)sub_string;
+	sub_len = strlen(sub);
+	
+	sub = StrStr(long_string, sub);
+	
+	printf("Desired substring is: %s\n", *sub_string);
+	printf("Found substring: %s\n", sub);
 }

@@ -22,4 +22,6 @@ extern char *StrCat(char *dest, const char *src);
 
 extern char *StrNcat(char *dest, const char *src, size_t n);
 
+extern char *StrStr (const char *s1, const char *s2);
+
 #endif
