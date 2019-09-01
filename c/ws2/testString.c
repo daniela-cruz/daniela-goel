@@ -1,5 +1,6 @@
 #include <stdio.h> /*printf*/
-#include <stdlib.h> /*link String.h*/
+#include <stdlib.h> /*free*/
+#include <stddef.h> /*size_t*/
 #include <assert.h> /*assert*/
 #include <string.h> /*strlen*/
 
@@ -17,14 +18,14 @@ static void StrNcatTest();
 
 int main()
 {
-	/*StrLenTest();*/
-	/*StrCmpTest();*/
-	/*StrCpyTest();*/
-	/*StrNcpyTest();*/
-	/*StrCaseCmpTest();*/
-	/*StrChrTest();*/
-	/*StrDupTest();*/
-	/*StrCatTest();*/
+	StrLenTest();
+	StrCmpTest();
+	StrCpyTest();
+	StrNcpyTest();
+	StrCaseCmpTest();
+	StrChrTest();
+	StrDupTest();
+	StrCatTest();
 	StrNcatTest();
 	
 	return 0;
@@ -37,15 +38,21 @@ static void StrLenTest()
 	size_t expected_result[] = {5, 7, 2};
 	size_t i = 0;
 	
+	printf("\nStrLen test:\n");
+	
 	for (; i < arr_size; i++)
 	{
 		if (expected_result[i] == StrLen(str[i]))
 		{
+			printf("\033[1;36m");
 			printf("SUCCESS!\n");
+			printf("\033[0m");
 		}
 		else
 		{
+			printf("\033[1;31m");
 			printf("FAILURE! Received size is %ld\n", StrLen(str[i]));
+			printf("\033[0m");
 		}
 	}
 }
@@ -58,18 +65,22 @@ static void StrCmpTest()
 	size_t test_num = 2;
 	size_t i = 0;
 	
-	
+	printf("\nStrCmp test:\n");
 	printf("string 1 is: %s and string 2 is: %s\n", str1, *str2);
 	
 	for (; i < test_num; i++)
 	{
 		if (expected_result[i] == StrCmp(str1, str2[i]))
 		{
+			printf("\033[1;36m");
 			printf("SUCCESS!\n");
+			printf("\033[0m");
 		}
 		else
 		{
+			printf("\033[1;31m");
 			printf("FAILURE! Received size is %d\n", StrCmp(str1, str2[i]));
+			printf("\033[0m");
 		}
 	}
 }
@@ -82,6 +93,14 @@ static void StrCpyTest()
 	
 	string_len = strlen(source);
 	destination = (char *)malloc((string_len + 1) * sizeof(char));
+	
+	if (NULL == destination)
+	{
+		fprintf(stderr, "Failed to allocate memory to destination pointer\n");
+		exit(1);
+	}
+	
+	printf("\nStrCpy test:\n");
 	
 	assert(NULL != destination);
 	destination = StrCpy(destination, source);
@@ -108,21 +127,24 @@ static void StrNcpyTest()
 	assert(NULL != dest);
 	assert(NULL != expected);
 	
-	printf("Source is: %s and expected is: %s\n", source, expected);
+	printf("\nStrNcpy test:\n");
 	
 	for (; 5 > i; i++)
 	{
 		printf("Expected string is: %s\n", expected);
-		
 		dest = StrNcpy(dest, source, *length);
 		
 		if(0 == strcmp(dest, expected))
 		{
+			printf("\033[1;36m");
 			printf("SUCCESS! Destination is: %s\n", dest);
+			printf("\033[0m");
 		}
 		else
 		{
+			printf("\033[1;31m");
 			printf("Failure! Destination is: %s\n", dest);
+			printf("\033[0m");
 		}
 		
 		expected = expected_string[i];
@@ -139,7 +161,7 @@ static void StrCaseCmpTest()
 	int expected_result[] = {0, 72, 0, -3};
 	size_t i = 0;
 	
-	
+	printf("\nStrCaseCmp test:\n");
 	
 	for (; 4 > i; i++)
 	{
@@ -147,36 +169,53 @@ static void StrCaseCmpTest()
 		
 		if (expected_result[i] == StrCaseCmp(s1, s2))
 		{
+			printf("\033[1;36m");
 			printf("SUCCESS!\n");
+			printf("\033[0m");
 		}
 		else
 		{
+			printf("\033[1;31m");
 			printf("Failure, received value is: %d!\n", StrCaseCmp(s1, s2));
+			printf("\033[0m");
 		}
-	}	
+	}
 }
 
 static void StrChrTest()
 {
 	const char *str = "bbab";
 	char *found_ptr = NULL;
-	int c[] = {0x61, 0x41};
+	int c_arr[] = {0x61, 0x41, 0x00};
+	int *c = 0x00;
 	char ch = 0;
 	size_t i = 0;
 	
-	for (; 2 > i; i++)
+	printf("\nStrChr test:\n");
+	
+	c = c_arr;
+	
+	for (; 3 > i; i++)
 	{
+		
 		found_ptr = StrChr(str, *c);
-		ch = (char)c[i];
+		ch = (char)*c;
+		printf("\nString is: %s and requested character is: %c:\n", str, ch);
 		
 		if (ch == *found_ptr)
 			{
-				printf("SUCCESS!\n");
+				printf("\033[1;36m");
+				printf("Found it!\n");
+				printf("\033[0m");
 			}
 			else
 			{
-				printf("Failure, received value is not found!\n");
+				printf("\033[1;35m");
+				printf("Received character is not found!\n");
+				printf("\033[0m");
 		}
+		
+		c++;
 	}
 }
 
@@ -187,7 +226,7 @@ static void StrDupTest()
 	
 	destination = StrDup(source);
 	
-	printf("Duplicant is: %s\n", destination);
+	printf("\nDuplicant is: %s\n", destination);
 	
 	free(destination);
 }
@@ -203,7 +242,7 @@ static void StrCatTest()
 	dest = strcpy(dest, destination);
 	destination = StrCat(dest, source);
 	
-	printf("Concatinated string is: %s\n", destination);
+	printf("\nConcatinated string is: %s\n", destination);
 }
 
 static void StrNcatTest()
@@ -217,5 +256,5 @@ static void StrNcatTest()
 	dest = strcpy(buffer, destination);
 	dest = StrNcat(dest, src, chr_amount);
 	
-	printf("Concatinated string is: %s\n", dest);
+	printf("\nConcatinated N string is: %s\n", dest);
 }

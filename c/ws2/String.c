@@ -1,6 +1,9 @@
-#include <stdio.h> /*printf*/
-#include <stdlib.h> /*linkage*/
+#ifndef NDEBUG
 #include <assert.h> /*assert*/
+#endif
+#include <stdlib.h> /*malloc*/
+#include <stddef.h> /*size_t*/
+
 
 #include "String.h" /*StrLen*/
 
@@ -213,3 +216,5 @@ char *StrNcat(char *dest, const char *src, size_t n)
 	
 	return dest_start;
 }
+
+

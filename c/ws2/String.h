@@ -1,5 +1,8 @@
-#include <stdio.h>  /*size_t*/
-#include <stdlib.h> /*linkage*/
+#ifndef __STRING_H__
+#define __STRING_H__
+
+#include <stddef.h> /*size_t*/
+
 /*String header reimplementation*/
 extern size_t StrLen(const char *str);
 
@@ -18,3 +21,5 @@ extern char *StrDup(const char *source);
 extern char *StrCat(char *dest, const char *src);
 
 extern char *StrNcat(char *dest, const char *src, size_t n);
+
+#endif
