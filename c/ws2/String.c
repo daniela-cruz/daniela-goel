@@ -1,25 +1,22 @@
 #ifndef NDEBUG
-#include <assert.h> /*assert*/
+#include <assert.h> /* assert */
 #endif
-#include <stdlib.h> /*malloc*/
-#include <stddef.h> /*size_t*/
+#include <stdlib.h> /* malloc */
+#include <stddef.h> /* size_t */
 
-
-#include "String.h" /*StrLen*/
-
+#include "String.h" /* StrLen */
 
 size_t StrLen(const char *str)
 {
-	char ch_number = 0;
+	char str_len = 0;
 	
 	assert(NULL != str);
-	while ('\0' != *str)
+	while ('\0' != *(str + str_len))
 	{
-		str++;
-		ch_number++;
+		str_len++;
 	}
 	
-	return ch_number;
+	return str_len;
 }
 
 int StrCmp(const char *str1, const char *str2)
