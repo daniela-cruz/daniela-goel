@@ -89,3 +89,40 @@ char *StrNcpy(char *destination, const char *source, size_t n)
 	
 	return dest_start;
 }
+
+int StrCaseCmp(const char *s1, const char *s2)
+{
+	char ch1 = 0, ch2 = 0;
+	char *str1 = NULL, *str2 = NULL;
+	char case_convert = 0x20;
+	int diff = 0;
+	
+	assert(NULL != s1);
+	assert(NULL != s2);
+	str1 = (char *)s1;
+	str2 = (char *)s2;
+	ch1 = *str1;
+	ch2 = *str2;
+	
+	while (('\0' != *str1) && ('\0' != *str2))
+	{
+		if ('A' <= ch1 && 'Z' >= ch1)
+		{
+			ch1 += case_convert;
+		}
+		if ('A' <= ch2 && 'Z' >= ch2)
+		{
+			ch2 += case_convert;
+		}
+		/*exit loop when difference is found:*/
+		if (ch1 != ch2)
+		{
+			break;
+		}
+		
+		str1++;
+		str2++;
+	}
+	
+	return ch1 - ch2;
+}
