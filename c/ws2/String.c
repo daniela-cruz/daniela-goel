@@ -8,8 +8,6 @@
 
 #include "String.h" /* StrLen */
 
-static char *FindSame(const char *s1, const char *accept);
-
 size_t StrLen(const char *str)
 {
 	char str_len = 0;
@@ -241,61 +239,39 @@ extern char *StrStr (const char *haystack, const char *needle)
 	return NULL;
 }
 
-size_t StrSpn(const char *s1, const char *accept)
+size_t StrSpn(const char *s, const char *accept)
 {
 	size_t span = 0; 
-	char *same_sub = NULL;
-	char const *s1_start = NULL;
+	char const *accept_start = NULL;
+	const char *s_start = NULL;
 	
-	assert(NULL != s1);
+	assert(NULL != s);
 	assert(NULL != accept);
-	s1_start = s1;
-	same_sub = FindSame(s1, accept);
+	accept_start = accept;
+	s_start = s;
 	
-	if (NULL == same_sub)
-	{	
-		return span;
-	}
-	
-	while ((('\0' != *same_sub) && ('\0' != *accept)) && (*same_sub == *accept))
+	while ('\0' != *s) 
 	{
-		/**/
-		printf("Same sub ptr: %s and accepted ptr is: %s\n", same_sub, accept);
-		/**/
-		span++;
-		same_sub++;
-		accept++;
-	}
-	
-	s1 = s1_start;
-	
-	return span;
-}
-
-/* returns the pointer of the first identical char in s1 or a NULL*/
-static char *FindSame(const char *s1, const char *accept)
-{
-	char *s1_cpy = NULL; 
-	char *accept_cpy = NULL;
-	
-	assert(NULL != s1);
-	assert(NULL != accept);
-	
-	s1_cpy = (char *)s1;
-	accept_cpy = (char *)accept;
-	
-	while (('\0' != *accept_cpy) && ('\0' != *s1_cpy))
-	{
-		if (*s1_cpy == *accept_cpy)
+		while ('\0' != *accept)
 		{
-			printf("Found pointer from sub func is: %s\n", s1_cpy);
+			if (*s == *accept)
+			{
+				s++;
+				span++;
+			}
+			else
+			{
+				s = s_start++;
+				
+				break;
+			}
 			
-			return s1_cpy;
+			accept++;
 		}
 		
-		accept_cpy++;
-		s1_cpy++;
+		accept = accept_start;
+		s++;
 	}
 	
-	return NULL;
+	return span;
 }

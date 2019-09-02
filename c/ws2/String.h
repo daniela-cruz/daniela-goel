@@ -34,6 +34,6 @@ extern char *StrNcat(char *dest, const char *src, size_t n);
 extern char *StrStr (const char *s1, const char *s2);
 
 /* length of identical consecutive characters in both strings: */
-extern size_t StrSpn(const char *s1, const char *accept);
+extern size_t StrSpn(const char *s, const char *accept);
 
 #endif

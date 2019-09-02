@@ -294,9 +294,9 @@ static void StrStrTest()
 static void StrSpnTest()
 {
 	char *s1 = "Can you find me in there?";
-	char *accept_str[] = {"Can", "an", "can!!!", "lala", ""};
+	char *accept_str[] = {"yncao ?", "x", "y Can", ""};
 	char **accepted = NULL;
-	size_t expected_result[] = {3, 2, 2, 0, 0};
+	size_t expected_result[] = {0, 0, 5, 0};
 	size_t *expected_res = NULL;
 	
 	printf("\nStrSpan test:\n");
