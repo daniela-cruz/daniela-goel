@@ -3,6 +3,7 @@
 #include <stddef.h> /*size_t*/
 #include <assert.h> /*assert*/
 #include <string.h> /*strlen*/
+#include <strings.h>
 
 #include "String.h" /*string reimplementation*/
 
@@ -16,6 +17,7 @@ static void StrDupTest();
 static void StrCatTest();
 static void StrNcatTest();
 static void StrStrTest();
+static void StrSpnTest();
 
 int main()
 {
@@ -29,6 +31,7 @@ int main()
 	StrCatTest();
 	StrNcatTest();
 	StrStrTest();
+	StrSpnTest();
 	
 	return 0;
 }
@@ -205,16 +208,16 @@ static void StrChrTest()
 		printf("\nString is: %s and requested character is: %c:\n", str, ch);
 		
 		if (ch == *found_ptr)
-			{
-				printf("\033[1;36m");
-				printf("Found it!\n");
-				printf("\033[0m");
-			}
-			else
-			{
-				printf("\033[1;35m");
-				printf("Received character is not found!\n");
-				printf("\033[0m");
+		{
+			printf("\033[1;36m");
+			printf("Found it!\n");
+			printf("\033[0m");
+		}
+		else
+		{
+			printf("\033[1;35m");
+			printf("Received character is not found!\n");
+			printf("\033[0m");
 		}
 		
 		c++;
@@ -278,5 +281,43 @@ static void StrStrTest()
 		printf("Found substring: %s\n", *sub);
 		
 		sub++;
+	}
+}
+
+static void StrSpnTest()
+{
+	char *s1 = "Can you find me in there?";
+	char *accept_str[] = {"Can", "can", "can!!!", "lala", ""};
+	char **accepted = NULL;
+	size_t expected_result[] = {3, 2, 2, 0, 0};
+	size_t *expected_res = NULL;
+	
+	printf("\nStrSpan test:\n");
+	
+	accepted = (char **)accept_str;
+	expected_res = expected_result;
+	
+	while ('\0' != **accepted)
+	{
+		printf("\033[01;33m");
+		printf("\nS1 is: %s and ACCEPTED STRING is: %s\n", s1, *accepted);
+		printf("\033[0m");	
+		
+		if (*expected_res == StrSpn(s1, *accepted))
+		{
+			printf("\033[1;36m");
+			printf("SUCCESS!\n");
+			printf("\033[0m");
+		}
+		else
+		{
+			printf("\033[1;31m");
+			printf("StrSpn calculated %ld but expected result is: %ld!\n", 
+					StrSpn(s1, *accepted), *expected_res);
+			printf("\033[0m");
+		}
+		
+		accepted++;
+		expected_res++;
 	}
 }
