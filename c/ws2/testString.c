@@ -263,16 +263,20 @@ static void StrNcatTest()
 
 static void StrStrTest()
 {
-	const char *long_string = "I am a long string, can you find my substring?";
-	char *sub_string[] = {"I", "am", " am!", "!", ""};
+	const char *long_string = "I aM a long string, can you find my substring?";
+	char *sub_string[] = {"I", "am", " am!", "!", "can", ""};
 	char **sub = NULL;
 	
 	printf("\nStrStr test:\n");
 
 	sub = sub_string;
-	printf("Desired substring is: %s\n", *sub);
-	*sub = StrStr(long_string, *sub);
-	printf("Found substring: %s\n", *sub);
 	
-	sub++;
+	while ('\0' != **sub)
+	{
+		printf("Desired substring is: %s\n", *sub);
+		*sub = StrStr(long_string, *sub);
+		printf("Found substring: %s\n", *sub);
+		
+		sub++;
+	}
 }

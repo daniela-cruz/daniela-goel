@@ -216,7 +216,6 @@ char *StrNcat(char *dest, const char *src, size_t n)
 
 extern char *StrStr (const char *s1, const char *s2)
 {
-	size_t s2_len = 0;
 	size_t same_chars = 0;
 	char *s2_start = NULL;
 	char *sub_str = NULL;
@@ -224,7 +223,6 @@ extern char *StrStr (const char *s1, const char *s2)
 	assert(NULL != s1);
 	assert(NULL != s2);
 	s2_start = (char *)s2;
-	s2_len = StrLen((char *)s2);
 	
 	while (('\0' != *s1) && ('\0' != *s2))
 	{
@@ -242,6 +240,7 @@ extern char *StrStr (const char *s1, const char *s2)
 		{
 			same_chars = 0;
 			s2 = s2_start;
+			sub_str = NULL;
 		}
 		
 		s1++;
