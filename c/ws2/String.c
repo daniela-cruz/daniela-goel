@@ -224,19 +224,19 @@ extern char *StrStr (const char *s1, const char *s2)
 	assert(NULL != s1);
 	assert(NULL != s2);
 	s2_start = (char *)s2;
-	s2_len = strlen((char *)s2);
+	s2_len = StrLen((char *)s2);
 	
-	while ('\0' != *s1)
+	while (('\0' != *s1) && ('\0' != *s2))
 	{
 		if (*s1 == *s2)
 		{
-			if (1 == same_chars)
+			same_chars++;
+			s2++;
+			
+			if (1 == same_chars) /* save ptr of first possible sub string appearance */
 			{
 				sub_str = (char *)s1;
 			}
-			
-			same_chars++;
-			s2++;
 		}
 		else
 		{
@@ -245,11 +245,6 @@ extern char *StrStr (const char *s1, const char *s2)
 		}
 		
 		s1++;
-	}
-	
-	if (s2_len != same_chars)
-	{
-		sub_str = NULL;
 	}
 	
 	return sub_str;
