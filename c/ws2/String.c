@@ -250,26 +250,20 @@ size_t StrSpn(const char *s, const char *accept)
 	accept_start = accept;
 	s_start = s;
 	
-	while ('\0' != *s) 
+	while ('\0' != *s)
 	{
-		while ('\0' != *accept)
+		while (*s == *accept)
 		{
-			if (*s == *accept)
-			{
-				s++;
-				span++;
-			}
-			else
-			{
-				s = s_start++;
-				
-				break;
-			}
-			
 			accept++;
+			span++;
+			
+			if ('\0' == *accept)
+			{
+				accept = accept_start;
+				s = s_start++;
+			}
 		}
 		
-		accept = accept_start;
 		s++;
 	}
 	
