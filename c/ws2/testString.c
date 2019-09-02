@@ -266,28 +266,35 @@ static void StrNcatTest()
 
 static void StrStrTest()
 {
-	const char *long_string = "I aM a long string, can you find my substring?";
-	char *sub_string[] = {"I", "am", " am!", "!", "can", ""};
+	const char *long_string[] = {"I aM a long string, can you find my substring?", "bababbbaaa", "dan daniela", ""};
+	char *sub_string[] = {"I", "am", " am!", "!", "can", "bba", "daniela", ""};
 	char **sub = NULL;
+	const char **long_ptr = NULL;
 	
 	printf("\nStrStr test:\n");
-
+	
+	long_ptr = long_string;
 	sub = sub_string;
 	
-	while ('\0' != **sub)
+	while ('\0' != **long_ptr)
 	{
-		printf("Desired substring is: %s\n", *sub);
-		*sub = StrStr(long_string, *sub);
-		printf("Found substring: %s\n", *sub);
+		while ('\0' != **sub)
+		{
+			printf("Desired substring is: %s\n", *sub);
+			*sub = StrStr(*long_ptr, *sub);
+			printf("Found substring: %s\n", *sub);
+			
+			sub++;
+		}
 		
-		sub++;
+		long_ptr++; 
 	}
 }
 
 static void StrSpnTest()
 {
 	char *s1 = "Can you find me in there?";
-	char *accept_str[] = {"Can", "can", "can!!!", "lala", ""};
+	char *accept_str[] = {"Can", "an", "can!!!", "lala", ""};
 	char **accepted = NULL;
 	size_t expected_result[] = {3, 2, 2, 0, 0};
 	size_t *expected_res = NULL;

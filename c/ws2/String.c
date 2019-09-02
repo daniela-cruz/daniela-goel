@@ -4,6 +4,7 @@
 #endif
 #include <stdlib.h> /* malloc */
 #include <stddef.h> /* size_t */
+#include <string.h> /* strncmp */
 
 #include "String.h" /* StrLen */
 
@@ -217,39 +218,27 @@ char *StrNcat(char *dest, const char *src, size_t n)
 	return dest_start;
 }
 
-extern char *StrStr (const char *s1, const char *s2)
+extern char *StrStr (const char *haystack, const char *needle)
 {
-	size_t same_chars = 0;
+	size_t needle_len = 0;
 	char *s2_start = NULL;
 	char *sub_str = NULL;
 	
-	assert(NULL != s1);
-	assert(NULL != s2);
-	s2_start = (char *)s2;
+	assert(needle != NULL);
+	assert(haystack != NULL);
+	needle_len = StrLen(needle);
 	
-	while (('\0' != *s1) && ('\0' != *s2))
+	while ('\0' != *haystack)
 	{
-		if (*s1 == *s2)
+		if (0 == strncmp(haystack, needle, needle_len))
 		{
-			same_chars++;
-			s2++;
-			
-			if (1 == same_chars) /* save ptr of first possible sub string appearance */
-			{
-				sub_str = (char *)s1;
-			}
-		}
-		else
-		{
-			same_chars = 0;
-			s2 = s2_start;
-			sub_str = NULL;
+			return (char *)haystack;
 		}
 		
-		s1++;
+		haystack++;
 	}
 	
-	return sub_str;
+	return NULL;
 }
 
 size_t StrSpn(const char *s1, const char *accept)
@@ -304,6 +293,7 @@ static char *FindSame(const char *s1, const char *accept)
 			return s1_cpy;
 		}
 		
+		accept_cpy++;
 		s1_cpy++;
 	}
 	
