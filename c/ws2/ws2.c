@@ -160,16 +160,23 @@ void RmSpaces(char *str)
 	runner = str;
 	str_cpy = str;
 	
+	/* remove from start */
+    while (('\0' != *runner) && (0 != isspace(*runner)))
+    {
+    	runner++;
+    }
+    
+    /* remove excess spaces */
     while ('\0' != *runner) 
     {
-        while ((0 != isspace(*runner)) && (1 < last_space_count))
+        /*while (0 != isspace(*runner))
         {
         		runner++;
-        }
+        }*/
         
         if (isspace(*runner)) 
         {
-            if (!last_space_count) 
+            if (!last_space_count)
             {
                 *str_cpy++ = *runner;
                 last_space_count = 1;
@@ -180,10 +187,17 @@ void RmSpaces(char *str)
             *str_cpy++ = *runner;
             last_space_count = 0;
         }
-        ++runner;
+        runner++;
     }
-    *str_cpy = '\0';
     
+    *str_cpy = '\0';
+    str_cpy--;
+    
+    while (0 != isspace(*str_cpy))
+    {
+		*str_cpy = '\0';
+		str_cpy--;
+    }
 }
 
 void RmSpacesTest()
