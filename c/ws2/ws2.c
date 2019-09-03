@@ -19,12 +19,15 @@ static void SwapTest();
 static char *SkipWhitespaces(char *str, char *start_str);
 static void RmSpacesTest();
 
+static void AdderTest();
+
 int main()
 {
 	/*IsPalindromeTest();
 	BoomTest();
-	SwapTest();*/
-	RmSpacesTest();
+	SwapTest();
+	RmSpacesTest();*/
+	AdderTest();
 	
 	return 0;
 }
@@ -156,6 +159,7 @@ void RmSpaces(char *str)
     char *start = NULL;
     int last_space_count = 0;
 	
+	assert(NULL != str);
 	start = str;
 	runner = str;
 	str_cpy = str;
@@ -169,12 +173,7 @@ void RmSpaces(char *str)
     /* remove excess spaces */
     while ('\0' != *runner) 
     {
-        /*while (0 != isspace(*runner))
-        {
-        		runner++;
-        }*/
-        
-        if (isspace(*runner)) 
+    	if (isspace(*runner)) 
         {
             if (!last_space_count)
             {
@@ -191,6 +190,8 @@ void RmSpaces(char *str)
     }
     
     *str_cpy = '\0';
+    
+    /* remove whitespaces from end */
     str_cpy--;
     
     while (0 != isspace(*str_cpy))
@@ -203,18 +204,72 @@ void RmSpaces(char *str)
 void RmSpacesTest()
 {
 	char test[] = "      word  longer word     encyclopedia        ";
+	char *test_ptr = NULL;                  
 	
-	printf("--%s-- before\n", test);
-	RmSpaces(test);
-	printf("--%s-- after\n", test);
-	/*
-	while ('\0' != **test_ptr)
+	test_ptr = test;
+	printf("--%s-- before\n", test_ptr);
+	RmSpaces(test_ptr);
+	printf("--%s-- after\n", test_ptr);
+}
+
+char *Adder(char *num1, char *num2, char *sum)
+{
+	char digit1 = 0, digit2 = 0;
+	size_t len1 = 0, len2 = 0;
+	int lsd = 0; /* least significant digit */
+	int carry = 0;
+	char *sum_start = NULL;
+	char *temp_sum = NULL;
+	
+	sum_start = sum;
+	len1 = strlen(num1);
+	len2 = strlen(num2);
+	
+	/* move pointers to lsd on both */
+	while ('\0' != *num1)
 	{
-		printf("--%s-- before\n", *test_ptr);
-		RmSpaces(*test_ptr);
-		printf("--%s-- after\n", *test_ptr);
-		
-		test_ptr++;
+		num1++;
 	}
-	*/
+	
+	while ('\0' != *num2)
+	{
+		num2++;
+	}
+	
+	/* add digit by digit until the smaller number runs out of digits */
+	while ((0 < len1--) && (0 < len2--))
+	{
+		lsd = carry + (int)(*num1 + *num2);
+		
+		if (9 < lsd)
+		{
+			carry = 1;
+			lsd -= 10;
+		}
+		
+		temp_sum = (char *)strdup(sum);
+		temp_sum = strcpy(temp_sum, sum);
+		*sum = (char)lsd;
+		sum = strcat(sum, temp_sum);
+		
+		num1--;
+		num2--;
+		sum++;
+		
+		free(temp_sum);
+	}
+	
+	return sum_start;
+}
+
+static void AdderTest()
+{
+	char high_sum[100] = {0};
+	char *sum = NULL;
+	char *num1 = "123", *num2 = "987";
+	
+	sum = high_sum;
+	sum = Adder(num1, num2, sum);
+	
+	printf("new sum is: %s\n", sum);
 }
