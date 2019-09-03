@@ -121,13 +121,13 @@ static void BoomTest()
 	SevenBoom(0, 0);
 }
 
-void Swap(int **p1, int **p2)
+void Swap(int ***pp1, int ***pp2)
 {
-	int *temp = *p1;
+	int **temp = *pp1;
 	
-	temp = *p1;
-	*p1 = *p2;
-	*p2 = temp;
+	temp = *pp1;
+	*pp1 = *pp2;
+	*pp2 = temp;
 }
 
 static void SwapTest()
@@ -139,7 +139,7 @@ static void SwapTest()
 	printf("Number is: %d and num address is: %p\n", **p1, &num);
 	printf("Address of ptr1 is: %p saved address on p1: %p \nAddress of ptr2 is: %p saved address on p2: %p \n", &ptr1, p1, &ptr2, p2);
 	
-	Swap(p1, p2);
+	Swap(&p1, &p2);
 	
 	printf("Post swap - address of ptr1 is: %p saved address on p1: %p \nAddress of ptr2 is: %p saved address on p2: %p \n", &ptr1, p1, &ptr2, p2);
 }

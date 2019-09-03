@@ -8,6 +8,6 @@ extern int IsPalindrome(const char *str);
 extern void SevenBoom(int from, int to);
 
 /* Swap two pointers to int */
-void Swap(int **p1, int **pt2);
+extern void Swap(int ***pp1, int ***pp2);
 
 #endif

@@ -241,31 +241,12 @@ extern char *StrStr (const char *haystack, const char *needle)
 
 size_t StrSpn(const char *s, const char *accept)
 {
-	size_t span = 0; 
-	char const *accept_start = NULL;
-	const char *s_start = NULL;
+	size_t span = 0;
 	
-	assert(NULL != s);
-	assert(NULL != accept);
-	accept_start = accept;
-	s_start = s;
-	
-	while ('\0' != *s)
+	while (('\0' != *s) && strchr(accept,*s++))
 	{
-		while (*s == *accept)
-		{
-			accept++;
-			span++;
-			
-			if ('\0' == *accept)
-			{
-				accept = accept_start;
-				s = s_start++;
-			}
-		}
-		
-		s++;
+		span++;
 	}
 	
-	return span;
+	return span;    
 }
