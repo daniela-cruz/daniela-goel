@@ -10,4 +10,7 @@ extern void SevenBoom(int from, int to);
 /* Swap two pointers to int */
 extern void Swap(int ***pp1, int ***pp2);
 
+/* remove excess whitespace from string */
+extern void RmSpaces(char *str);
+
 #endif

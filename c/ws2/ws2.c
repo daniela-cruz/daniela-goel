@@ -1,6 +1,7 @@
 #include <stdio.h> /*print*/
 #include <string.h> /*strlen*/
 #include <assert.h> /*assert*/
+#include <ctype.h> /* isspace */
 
 #include "ws2.h" /* for current exercise */
 
@@ -15,11 +16,15 @@ static void BoomTest();
 
 static void SwapTest();
 
+static char *SkipWhitespaces(char *str, char *start_str);
+static void RmSpacesTest();
+
 int main()
 {
-	IsPalindromeTest();
+	/*IsPalindromeTest();
 	BoomTest();
-	SwapTest();
+	SwapTest();*/
+	RmSpacesTest();
 	
 	return 0;
 }
@@ -142,4 +147,60 @@ static void SwapTest()
 	Swap(&p1, &p2);
 	
 	printf("Post swap - address of ptr1 is: %p saved address on p1: %p \nAddress of ptr2 is: %p saved address on p2: %p \n", &ptr1, p1, &ptr2, p2);
+}
+
+void RmSpaces(char *str)
+{
+    char *runner = NULL;
+    char *str_cpy = NULL;
+    char *start = NULL;
+    int last_space_count = 0;
+	
+	start = str;
+	runner = str;
+	str_cpy = str;
+	
+    while ('\0' != *runner) 
+    {
+        while ((0 != isspace(*runner)) && (1 < last_space_count))
+        {
+        		runner++;
+        }
+        
+        if (isspace(*runner)) 
+        {
+            if (!last_space_count) 
+            {
+                *str_cpy++ = *runner;
+                last_space_count = 1;
+            }
+        } 
+        else 
+        {
+            *str_cpy++ = *runner;
+            last_space_count = 0;
+        }
+        ++runner;
+    }
+    *str_cpy = '\0';
+    
+}
+
+void RmSpacesTest()
+{
+	char test[] = "      word  longer word     encyclopedia        ";
+	
+	printf("--%s-- before\n", test);
+	RmSpaces(test);
+	printf("--%s-- after\n", test);
+	/*
+	while ('\0' != **test_ptr)
+	{
+		printf("--%s-- before\n", *test_ptr);
+		RmSpaces(*test_ptr);
+		printf("--%s-- after\n", *test_ptr);
+		
+		test_ptr++;
+	}
+	*/
 }
