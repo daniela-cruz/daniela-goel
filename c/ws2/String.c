@@ -250,3 +250,56 @@ size_t StrSpn(const char *s, const char *accept)
 	
 	return span;    
 }
+
+char *StrTok(char *str, const char *delim)
+{
+	static char *next_addr;
+	char *next = NULL;
+	char *delim_start = NULL;
+	
+	assert(NULL != str);
+	assert(NULL != delim);
+	next = str;
+	delim_start = delim;
+	
+	if ('\0' == *str)
+	{
+		return NULL;
+	}
+	
+	while ('\0' != *next)
+	{
+		while ('\0' != *delim)
+		{
+			if (*next == *delim)
+			{
+				next_addr = next;
+				
+				return next_addr;
+			}
+			delim++;
+		}
+		
+		delim = delim_start;
+		next++;
+	}
+	
+	return next_addr;
+}
+
+static void StrTokTest()
+{
+	char word_arr[] = "word1, word2, word3"; 
+	char token_ch = ' ';
+    /* Returns first token  */
+    char* token = strtok(word_arr, token_ch); 
+  
+    /* Keep printing tokens while one of the  */
+    /* delimiters present in word_arr[]. */
+    while (token != NULL) 
+    { 
+        printf("%s\n", token); 
+        token = strtok(NULL, token_ch); 
+    } 
+  
+}
