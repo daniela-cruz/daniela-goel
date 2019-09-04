@@ -333,19 +333,28 @@ static void StrSpnTest()
 
 static void StrTokTest()
 {
-	char word_arr[] = "word1, word2, word3"; 
-	const char *token_ch = ", ";
+	char word_arr[100] = " word1, word2, word3";
+	const char *delim = ", ";
     /* Returns first token  */
     char *token = NULL;
+    int i = 0, init_size = 0;
     
-    token = word_arr; 
 	printf("\nStrTok test\n"); 
 	
-    /* Keep printing tokens while one of the delimiters present in word_arr[]. */
-    while (token != NULL) 
-    { 
-		printf("%s\n", token); 
-		token = StrTok(token, token_ch); 
-    } 
-  
+	token = word_arr;
+	init_size = strlen(token);
+	
+	while(token != NULL)
+	{
+		printf("%s\n", token);
+		token = StrTok(NULL, delim);
+	}
+
+	/* This loop will show that there are zeroes in the str after tokenizing */
+	for (; i < init_size; i++)
+	{
+		printf("%d ", token[i]); /* Convert the character to integer, in this case
+							   the character's ASCII equivalent */
+	}
+	printf("\n");
 }

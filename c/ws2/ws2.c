@@ -1,9 +1,12 @@
 #include <stdio.h> /*print*/
+#include <stdlib.h> /* free */
 #include <string.h> /*strlen*/
+#include <strings.h> /*strdup*/
 #include <assert.h> /*assert*/
 #include <ctype.h> /* isspace */
 
 #include "ws2.h" /* for current exercise */
+#include "String.h" /* strdup */
 
 #define BOOM 7
 enum true_false_t {FALSE = 0, TRUE = 1};
@@ -19,6 +22,8 @@ static void SwapTest();
 static char *SkipWhitespaces(char *str, char *start_str);
 static void RmSpacesTest();
 
+static char *FindLastChar(char *num);
+static int GetDigitsSum(char num1, char num2, int carry);
 static void AdderTest();
 
 int main()
@@ -214,57 +219,71 @@ void RmSpacesTest()
 
 char *Adder(char *num1, char *num2, char *sum)
 {
-	char digit1 = 0, digit2 = 0;
 	size_t len1 = 0, len2 = 0;
-	int lsd = 0; /* least significant digit */
+	int temp_sum = 0; /* least significant digit */
 	int carry = 0;
 	char *sum_start = NULL;
-	char *temp_sum = NULL;
+	char lsd = 0;
+	char *prev_sum = NULL;
 	
 	sum_start = sum;
 	len1 = strlen(num1);
 	len2 = strlen(num2);
 	
-	/* move pointers to lsd on both */
-	while ('\0' != *num1)
-	{
-		num1++;
-	}
-	
-	while ('\0' != *num2)
-	{
-		num2++;
-	}
+	/* move pointers to last char --lsd-- on both string numbers */
+	num1 = FindLastChar(num1);
+	num2 = FindLastChar(num2);
 	
 	/* add digit by digit until the smaller number runs out of digits */
-	while ((0 < len1--) && (0 < len2--))
+	
+	while ((0 < len1) && (0 < len2))
 	{
-		lsd = carry + (int)(*num1 + *num2);
+		temp_sum = GetDigitsSum(*num1, *num2, carry);
 		
-		if (9 < lsd)
-		{
-			carry = 1;
-			lsd -= 10;
-		}
+		(9 < temp_sum)? (carry = 1, temp_sum -= 10):(carry = 0); /* handle carry*/
 		
-		temp_sum = (char *)strdup(sum);
-		temp_sum = strcpy(temp_sum, sum);
-		*sum = (char)lsd;
-		sum = strcat(sum, temp_sum);
-		
+		lsd = (char)temp_sum; /* convert back to chars */
+		prev_sum = (char *)StrDup(sum_start);
+		sum = strcpy(sum_start, prev_sum); /* strcpy also initializes sum to sum_start location*/
+		*sum = lsd;
+		sum = strcat(sum, prev_sum);
 		num1--;
 		num2--;
-		sum++;
+		len1--;
+		len2--;
 		
-		free(temp_sum);
+		free(prev_sum);
 	}
+	
+	/* handle rest of larger number */
 	
 	return sum_start;
 }
 
+static char *FindLastChar(char *num)
+{
+	while ('\0' != *num)
+	{
+		num++;
+	}
+	
+	num--;
+	
+	return num;
+}
+
+static int GetDigitsSum(char num1, char num2, int carry)
+{
+	int digits_sum = 0;
+	
+	digits_sum = carry + (int)num1 + (int)num2;
+	
+	return digits_sum;
+}
+
 static void AdderTest()
 {
-	char high_sum[100] = {0};
+	char high_sum[100];
 	char *sum = NULL;
 	char *num1 = "123", *num2 = "987";
 	

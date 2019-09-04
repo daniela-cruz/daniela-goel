@@ -262,7 +262,7 @@ char *StrTok(char *str, const char *delim)
     iterator  = token;
     delim_cpy = (char *)delim;
 	
-    if (str != NULL) 
+    if (NULL != str) 
     {
     	token = str;
     }
@@ -274,7 +274,7 @@ char *StrTok(char *str, const char *delim)
 
     for (b = token; *b !='\0'; b++) 
     {
-        for (; *delim_cpy != '\0'; delim_cpy++) 
+        for (delim_cpy; *delim_cpy != '\0'; delim_cpy++) 
         {
             if(IsDelimiter(*b, delim_cpy)) 
             {
