@@ -18,6 +18,7 @@ static void StrCatTest();
 static void StrNcatTest();
 static void StrStrTest();
 static void StrSpnTest();
+static void StrTokTest();
 
 int main()
 {
@@ -32,6 +33,7 @@ int main()
 	StrNcatTest();
 	StrStrTest();
 	StrSpnTest();
+	StrTokTest();
 	
 	return 0;
 }
@@ -327,4 +329,23 @@ static void StrSpnTest()
 		accepted++;
 		expected_res++;
 	}
+}
+
+static void StrTokTest()
+{
+	char word_arr[] = "word1, word2, word3"; 
+	const char *token_ch = ", ";
+    /* Returns first token  */
+    char *token = NULL;
+    
+    token = word_arr; 
+	printf("\nStrTok test\n"); 
+	
+    /* Keep printing tokens while one of the delimiters present in word_arr[]. */
+    while (token != NULL) 
+    { 
+		printf("%s\n", token); 
+		token = StrTok(token, token_ch); 
+    } 
+  
 }

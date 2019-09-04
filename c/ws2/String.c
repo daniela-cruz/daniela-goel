@@ -8,6 +8,8 @@
 
 #include "String.h" /* StrLen */
 
+static size_t IsDelimiter(char ch, char *delim);
+
 size_t StrLen(const char *str)
 {
 	char str_len = 0;
@@ -253,53 +255,61 @@ size_t StrSpn(const char *s, const char *accept)
 
 char *StrTok(char *str, const char *delim)
 {
-	static char *next_addr;
-	char *next = NULL;
-	char *delim_start = NULL;
+	static char* token;
+	char *iterator, *b;
+    char *delim_cpy;
+    
+    iterator  = token;
+    delim_cpy = (char *)delim;
 	
-	assert(NULL != str);
-	assert(NULL != delim);
-	next = str;
-	delim_start = delim;
-	
-	if ('\0' == *str)
-	{
-		return NULL;
-	}
-	
-	while ('\0' != *next)
-	{
-		while ('\0' != *delim)
-		{
-			if (*next == *delim)
-			{
-				next_addr = next;
-				
-				return next_addr;
-			}
-			delim++;
-		}
-		
-		delim = delim_start;
-		next++;
-	}
-	
-	return next_addr;
+    if (str != NULL) 
+    {
+    	token = str;
+    }
+    
+    if ('\0' == *token) 
+    {
+    	return NULL;
+    }
+
+    for (b = token; *b !='\0'; b++) 
+    {
+        for (; *delim_cpy != '\0'; delim_cpy++) 
+        {
+            if(IsDelimiter(*b, delim_cpy)) 
+            {
+                *b = '\0';
+                token = b+1;
+ 
+                /* skip the beginning delimiters */
+                if (b == iterator) 
+                { 
+                    iterator++; 
+                    continue; 
+                }
+                return iterator;
+            }
+        }
+    }
+ 
+    return iterator;
 }
 
-static void StrTokTest()
+static size_t IsDelimiter(char ch, char *delim)
 {
-	char word_arr[] = "word1, word2, word3"; 
-	char token_ch = ' ';
-    /* Returns first token  */
-    char* token = strtok(word_arr, token_ch); 
-  
-    /* Keep printing tokens while one of the  */
-    /* delimiters present in word_arr[]. */
-    while (token != NULL) 
-    { 
-        printf("%s\n", token); 
-        token = strtok(NULL, token_ch); 
-    } 
-  
+	size_t is_delim = 0;
+	
+	while (('\0' != *delim) && ('\0' != ch))
+	{
+		if (ch == *delim)
+		{
+			is_delim = 1;
+		}
+		
+		delim++;
+	}
+	
+	return is_delim;
 }
+
+
