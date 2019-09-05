@@ -56,7 +56,7 @@ static size_t GetEnvpLength(const char **envp)
 	
 	envp_cpy = (char **)envp;
 	
-	while (envp_cpy)
+	while (*envp_cpy)
 	{
 		envp_len++;
 		envp_cpy++;
