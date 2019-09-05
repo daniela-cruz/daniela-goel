@@ -23,7 +23,7 @@ static char *SkipWhitespaces(char *str, char *start_str);
 static void RmSpacesTest();
 
 static char *FindLastChar(char *num);
-static int GetDigitsSum(char num1, char num2, int carry);
+static int GetDigitsSum(char num1, char num2, int carry, char *sum);
 static void AdderTest();
 
 int main()
@@ -220,11 +220,9 @@ void RmSpacesTest()
 char *Adder(char *num1, char *num2, char *sum)
 {
 	size_t len1 = 0, len2 = 0;
-	int temp_sum = 0; /* least significant digit */
 	int carry = 0;
 	char *sum_start = NULL;
 	char lsd = 0;
-	char *prev_sum = NULL;
 	
 	sum_start = sum;
 	len1 = strlen(num1);
@@ -233,29 +231,21 @@ char *Adder(char *num1, char *num2, char *sum)
 	/* move pointers to last char --lsd-- on both string numbers */
 	num1 = FindLastChar(num1);
 	num2 = FindLastChar(num2);
-	
+	printf("digit1 is: %c and digit2 is: %c\n", *num1, *num2);
 	/* add digit by digit until the smaller number runs out of digits */
 	
 	while ((0 < len1) && (0 < len2))
 	{
-		temp_sum = GetDigitsSum(*num1, *num2, carry);
 		
-		(9 < temp_sum)? (carry = 1, temp_sum -= 10):(carry = 0); /* handle carry*/
-		
-		lsd = (char)temp_sum; /* convert back to chars */
-		prev_sum = (char *)StrDup(sum_start);
-		sum = strcpy(sum_start, prev_sum); /* strcpy also initializes sum to sum_start location*/
-		*sum = lsd;
-		sum = strcat(sum, prev_sum);
+		lsd = carry + *num1;
+		carry = GetDigitsSum(lsd, *num2, carry, sum);
+		printf("carry is: %d and sum is: %s\n", carry, sum);
+		sum = sum_start;
 		num1--;
 		num2--;
 		len1--;
 		len2--;
-		
-		free(prev_sum);
 	}
-	
-	/* handle rest of larger number */
 	
 	return sum_start;
 }
@@ -272,13 +262,34 @@ static char *FindLastChar(char *num)
 	return num;
 }
 
-static int GetDigitsSum(char num1, char num2, int carry)
+static int GetDigitsSum(char num1, char num2, int carry, char *sum)
 {
 	int digits_sum = 0;
+	char *temp_sum = NULL;
 	
-	digits_sum = carry + (int)num1 + (int)num2;
+	temp_sum = StrDup(sum);
+	printf("Temp sum was duplicated: %s\n", temp_sum);
+	/* calc lsd and carry */
+	digits_sum = carry + (int)(num1 - '0') + (int)(num2 - '0');
+	printf("digits sum is: %d \n", digits_sum);
+	*sum = (char)(digits_sum % 10); /*add new digits sum*/
+	printf("Sum before cat is: %s and temp is: %s \n", sum, temp_sum);
 	
-	return digits_sum;
+	if (9 < digits_sum)
+	{
+		carry = 1;
+	}
+	
+	else
+	{
+		carry = 0;
+	}
+	
+	sum = strcat(sum, temp_sum); /* add rest of number to new sum */
+	printf("Sum after cat is: %s \n", sum);
+	free(temp_sum); temp_sum = NULL;
+	
+	return carry;
 }
 
 static void AdderTest()
