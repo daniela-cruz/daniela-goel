@@ -6,7 +6,6 @@
 #define UNUSED (void)
 
 static void MirrorEnvp(const char **envp);
-static char **GetLowerEnvp(const char **envp, char **mirror_envp);
 static char *LowStr(const char *str, char *str_lower);
 static size_t GetEnvpLength(const char **envp);
 static void PrintMirrorEnvp(const char **envp_mirror);
@@ -33,16 +32,15 @@ static void MirrorEnvp(const char **envp)
 	mirror_start = envp_mirror;
 	
 	/*allocate for each string*/
-	while (0 < mirr_len--)
+	while (*envp)
 	{
-		*envp_mirror = (char *)malloc(strlen((char *)*envp++) * sizeof(char));
-		envp_mirror++;
+		*envp_mirror = (char *)malloc(strlen((char *)*envp) * sizeof(char));
+		LowStr(*envp++, *envp_mirror++);
 	}
 	
 	envp_mirror = NULL;
-	envp_mirror = mirror_start;
 	
-	envp_mirror = GetLowerEnvp(envp, envp_mirror);
+	envp_mirror = mirror_start;
 	
 	PrintMirrorEnvp((const char **)envp_mirror);
 	
@@ -58,35 +56,13 @@ static size_t GetEnvpLength(const char **envp)
 	
 	envp_cpy = (char **)envp;
 	
-	while (*envp_cpy)
+	while (envp_cpy)
 	{
 		envp_len++;
 		envp_cpy++;
 	}
 	
 	return envp_len;
-}
-
-static char **GetLowerEnvp(const char **envp, char **mirror_envp)
-{
-	char **mirorr_start = NULL;
-	
-	mirorr_start = mirror_envp;
-	
-	while (envp)
-	{
-		while (*envp)
-		{
-			mirror_envp = (char **)*envp;
-			*mirror_envp = LowStr(*envp, *mirror_envp);
-			
-		}
-		
-		mirror_envp++;
-		envp++;
-	}
-	
-	return mirorr_start;
 }
 
 static char *LowStr(const char *str, char *str_lower)
