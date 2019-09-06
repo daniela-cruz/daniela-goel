@@ -38,14 +38,13 @@ static void MirrorEnvp(const char **envp)
 		LowStr(*envp++, *envp_mirror++);
 	}
 	
-	envp_mirror = NULL;
-	
 	envp_mirror = mirror_start;
 	
 	PrintMirrorEnvp((const char **)envp_mirror);
-	
+
 	FreeLowerEnvp(envp_mirror, mirr_len);
 	
+	mirror_start = envp_mirror;
 	free(envp_mirror); envp_mirror = NULL;
 }
 
@@ -77,8 +76,6 @@ static char *LowStr(const char *str, char *str_lower)
 		str_lower++;
 	}
 	
-	*str_lower = '\0';
-	
 	return str_start;
 }
 
@@ -94,6 +91,6 @@ static void FreeLowerEnvp(char **lower_envp, size_t mirr_len)
 {
 	while (mirr_len--)
 	{
-		free(lower_envp++);
+		free(*lower_envp++);
 	}
 }
