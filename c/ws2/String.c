@@ -250,3 +250,9 @@ size_t StrSpn(const char *s, const char *accept)
 	
 	return span;    
 }
+char *StrTok(char *str, const char *delim)
+{
+	
+}
+
+
