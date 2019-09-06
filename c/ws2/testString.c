@@ -18,6 +18,7 @@ static void StrCatTest();
 static void StrNcatTest();
 static void StrStrTest();
 static void StrSpnTest();
+static void StrTokTest();
 
 int main()
 {
@@ -32,6 +33,7 @@ int main()
 	StrNcatTest();
 	StrStrTest();
 	StrSpnTest();
+	StrTokTest();
 	
 	return 0;
 }
@@ -327,4 +329,32 @@ static void StrSpnTest()
 		accepted++;
 		expected_res++;
 	}
+}
+
+static void StrTokTest()
+{
+	char word_arr[100] = " word1, word2, word3";
+	const char *delim = ", ";
+    /* Returns first token  */
+    char *token = NULL;
+    int i = 0, init_size = 0;
+    
+	printf("\nStrTok test\n"); 
+	
+	token = word_arr;
+	init_size = strlen(token);
+	
+	while(token != NULL)
+	{
+		printf("%s\n", token);
+		token = StrTok(NULL, delim);
+	}
+
+	/* This loop will show that there are zeroes in the str after tokenizing */
+	for (; i < init_size; i++)
+	{
+		printf("%d ", token[i]); /* Convert the character to integer, in this case
+							   the character's ASCII equivalent */
+	}
+	printf("\n");
 }

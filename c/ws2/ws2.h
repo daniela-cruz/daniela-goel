@@ -14,6 +14,6 @@ extern void Swap(int ***pp1, int ***pp2);
 extern void RmSpaces(char *str);
 
 /* addition of large numbers */
-extern char *Adder(char *num1, char *num2, char *sum);
+extern char *Adder(const char *num1, const char *num2, char *sum);
 
 #endif

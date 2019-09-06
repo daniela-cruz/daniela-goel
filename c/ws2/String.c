@@ -8,6 +8,8 @@
 
 #include "String.h" /* StrLen */
 
+static size_t IsDelimiter(char ch, char *delim);
+
 size_t StrLen(const char *str)
 {
 	char str_len = 0;
@@ -250,9 +252,65 @@ size_t StrSpn(const char *s, const char *accept)
 	
 	return span;    
 }
+
 char *StrTok(char *str, const char *delim)
 {
+	static char* token;
+	char *iterator, *b;
+    char *delim_cpy;
+    
+    iterator  = token;
+    delim_cpy = (char *)delim;
 	
+    if (NULL != str) 
+    {
+    	token = str;
+    }
+    
+    if ('\0' == *token) 
+    {
+    	return NULL;
+    }
+
+    for (b = token; *b !='\0'; b++) 
+    {
+        for (delim_cpy; *delim_cpy != '\0'; delim_cpy++) 
+        {
+            if(IsDelimiter(*b, delim_cpy)) 
+            {
+                *b = '\0';
+                token = b+1;
+ 
+                /* skip the beginning delimiters */
+                if (b == iterator) 
+                { 
+                    iterator++; 
+                    continue; 
+                }
+                return iterator;
+            }
+        }
+    }
+ 
+    return iterator;
 }
+
+static size_t IsDelimiter(char ch, char *delim)
+{
+	size_t is_delim = 0;
+	
+	while (('\0' != *delim) && ('\0' != ch))
+	{
+		if (ch == *delim)
+		{
+			is_delim = 1;
+		}
+		
+		delim++;
+	}
+	
+	return is_delim;
+}
+
 
 
