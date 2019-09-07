@@ -13,7 +13,7 @@ static void FreeLowerEnvp(char **lower_envp, size_t mirr_len);
 
 size_t Josephus(size_t n, size_t k) ;
 static size_t SwordStory(size_t battle_field_size);
-static size_t FIndNextAlive(size_t *soldiers, size_t soldier_index, size_t field_size);
+static size_t FindNextAlive(size_t *soldiers, size_t soldier_index, size_t field_size);
 static size_t KeepInCircle(size_t *soldiers, size_t soldier_index, size_t field_size);
 static void TestSwordStory();
 
@@ -130,7 +130,7 @@ static size_t SwordStory(size_t battle_field_size)
 	
 	while (dead_soldiers_number + 1 < battle_field_size)
 	{
-		soldier_location = FIndNextAlive(soldiers, soldier_location + 1, battle_field_size);
+		soldier_location = FindNextAlive(soldiers, soldier_location + 1, battle_field_size);
 		sword = soldiers + soldier_location;
 			
 		if (0 == is_stabbed)
@@ -145,61 +145,62 @@ static size_t SwordStory(size_t battle_field_size)
 		}
 	}
 	
-	free(soldiers);
+	free(soldiers); soldiers = NULL;
 	
 	return soldier_location;
 }
 
-static size_t FIndNextAlive(size_t *soldiers, size_t soldier_index, size_t field_size)
+static size_t FindNextAlive(size_t *soldiers, size_t soldier_index, size_t field_size)
 {
 	soldier_index = KeepInCircle(soldiers, soldier_index, field_size);
 	
-	for (; soldier_index <= field_size; soldier_index++)
+	while (soldier_index < field_size)
 	{	
-		soldier_index = KeepInCircle(soldiers, soldier_index, field_size);
 		
 		if (0 == *(soldiers + soldier_index)) /* if zero : live soldier found */
 		{
 			
 			return soldier_index;
 		}
+		soldier_index = KeepInCircle(soldiers, soldier_index, field_size);
+		soldier_index++;
 	}
 	
 	return soldier_index;	
 }
 
-static size_t KeepInCircle(size_t *soldiers, size_t soldier_index, size_t field_size)
+static size_t KeepInCircle(size_t *soldiers, size_t soldier_location, size_t field_size)
 {
-	if (soldier_index  == field_size) 
+	if (soldier_location  == field_size) 
 	{
-		soldier_index = 0;
+		soldier_location = 0;
 	}
 	
-	if (soldier_index > field_size)
+	if (soldier_location > field_size)
 	{
-		soldier_index = 1;
+		soldier_location = 1;
 	}
-		
-	return soldier_index;
+	
+		return soldier_location;
 }
 
 static void TestSwordStory()
 {
-	size_t soldiers_number = 4, soldiers_number_2 = 5;
+	size_t soldiers_number = 4, soldiers_number_2 = 100;
 	size_t last_soldier = 0;
 	
+	/*
 	last_soldier = Josephus(soldiers_number, last_soldier) ;
 	printf("Location of soldier is %lu\n", last_soldier);
 	
 	last_soldier = Josephus(soldiers_number_2, last_soldier) ;
 	printf("Location of soldier is %lu\n", last_soldier);
+	*/
 	
-	/*
 	last_soldier = SwordStory(soldiers_number);
 	printf("Location of soldier is %lu\n", last_soldier);
 	
 	last_soldier = SwordStory(soldiers_number_2);
-	
 	printf("Location of soldier is %lu\n", last_soldier);
-	*/
+	
 }
