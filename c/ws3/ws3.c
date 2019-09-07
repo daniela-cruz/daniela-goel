@@ -185,7 +185,7 @@ static size_t KeepInCircle(size_t *soldiers, size_t soldier_index, size_t field_
 
 static void TestSwordStory()
 {
-	size_t soldiers_number = 4, soldiers_number_2 = 100;
+	size_t soldiers_number = 4, soldiers_number_2 = 5;
 	size_t last_soldier = 0;
 	
 	last_soldier = Josephus(soldiers_number, last_soldier) ;
