@@ -145,7 +145,11 @@ static size_t SwordStory(size_t battle_field_size)
 		}
 	}
 	
-	soldier_location = FindNextAlive(soldiers, soldier_location, battle_field_size);
+	while (0 != *sword)
+	{
+		soldier_location = FindNextAlive(soldiers, soldier_location + 1, battle_field_size);
+		sword = soldiers + soldier_location;
+	}
 	
 	free(soldiers); soldiers = NULL;
 	
