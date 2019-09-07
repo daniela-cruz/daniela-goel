@@ -20,9 +20,9 @@ static void TestSwordStory();
 
 int main(int argc, char *argv[], char **envp)
 {
-	ShowEnvironment((const char **)envp);
+	/*ShowEnvironment((const char **)envp);*/
 	
-	/*TestSwordStory();*/
+	TestSwordStory();
 	
 	(void)argc;
 	(void)argv;
@@ -57,7 +57,7 @@ size_t GetEnvironmentLength(const char **envp)
 {
 	size_t num_of_strings = 0;
 	
-	while ('\0' != *envp)
+	while ('\0' != **envp)
 	{	
 		num_of_strings++;
 		envp++;
@@ -80,7 +80,7 @@ static char **AllocateEmptyEnvitonment(const char **envp,
 	
 	assert(buffer != NULL);
 	
-	while ('\0' != envp)
+	while ('\0' != **envp)
 	{
 		*buffer = (char *)malloc(strlen((*envp) + 1) * sizeof(char));
 		envp++;
@@ -96,7 +96,7 @@ static void PrintEnvironment(const char **lower_case_envp, size_t envp_length)
 	
 	/*envp_length = 3;*/
 	
-	while ('\0' != lower_case_envp)
+	while ('\0' != **lower_case_envp)
 	{
 		printf("%s\n", *lower_case_envp);
 		lower_case_envp++;
