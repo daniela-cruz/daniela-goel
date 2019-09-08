@@ -226,7 +226,8 @@ char *Adder(const char *num1, const char *num2, char *sum)
 	char lsd = 0;
 	char *n1 = NULL, *n2 = NULL;
 	
-	
+	assert(NULL != num1);
+	assert(NULL != num2);	
 	n1 = (char *)num1; n2 = (char *)num2;
 	sum_start = sum;
 	sum_len = strlen(sum);
@@ -242,9 +243,8 @@ char *Adder(const char *num1, const char *num2, char *sum)
 	n1 = FindLastChar(n1);
 	n2 = FindLastChar(n2);
 	sum = FindLastChar(sum);
-	printf("sum is: %s, digit1 is: %c and digit2 is: %c\n", sum, *n1, *n2);
-	/* add digit by digit until the smaller number runs out of digits */
 	
+	/* add digit by digit until the smaller number runs out of digits */
 	while ((0 < len1) || (0 < carry))
 	{
 		if (0 < len1)
@@ -270,8 +270,6 @@ char *Adder(const char *num1, const char *num2, char *sum)
 			carry = GetDigitsSum('0', '0', carry, sum);
 			break;
 		}
-		
-		printf("carry is: %d and sum is: %s\n", carry, sum);
 		
 		sum_len--;
 	}
@@ -314,7 +312,6 @@ static int GetDigitsSum(char num1, char num2, int carry, char *sum)
 	{
 		digits_sum = carry + (num1 - '0');
 	}
-	printf("digits sum is: %d \n", digits_sum);
 	
 	if (9 < digits_sum)
 	{
@@ -328,16 +325,15 @@ static int GetDigitsSum(char num1, char num2, int carry, char *sum)
 		*sum = (digits_sum) + '0' ; /*add new digits sum*/
 	}
 	
-	printf("Sum in DigitSum is: %s \n", sum);
 	
 	return carry;
 }
 
 static void AdderTest()
 {
-	char high_sum[] = "9999";
+	char high_sum[] = "99999";
 	char *sum = NULL;
-	char *num1 = "923", *num2 = "187";
+	char *num1 = "923", *num2 = "398";
 	
 	sum = high_sum;
 	sum = Adder(num1, num2, sum);
