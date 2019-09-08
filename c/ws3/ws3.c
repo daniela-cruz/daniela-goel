@@ -5,13 +5,15 @@
 
 #define UNUSED (void)
 
+static void MirrorII(const char **envp);
 static void MirrorEnvp(const char **envp);
 static char *LowStr(const char *str, char *str_lower);
 static size_t GetEnvpLength(const char **envp);
 static void PrintMirrorEnvp(const char **envp_mirror);
 static void FreeLowerEnvp(char **lower_envp, size_t mirr_len);
 
-size_t Josephus(size_t n, size_t k) ;
+/*size_t Josephus(size_t n, size_t k) ;*/
+static size_t JosephusII(size_t battle_field_size);
 static size_t SwordStory(size_t battle_field_size);
 static size_t FindNextAlive(size_t *soldiers, size_t soldier_index, size_t field_size);
 static size_t KeepInCircle(size_t *soldiers, size_t soldier_index, size_t field_size);
@@ -22,6 +24,7 @@ int main(int argc, char *argv[], char **envp)
 	UNUSED argc;
 	UNUSED argv;
 	
+	MirrorII((const char **)envp);
 	/*MirrorEnvp((const char **)envp);*/
 	
 	TestSwordStory();
@@ -29,6 +32,42 @@ int main(int argc, char *argv[], char **envp)
 	return 0;
 }
 
+/* ENVP II */
+/*
+static void MirrorII(const char **envp)
+{
+	size_t address_len = 0;
+	size_t str_len = 0;
+	size_t str_num = 0;
+	void *mirror = NULL;
+	void *mirror_start = NULL;
+	const char ** envp_start = NULL;
+	
+	envp_start = envp;
+	address_len = sizeof(char *);
+	
+	while (*envp)
+	{
+		str_len += strlen(*envp) +1;
+		envp++;
+		str_num++;
+	}
+	
+	envp = envp_start;
+	mirror = malloc(((str_num + 1) * address_len + str_len) * sizeof(char));
+	mirror_start = mirror;
+	
+	mirror += (str_num + 1) * address_len;
+	
+	while (*envp)
+	{
+		mirror = strcpy(mirror, *envp);
+		envp++;
+		mirror += sizeof(strlen(*envp));
+	}
+	
+}
+*/
 /* ENVP */
 static void MirrorEnvp(const char **envp)
 {
@@ -117,6 +156,34 @@ size_t Josephus(size_t n, size_t k)
     return (Josephus(n - 1, k) + k-1) % n + 1; 
 } 
 
+static size_t JosephusII(size_t battle_field_size)
+{
+	size_t *soldiers = NULL; /*an array of zeros*/
+	size_t *sword = NULL;
+	size_t *location = 0, i = 0;
+	
+	/* initialize array */
+	soldiers = malloc(sizeof(size_t) * battle_field_size);
+	sword = soldiers;
+	
+	for (; i < battle_field_size; i++)
+	{
+		*(sword + i) = i + 1;
+	}
+	
+	*(sword + i + 1) = 0;
+	i = 0; /* is_dead */
+	
+	while (location != soldiers[location])
+	{
+		soldiers[location] += location;
+		location = soldiers[location];
+	}
+	
+	
+	return location;
+}
+
 static size_t SwordStory(size_t battle_field_size)
 {
 	size_t *soldiers = NULL; /*an array of zeros*/
@@ -197,6 +264,7 @@ static void TestSwordStory()
 	size_t soldiers_number = 4, soldiers_number_2 = 100;
 	size_t last_soldier = 0;
 	
+	printf("\n\nJosephus problem test:\n");
 	/*
 	last_soldier = Josephus(soldiers_number, last_soldier) ;
 	printf("Location of soldier is %lu\n", last_soldier);
@@ -204,11 +272,12 @@ static void TestSwordStory()
 	last_soldier = Josephus(soldiers_number_2, last_soldier) ;
 	printf("Location of soldier is %lu\n", last_soldier);
 	*/
-	
-	last_soldier = SwordStory(soldiers_number);
+	printf("\nTest 1: soldiers number is: %lu\n", soldiers_number);
+	last_soldier = JosephusII(soldiers_number);
 	printf("Location of soldier is %lu\n", last_soldier);
 	
-	last_soldier = SwordStory(soldiers_number_2);
+	printf("\nTest 2: soldiers number is: %lu\n", soldiers_number_2);
+	last_soldier = JosephusII(soldiers_number_2);
 	printf("Location of soldier is %lu\n", last_soldier);
 	
 }
