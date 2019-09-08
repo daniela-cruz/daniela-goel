@@ -153,7 +153,7 @@ static size_t SwordStory(size_t battle_field_size)
 	
 	free(soldiers); soldiers = NULL;
 	
-	return soldier_location;
+	return soldier_location + 1;
 }
 
 static size_t FindNextAlive(size_t *soldiers, size_t soldier_index, size_t field_size)
@@ -168,8 +168,10 @@ static size_t FindNextAlive(size_t *soldiers, size_t soldier_index, size_t field
 			
 			return soldier_index;
 		}
-		soldier_index = KeepInCircle(soldiers, soldier_index, field_size);
+		
 		soldier_index++;
+		soldier_index = KeepInCircle(soldiers, soldier_index, field_size);
+		
 	}
 	
 	return soldier_index;	
