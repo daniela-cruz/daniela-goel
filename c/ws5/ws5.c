@@ -7,78 +7,108 @@
 #include <string.h> /* getchar */
 
 #define MODULES_SIZE 2
+#define STR_MAX 100
 
-enum status_t {SUCCESS, ERR_FOPEN};
+enum status_t {SUCCESS, FAILURE};
 
-struct log_module_t 	
+struct operation 	
 {	
-	char *user_input;
-	enum status_t (*function_module)(const char *user_input, const char *file_name);
+	char *action_request;
+	enum status_t (*action)(const char *, const char *);
 };
 
-void Logger();
+static void Logger();
+static enum status_t Parser(const char *user_input, const char* action_req, size_t index);
 
-enum status_t Append(const char *user_input, const char *file_name);
-enum status_t EscapeFunction(const char *user_input, const char *file_name);
+static enum status_t Append(const char *user_input, const char *path);
+static enum status_t TrueFunction();
 
-int main()
+static enum status_t EscapeFunction(const char *user_input, const char *path);
+
+int main(int argc, char **argv)
 {
-	Logger();
+	Logger(argv[1]);
 	
+	(void) argc;
 	return 0;
 }
 
-void Logger()
+void Logger(char *path_input)
 {
-	char *str = NULL;
-	char *file_name = NULL;
-	struct log_module_t operations[] = {	/*{"<", AddToTop},
+	char user_input[STR_MAX] = {0};
+	char *path = path_input;
+	struct operation operations[] = {	/*{"<", AddToTop},
 														{"-count", CountLines},
 														{"-remove", RemoveFIle},*/
 														{"-exit", EscapeFunction},
 														{"", Append}};
-	int i = 0;
+	size_t i = 0;
 	
-	printf("Give your file a name:\n");
-	gets(file_name);
-	
-	while (1)
+	while (SUCCESS == operations[i].action(user_input, path))
 	{
-		Printf("Please enter your string\n");
-		gets(str);
+		printf("Please enter your string\n");
+		fgets(user_input, STR_MAX, stdin);
 		
 		for (; i < MODULES_SIZE; i++)
-	{
-		if (0 == strcmp(str, operations[i].user_input))
 		{
-			operations[i].function_module(str, file_name);
+			if (SUCCESS == Parser(user_input, operations[i].action_request, i))
+			{
+				operations[i].action(user_input, path);
+				break;
+			}
 		}
 	}
 }
 
-enum status_t Append(const char *user_input, const char *file_name)
+enum status_t Parser(const char *user_input, const char* action_req, size_t index)
+{
+	enum status_t status = SUCCESS;
+	
+	printf("I am the PARSER!\n");
+	
+	if (0 == index)
+	{
+		status = SUCCESS;
+	}
+	else if (index == 1)
+	{
+		status = TrueFunction();
+	}
+	else
+	{
+		status = FAILURE;
+	}
+	
+	return status;
+}
+
+enum status_t Append(const char *user_input, const char *path)
 {
 	FILE *file = NULL;
 	
-	/*DEBUG_PRINT("Append parsing succeeded!\n")*/
+	printf("I am the APPENDER!!\n");
+	file = fopen(path, "a+");
 	
-	if (NULL == (file = fopen(file_name, "a+")))
+	if (NULL == file)
 	{
-		fprintf (stderr, "%s: Couldn't open file %s.\n", file_name);
-		return ERR_FOPEN;
+		fprintf (stderr, "%s: Couldn't open file %s.\n", "ERROR", path);
+		return FAILURE;
 	}
 	
 	fprintf(file, "%s", user_input);
-	
-	fclose(file_name);
+	fclose(file);
 	
 	return SUCCESS;
 }
 
-enum status_t EscapeFunction(const char *user_input, const char *file_name)
+enum status_t TrueFunction()
+{
+	return SUCCESS;
+}
+
+enum status_t EscapeFunction(const char *user_input, const char *path)
 {
 	printf("Now it's time to die! G'bye!\n");
-	system("stty icanon echo");
 	
 	exit(0);
-}
+} 
