@@ -7,7 +7,7 @@
 #include <string.h> /* getchar */
 #include <assert.h> /* assert */
 
-#define MODULES_SIZE 4
+#define MODULES_SIZE 5
 #define STR_MAX 100
 
 typedef enum status {SUCCESS, FAILURE} status_t;
@@ -22,20 +22,17 @@ static void Logger();
 static status_t Parser(const char *user_input, const char* path);
 
 static status_t EscapeFunction(const char *user_input, const char *path);
-
 static status_t Append(const char *user_input, const char *path);
-static status_t TrueFunction();
-
 static status_t PushToTop(const char *user_input, const char *path);
-
 static status_t RemoveFile(const char *user_input, const char *path);
+static status_t CountLines(const char *user_input, const char *path);
 
-status_t CountLines(const char *user_input, const char *path);
+static void TestLogger();
 
 int main(int argc, char **argv)
 {
-	Logger(argv[1]);
-	
+	/*Logger(argv[1]);*/
+	TestLogger();
 	(void) argc;
 	return 0;
 }
@@ -48,7 +45,7 @@ void Logger(char *path_input)
 	size_t compare = 0;
 	status_t status = SUCCESS;
 	
-	while (FAILURE != Parser(user_input, path))
+	while (SUCCESS == Parser(user_input, path))
 	{
 		printf("Please enter your string\n");
 		fgets(user_input, STR_MAX, stdin);
@@ -180,8 +177,6 @@ status_t Append(const char *user_input, const char *path)
 {
 	FILE *file = fopen(path, "a+");
 	
-	printf("I am the APPENDER!!\n");
-	
 	if (NULL == file)
 	{
 		fprintf (stderr, "%s: Couldn't open file %s.\n", "ERROR", path);
@@ -202,7 +197,25 @@ status_t TrueFunction()
 status_t EscapeFunction(const char *user_input, const char *path)
 {
 	printf("Now it's time to die! G'bye!\n");
-	/*exit(0);*/
 	
 	return FAILURE;
 } 
+
+static void TestLogger()
+{
+	const char *path = "file_1.txt";
+	const char *user_inpt[] = {"blahblah\n", "lala\n", "-count\n", "<I'm on top!\n", "-remove", "-exit"};
+	size_t i = 0;
+	
+	for (; i < MODULES_SIZE + 1; i++)
+	{
+		if (!Parser(user_inpt[i], path))
+		{
+			printf("Test no %ld is successful!\n", i + 1);
+		}
+		else
+		{
+			printf("Test no. %ld is a failure! Well... if we're here and it's number 6 then it's a SUCCESS!!!\n", i + 1);
+		}
+	}
+}
