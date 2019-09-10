@@ -30,6 +30,8 @@ static status_t PushToTop(const char *user_input, const char *path);
 
 static status_t RemoveFile(const char *user_input, const char *path);
 
+status_t CountLines(const char *user_input, const char *path);
+
 int main(int argc, char **argv)
 {
 	Logger(argv[1]);
@@ -45,21 +47,11 @@ void Logger(char *path_input)
 	size_t i = 0;
 	size_t compare = 0;
 	status_t status = SUCCESS;
-	struct operation operations[] = {	{"<", PushToTop},
-														/*{"-count", CountLines},*/
-														{"-remove", RemoveFile},
-														{"-exit", EscapeFunction},
-														{"", Append}};
 	
 	while (FAILURE != Parser(user_input, path))
 	{
 		printf("Please enter your string\n");
 		fgets(user_input, STR_MAX, stdin);
-		/*
-		for(; i < )
-		{
-		
-		}*/
 	}
 }
 
@@ -70,12 +62,10 @@ status_t Parser(const char *user_input, const char* path)
 	char ch = 0;
 	status_t status = SUCCESS;
 	struct operation operations[] = {	{"<", PushToTop},
-														/*{"-count", CountLines},*/
-														{"-remove", RemoveFile},
-														{"-exit", EscapeFunction},
-														{"", Append}};
-	
-	printf("I am the PARSER!\n");
+													/*{"-count", CountLines},*/
+													{"-remove", RemoveFile},
+													{"-exit", EscapeFunction},
+													{"", Append}};
 	
 	ch = *user_input;
 	
@@ -87,44 +77,17 @@ status_t Parser(const char *user_input, const char* path)
 		
 		case '-':
 			{
-				compare = strlen(user_input);
+				compare = strlen(user_input) - 1;
 				(0 == strncmp(user_input, "-exit", compare)) ? status = EscapeFunction(user_input, path): status;
-				
+				(0 == strncmp(user_input, "-remove", compare)) ? status = RemoveFile(user_input, path): status;
+				(0 == strncmp(user_input, "-count", compare)) ? status = CountLines(user_input, path): status;
 			}
 			break;
 		
 		default:
 			status = Append(user_input, path);
 			break;
-	
 	}
-		/*
-		if ('<' == *user_input)
-		{
-			PushToTop(user_input, path);
-		}
-		else if (strlen(operations[i].action_request) + 1 == strlen(user_input))
-		{
-			printf("I am the first exit condition!\n");
-			
-			if (0 == strncmp(user_input, operations[i].action_request, compare))
-			{
-				printf("I am the second exit condition!\n");
-				EscapeFunction(user_input, path);
-			}
-			
-			break;
-		}
-		else if (user_input)
-		{
-			Append(user_input, path);
-			break;
-		}
-		else
-		{
-			status = FAILURE;
-		
-	}*/
 
 	return status;
 }
@@ -183,6 +146,34 @@ status_t RemoveFile(const char *user_input, const char *path)
 	}
 	
 	return SUCCESS;
+}
+
+status_t CountLines(const char *user_input, const char *path)
+{
+	FILE *file = NULL;
+    char line[STR_MAX];
+    size_t counter = 0; /*Number of lines*/
+    status_t status = SUCCESS;
+
+    file = fopen(path, "r");
+   
+    if (file == NULL)
+    {
+        fprintf(stderr, "Error: Unable to open file");
+        status = FAILURE;
+    }
+
+
+    while(fgets(line, sizeof(line), file) != NULL)
+    {
+        counter++;
+    }
+
+    printf("Number of lines in the file is %ld\n", counter);
+    
+    fclose(file);
+    
+    return status;
 }
 
 status_t Append(const char *user_input, const char *path)
