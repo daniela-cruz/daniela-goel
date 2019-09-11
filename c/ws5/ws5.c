@@ -35,9 +35,9 @@ static const size_t block_size = 4096;
 
 int main(int argc, char **argv)
 {
-	/*Logger(argv[1]);*/
-/*	TestLogger();*/
-	CopyFileTest();
+	Logger(argv[1]);
+	/*TestLogger();*/
+	/*CopyFileTest();*/
 	(void) argc;
 	return 0;
 }
@@ -109,13 +109,12 @@ static status_t Preppend(const char *user_input, const char *path)
 {
 	FILE *temp_file = NULL;
 	FILE *file = NULL;
-	char ch = 0;
-	char *buffer = NULL;
-	size_t bytes_counted = 0;
+	char *file_buffer = NULL;
+	size_t byte_amount = block_size;
 	
 	assert(NULL != user_input);
 	assert(NULL != path);
-	user_input++;
+	user_input++; /* promote pointer by one to ignore the '<' during copy */
 	file = fopen(path, "r");
 	
 	if (NULL == file)
@@ -127,20 +126,33 @@ static status_t Preppend(const char *user_input, const char *path)
 	/* go to the beginnig of the file and send back a pointer */	
 	Append(user_input, "temp_file");
 	temp_file = fopen("temp_file", "a");
-	/* copy */
-	/*
-	while (0 < (bytes_counted = fread(buffer, 1, block_size, file)))
+	
+	if (NULL == temp_file)
 	{
-        fwrite(buffer, 1, bytes_counted, temp_file);
+	  printf("Error! Can't open empty temp_file!\n");
+	  exit(1);
 	}
-	*/
+	
+	file_buffer = malloc(block_size);
+	assert(NULL != file_buffer);
+	
+	do
+	{
+		byte_amount = fread(file_buffer, 1, block_size, file);
+		fwrite(file_buffer, 1, byte_amount, temp_file);
+	}
+	while (byte_amount == block_size);
+	
+	fclose(file); 
 	fclose(temp_file);
+	free(file_buffer); file_buffer = NULL;
 	
 	RemoveFile("-remove", path);
 	rename("temp_file", path);
 	
 	return SUCCESS;
 }
+
 
 static void CopyFileTest()
 {
