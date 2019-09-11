@@ -114,8 +114,8 @@ static status_t Preppend(const char *user_input, const char *path)
 	
 	assert(NULL != user_input);
 	user_input++;
-	file = fopen(path, "rb");
-	temp_file = fopen("temp_file", "w + b");
+	file = fopen(path, "r");
+	temp_file = fopen("temp_file", "w+");
 	
 	if (NULL == path)
 	{
