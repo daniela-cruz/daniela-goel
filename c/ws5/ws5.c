@@ -9,6 +9,7 @@
 
 #define MODULES_SIZE 5
 #define STR_MAX 100
+#define BUFF_MAX 1000
 
 typedef enum status {SUCCESS, FAILURE} status_t;
 
@@ -23,7 +24,7 @@ static status_t Parser(const char *user_input, const char* path);
 
 static status_t EscapeFunction(const char *user_input, const char *path);
 static status_t Append(const char *user_input, const char *path);
-static status_t PushToTop(const char *user_input, const char *path);
+static status_t Preppend(const char *user_input, const char *path);
 static status_t RemoveFile(const char *user_input, const char *path);
 static status_t CountLines(const char *user_input, const char *path);
 
@@ -59,7 +60,7 @@ status_t Parser(const char *user_input, const char* path)
 	char ch = 0;
 	size_t is_found = 0;
 	status_t status = SUCCESS;
-	struct operation operations[] = {	{"<", PushToTop},
+	struct operation operations[] = {	{"<", Preppend},
 													{"-count", CountLines},
 													{"-remove", RemoveFile},
 													{"-exit", EscapeFunction},
@@ -70,7 +71,7 @@ status_t Parser(const char *user_input, const char* path)
 	switch(ch)
 	{
 		case '<':
-			status = PushToTop(user_input, path);
+			status = Preppend(user_input, path);
 			break;
 		
 		case '-':
@@ -102,16 +103,19 @@ status_t Parser(const char *user_input, const char* path)
 	return status;
 }
 
-static status_t PushToTop(const char *user_input, const char *path)
+static status_t Preppend(const char *user_input, const char *path)
 {
 	FILE *temp_file = NULL;
 	FILE *file = NULL;
 	char ch = 0;
+	char buffer[BUFF_MAX] = {0};
+	size_t block_size = 4096;
+	size_t bytes_counted = 0;
 	
 	assert(NULL != user_input);
 	user_input++;
-	file = fopen(path, "a+");
-	temp_file = fopen("temp_file", "w");
+	file = fopen(path, "rb");
+	temp_file = fopen("temp_file", "w + b");
 	
 	if (NULL == path)
 	{
@@ -119,21 +123,15 @@ static status_t PushToTop(const char *user_input, const char *path)
 	  exit(1);
 	}
 	
-	/*go to the beginnig of the file and send back a pointer*/	
-	Append(user_input, "temp_file");
+	/* go to the beginnig of the file and send back a pointer */	
 	temp_file = fopen("temp_file", "a+");
+	Append(user_input, "temp_file");
 	
-	while(1)
+	while (0 < (bytes_counted = fread(buffer, 1, block_size, file)))
 	{
-		ch = fgetc(file);
-
-		if (ch == EOF)
-		{
-			break;
-		}
-		putc(ch, temp_file);
-	} 
-
+        fwrite(buffer, 1, bytes_counted, temp_file);
+	}
+	
 	RemoveFile("-remove", path);
 	rename("temp_file", path);
 	fclose(temp_file);
