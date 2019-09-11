@@ -45,19 +45,19 @@ void Logger(char *path_input)
 	size_t i = 0;
 	size_t compare = 0;
 	status_t status = SUCCESS;
-	
-	while (SUCCESS == Parser(user_input, path))
+
+	do	
 	{
 		printf("Please enter your string\n");
 		fgets(user_input, STR_MAX, stdin);
 	}
+	while (SUCCESS == Parser(user_input, path));
 }
 
 status_t Parser(const char *user_input, const char* path)
 {
 	size_t i = 0;
 	size_t compare = 0;
-	char ch = 0;
 	size_t is_found = 0;
 	status_t status = SUCCESS;
 	struct operation operations[] = {	{"<", Preppend},
@@ -66,9 +66,8 @@ status_t Parser(const char *user_input, const char* path)
 													{"-exit", EscapeFunction},
 													{"", Append}};
 	
-	ch = *user_input;
 	
-	switch(ch)
+	switch(*user_input)
 	{
 		case '<':
 			status = Preppend(user_input, path);
@@ -115,7 +114,7 @@ static status_t Preppend(const char *user_input, const char *path)
 	assert(NULL != user_input);
 	user_input++;
 	file = fopen(path, "r");
-	temp_file = fopen("temp_file", "w+");
+	temp_file = fopen("temp_file", "a");
 	
 	if (NULL == path)
 	{
@@ -124,17 +123,16 @@ static status_t Preppend(const char *user_input, const char *path)
 	}
 	
 	/* go to the beginnig of the file and send back a pointer */	
-	temp_file = fopen("temp_file", "a+");
 	Append(user_input, "temp_file");
 	
 	while (0 < (bytes_counted = fread(buffer, 1, block_size, file)))
 	{
         fwrite(buffer, 1, bytes_counted, temp_file);
 	}
+	fclose(temp_file);
 	
 	RemoveFile("-remove", path);
 	rename("temp_file", path);
-	fclose(temp_file);
 	
 	return SUCCESS;
 }
