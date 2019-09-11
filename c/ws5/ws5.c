@@ -31,8 +31,8 @@ static void TestLogger();
 
 int main(int argc, char **argv)
 {
-	/*Logger(argv[1]);*/
-	TestLogger();
+	Logger(argv[1]);
+/*	TestLogger();*/
 	(void) argc;
 	return 0;
 }
@@ -57,9 +57,10 @@ status_t Parser(const char *user_input, const char* path)
 	size_t i = 0;
 	size_t compare = 0;
 	char ch = 0;
+	size_t is_found = 0;
 	status_t status = SUCCESS;
 	struct operation operations[] = {	{"<", PushToTop},
-													/*{"-count", CountLines},*/
+													{"-count", CountLines},
 													{"-remove", RemoveFile},
 													{"-exit", EscapeFunction},
 													{"", Append}};
@@ -73,12 +74,24 @@ status_t Parser(const char *user_input, const char* path)
 			break;
 		
 		case '-':
+			compare = strlen(user_input) - 1;
+				
+			for (i = 1; i < MODULES_SIZE - 1; i++)
 			{
-				compare = strlen(user_input) - 1;
-				(0 == strncmp(user_input, "-exit", compare)) ? status = EscapeFunction(user_input, path): status;
-				(0 == strncmp(user_input, "-remove", compare)) ? status = RemoveFile(user_input, path): status;
-				(0 == strncmp(user_input, "-count", compare)) ? status = CountLines(user_input, path): status;
+				if (0 == strncmp(operations[i].action_request, user_input, compare)) 
+				{
+					status = operations[i].action(user_input, path);
+					is_found = 1;
+					break;
+				}
 			}
+			
+			if (0 == is_found)
+			{
+				Append(user_input, path);
+			}
+			
+			is_found = 0;
 			break;
 		
 		default:
@@ -100,7 +113,7 @@ static status_t PushToTop(const char *user_input, const char *path)
 	file = fopen(path, "a+");
 	temp_file = fopen("temp_file", "w");
 	
-	if (path == NULL)
+	if (NULL == path)
 	{
 	  printf("Error! Can't open file!\n");
 	  exit(1);
