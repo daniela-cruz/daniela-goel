@@ -20,20 +20,24 @@ struct operation
 };
 
 static void Logger();
-static status_t Parser(const char *user_input, const char* path);
+static status_t Parser(const char *user_input, const char* path); /* parse user input and call the right action */
 
+static status_t Preppend(const char *user_input, const char *path); /* add user's input to top of the file */
+static status_t RemoveFile(const char *user_input, const char *path); 
+static status_t CountLines(const char *user_input, const char *path);
 static status_t EscapeFunction(const char *user_input, const char *path);
 static status_t Append(const char *user_input, const char *path);
-static status_t Preppend(const char *user_input, const char *path);
-static status_t RemoveFile(const char *user_input, const char *path);
-static status_t CountLines(const char *user_input, const char *path);
 
 static void TestLogger();
+static void CopyFileTest();
+
+static const size_t block_size = 4096;
 
 int main(int argc, char **argv)
 {
-	Logger(argv[1]);
+	/*Logger(argv[1]);*/
 /*	TestLogger();*/
+	CopyFileTest();
 	(void) argc;
 	return 0;
 }
@@ -65,7 +69,6 @@ status_t Parser(const char *user_input, const char* path)
 													{"-remove", RemoveFile},
 													{"-exit", EscapeFunction},
 													{"", Append}};
-	
 	
 	switch(*user_input)
 	{
@@ -107,16 +110,15 @@ static status_t Preppend(const char *user_input, const char *path)
 	FILE *temp_file = NULL;
 	FILE *file = NULL;
 	char ch = 0;
-	char buffer[BUFF_MAX] = {0};
-	size_t block_size = 4096;
+	char *buffer = NULL;
 	size_t bytes_counted = 0;
 	
 	assert(NULL != user_input);
+	assert(NULL != path);
 	user_input++;
 	file = fopen(path, "r");
-	temp_file = fopen("temp_file", "a");
 	
-	if (NULL == path)
+	if (NULL == file)
 	{
 	  printf("Error! Can't open file!\n");
 	  exit(1);
@@ -124,17 +126,54 @@ static status_t Preppend(const char *user_input, const char *path)
 	
 	/* go to the beginnig of the file and send back a pointer */	
 	Append(user_input, "temp_file");
-	
+	temp_file = fopen("temp_file", "a");
+	/* copy */
+	/*
 	while (0 < (bytes_counted = fread(buffer, 1, block_size, file)))
 	{
         fwrite(buffer, 1, bytes_counted, temp_file);
 	}
+	*/
 	fclose(temp_file);
 	
 	RemoveFile("-remove", path);
 	rename("temp_file", path);
 	
 	return SUCCESS;
+}
+
+static void CopyFileTest()
+{
+	FILE *file = NULL; /* large text file */
+	FILE *file_cpy = NULL;
+	char *file_buffer = NULL;
+	
+	file = fopen("/usr/share/dict/american-english", "r");
+	
+	if (NULL == file)
+	{
+	  printf("Error! Can't open american-dicitonary file!\n");
+	  exit(1);
+	}
+	
+	file_cpy = fopen("file_cpy.txt", "w");
+	
+	if (NULL == file_cpy)
+	{
+	  printf("Error! Can't open empty copy file!\n");
+	  exit(1);
+	}
+	
+	file_buffer = malloc(block_size);
+	
+	while (block_size == fread(file_buffer, 1, block_size, file))
+	{
+        fwrite(file_buffer, 1, block_size, file_cpy);
+	}
+	
+	fclose(file); 
+	fclose(file_cpy);
+	free(file_buffer); file_buffer = NULL;
 }
 
 status_t RemoveFile(const char *user_input, const char *path)
