@@ -26,6 +26,9 @@ static size_t AreBits2And6On(size_t num);
 static size_t AreBits2Or6On(size_t num);
 static void AreBits2And6OnTest();
 
+static unsigned int Swap3and5(unsigned char binary_number);
+static void Swap3and5Test();
+
 int main()
 {
 	Pow2Test();
@@ -33,6 +36,8 @@ int main()
 	AddBitwiseTest();
 	FindNumsWith3BitsOnTest();
 	TestMirrorNumberLoop();
+	AreBits2And6OnTest();
+	Swap3and5Test();
 	
 	return 0;
 }
@@ -250,7 +255,7 @@ static void AreBits2And6OnTest()
 	}
 }
 
-unsigned int Swap3and5(unsigned char binary_number)
+static unsigned int Swap3and5(unsigned char binary_number)
 {
 	size_t mask = 0xD7;
 	size_t right_mask = 8;
@@ -260,4 +265,36 @@ unsigned int Swap3and5(unsigned char binary_number)
 	return (binary_number & mask) | 
 			(((binary_number & right_mask) << bits_shifter) | 
 			((binary_number & left_mask) >> bits_shifter));
+}
+
+static void Swap3and5Test()
+{
+	printf("\nSwap 3 and 5 test:\n");
+	if (32 == Swap3and5(8))
+	{
+		printf("SUCCESS!\n");
+	}
+	else
+	{
+		printf("Failure, received result is: %d\n", Swap3and5(8));
+	}
+}
+
+static void PrintFloat(float num)
+{
+	struct float_t
+	{
+		size_t m:23;
+		size_t e:8;
+		size_t s:1;
+	};
+	
+	printf("\nFloat is: %ld%d%d\n", float_t.s, float_t.e, float_t.m);
+}
+
+static size_t Denominator16(size_t num)
+{
+	size_t bit_shifter = 4;
+	size_t denominator = 1;
+	
 }
