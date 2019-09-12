@@ -22,6 +22,10 @@ static void FindNumsWith3BitsOnTest();
 static unsigned int MirrorLoopBitwise(unsigned int binary_number);
 static void TestMirrorNumberLoop();
 
+static size_t AreBits2And6On(size_t num);
+static size_t AreBits2Or6On(size_t num);
+static void AreBits2And6OnTest();
+
 int main()
 {
 	Pow2Test();
@@ -206,4 +210,54 @@ static void TestMirrorNumberLoop()
 		assert(numbers[i] == MirrorLoopBitwise(mirrored));
 		printf("SUCCESS!\n");
 	}
+}
+
+static size_t AreBits2And6On(size_t num)
+{
+	size_t mask = 68;
+	
+	return ((num & mask) == mask) ? 1 : 0;
+}
+
+static size_t AreBits2Or6On(size_t num)
+{
+	size_t mask_2 = 4;
+	size_t mask_6 = 64;
+	
+	return (((num & mask_2) == mask_2) || ((num & mask_6) == mask_6)) ? 1 : 0;
+}
+
+static void AreBits2And6OnTest()
+{
+	printf("\nBits 2 and 6 test:\n");
+	if (1 == AreBits2And6On(70))
+	{
+		printf("SUCCESS!\n");
+	}
+	else
+	{
+		printf("Failure, received result is: %ld\n", AreBits2And6On(70));
+	}
+	
+	printf("\nBits 2 OR 6 test:\n");
+	if (1 == AreBits2Or6On(6))
+	{
+		printf("SUCCESS!\n");
+	}
+	else
+	{
+		printf("Failure, received result is: %ld\n", AreBits2Or6On(6));
+	}
+}
+
+unsigned int Swap3and5(unsigned char binary_number)
+{
+	size_t mask = 0xD7;
+	size_t right_mask = 8;
+	size_t left_mask = 32;
+	size_t bits_shifter = 2;
+	
+	return (binary_number & mask) | 
+			(((binary_number & right_mask) << bits_shifter) | 
+			((binary_number & left_mask) >> bits_shifter));
 }
