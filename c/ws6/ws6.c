@@ -3,8 +3,14 @@
 
 #define BASE 2
 #define BITS_IN_BYTE sizeof(size_t) * 8
-
-
+/*
+struct float_t
+{
+	size_t mantissa:23;
+	size_t exponent:8;
+	size_t signes:1;
+};
+*/
 static long Pow2(unsigned int x, unsigned y);
 static void Pow2Test();
 
@@ -22,12 +28,17 @@ static void FindNumsWith3BitsOnTest();
 static unsigned int MirrorLoopBitwise(unsigned int binary_number);
 static void TestMirrorNumberLoop();
 
-static size_t AreBits2And6On(size_t num);
-static size_t AreBits2Or6On(size_t num);
-static void AreBits2And6OnTest();
+static size_t AreBits2And6On(size_t binary_number);
+static size_t AreBits2Or6On(size_t binary_number);
+static void AreBits2And6OrTest();
 
 static unsigned int Swap3and5(unsigned char binary_number);
 static void Swap3and5Test();
+
+static size_t Denominator16(size_t num);
+
+static void SwapBitwise(unsigned int *num1, unsigned int *num2);
+static void SwapBitwiseTest();
 
 int main()
 {
@@ -36,8 +47,10 @@ int main()
 	AddBitwiseTest();
 	FindNumsWith3BitsOnTest();
 	TestMirrorNumberLoop();
-	AreBits2And6OnTest();
+	AreBits2And6OrTest();
 	Swap3and5Test();
+	SwapBitwiseTest();
+	Denominator16(49);
 	
 	return 0;
 }
@@ -217,22 +230,25 @@ static void TestMirrorNumberLoop()
 	}
 }
 
-static size_t AreBits2And6On(size_t num)
+static size_t AreBits2And6On(size_t binary_number)
 {
-	size_t mask = 68;
+	size_t bits_to_shift_a = 2;
+	size_t bits_to_shift_b = 6;	
 	
-	return ((num & mask) == mask) ? 1 : 0;
+	return ((binary_number >> bits_to_shift_a) & 
+			(binary_number >> bits_to_shift_b) & 1);
 }
 
-static size_t AreBits2Or6On(size_t num)
+static size_t AreBits2Or6On(size_t binary_number)
 {
-	size_t mask_2 = 4;
-	size_t mask_6 = 64;
+	size_t bits_to_shift_a = 2;
+	size_t bits_to_shift_b = 6;	
 	
-	return (((num & mask_2) == mask_2) || ((num & mask_6) == mask_6)) ? 1 : 0;
+	return (((binary_number >> bits_to_shift_a) | 
+			(binary_number >> bits_to_shift_b))  &  1);
 }
 
-static void AreBits2And6OnTest()
+static void AreBits2And6OrTest()
 {
 	printf("\nBits 2 and 6 test:\n");
 	if (1 == AreBits2And6On(70))
@@ -279,22 +295,46 @@ static void Swap3and5Test()
 		printf("Failure, received result is: %d\n", Swap3and5(8));
 	}
 }
-
+/*
 static void PrintFloat(float num)
 {
-	struct float_t
-	{
-		size_t m:23;
-		size_t e:8;
-		size_t s:1;
-	};
 	
 	printf("\nFloat is: %ld%d%d\n", float_t.s, float_t.e, float_t.m);
-}
+}*/
+/* TODO: find a way it actually works for large numbers */
 
 static size_t Denominator16(size_t num)
+{ 
+	size_t denominator = 4;
+	
+	return num >> 4;
+	
+}
+
+void SwapBitwise(unsigned int *num1, unsigned int *num2)
 {
-	size_t bit_shifter = 4;
-	size_t denominator = 1;
+	if (num1 != num2)
+	{
+		*num1 = *num1 ^ *num2; 
+		*num2 = *num1 ^ *num2;
+		*num1 = *num1 ^ *num2;
+	}
+}
+
+static void SwapBitwiseTest()
+{
+	unsigned int num1 = 5;
+	unsigned int num2 = 3;
+	
+	SwapBitwise(&num1, &num1);
+	
+	if (5 == num1 && 3 == num2)
+	{
+		printf("GRRREAT SUCCESS!\n");
+	}
+	else
+	{
+		printf("FAILURE!\n");
+	}
 	
 }
