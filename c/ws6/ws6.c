@@ -3,14 +3,15 @@
 
 #define BASE 2
 #define BITS_IN_BYTE sizeof(size_t) * 8
-/*
-struct float_t
+
+static const size_t BitReverseTable256[256] = 
 {
-	size_t mantissa:23;
-	size_t exponent:8;
-	size_t signes:1;
+#   define R2(n)     n,     n + 2*64,     n + 1*64,     n + 3*64
+#   define R4(n) R2(n), R2(n + 2*16), R2(n + 1*16), R2(n + 3*16)
+#   define R6(n) R4(n), R4(n + 2*4 ), R4(n + 1*4 ), R4(n + 3*4 )
+    R6(0), R6(2), R6(1), R6(3)
 };
-*/
+
 static long Pow2(unsigned int x, unsigned y);
 static void Pow2Test();
 
@@ -26,6 +27,7 @@ static size_t CountBits(size_t num);
 static void FindNumsWith3BitsOnTest();
 
 static unsigned int MirrorLoopBitwise(unsigned int binary_number);
+static size_t MirrorBitwiseNoLoop(size_t num);
 static void TestMirrorNumberLoop();
 
 static size_t AreBits2And6On(size_t binary_number);
@@ -40,17 +42,20 @@ static size_t Denominator16(size_t num);
 static void SwapBitwise(unsigned int *num1, unsigned int *num2);
 static void SwapBitwiseTest();
 
+static void PrintFloat(float num);
+
 int main()
-{
+{/*
 	Pow2Test();
 	IsPowerOf2Test();
 	AddBitwiseTest();
-	FindNumsWith3BitsOnTest();
+	FindNumsWith3BitsOnTest();*/
 	TestMirrorNumberLoop();
-	AreBits2And6OrTest();
+	/*AreBits2And6OrTest();
 	Swap3and5Test();
 	SwapBitwiseTest();
-	Denominator16(49);
+	Denominator16(49);*/
+	PrintFloat(-79.89998);
 	
 	return 0;
 }
@@ -220,14 +225,41 @@ static void TestMirrorNumberLoop()
 	size_t numbers_array_size = 6;
 	size_t i = 0;
 	
+	printf("\nLoopMirror test:\n");
 	for (; i < numbers_array_size; i++)
 	{
 		size_t mirrored = MirrorLoopBitwise(numbers[i]);
-		printf("Index is: %u\n", i);
-		printf("Unmirror output is: %u\n", mirrored);
+		printf("Index is: %lu\n", i);
+		printf("Unmirror output is: %lu\n", mirrored);
 		assert(numbers[i] == MirrorLoopBitwise(mirrored));
 		printf("SUCCESS!\n");
 	}
+	
+	printf("\nNo loop Mirror test:\n");
+	for (; i < numbers_array_size; i++)
+	{
+		size_t mirrored = MirrorBitwiseNoLoop(numbers[i]);
+		printf("Index is: %lu\n", i);
+		printf("Unmirror output is: %lu\n", mirrored);
+		assert(numbers[i] == MirrorBitwiseNoLoop(mirrored));
+		printf("SUCCESS!\n");
+	}
+}
+
+static size_t MirrorBitwiseNoLoop(size_t num)
+{
+	size_t reverse_32_bit_val; /* will reverse 8 bits at a time */
+	size_t mirrored = 0; 
+	
+	mirrored = num;
+	
+	/* using the LUT: */
+	mirrored = 	(BitReverseTable256[reverse_32_bit_val & 0xff] << 24) | 
+						(BitReverseTable256[(reverse_32_bit_val >> 8) & 0xff] << 16) | 
+						(BitReverseTable256[(reverse_32_bit_val >> 16) & 0xff] << 8) |
+						(BitReverseTable256[(reverse_32_bit_val >> 24) & 0xff]);
+	
+	return mirrored;
 }
 
 static size_t AreBits2And6On(size_t binary_number)
@@ -295,13 +327,6 @@ static void Swap3and5Test()
 		printf("Failure, received result is: %d\n", Swap3and5(8));
 	}
 }
-/*
-static void PrintFloat(float num)
-{
-	
-	printf("\nFloat is: %ld%d%d\n", float_t.s, float_t.e, float_t.m);
-}*/
-/* TODO: find a way it actually works for large numbers */
 
 static size_t Denominator16(size_t num)
 { 
@@ -338,3 +363,19 @@ static void SwapBitwiseTest()
 	}
 	
 }
+
+static void PrintFloat(float num)
+{
+    struct float_structure
+    {
+        size_t mantissa : 23;
+        size_t exponent : 8;
+        size_t is_signed: 1;
+    };
+    struct float_structure *float_segment = (struct float_structure *)&num;
+
+    printf("Decimal point value: %1$u\n",float_segment->mantissa);
+    printf("Exponent value: %1$u\n",float_segment->exponent);
+    printf("Signed bit: %1$u\n",float_segment->is_signed);
+}
+
