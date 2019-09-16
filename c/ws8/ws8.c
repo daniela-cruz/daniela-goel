@@ -13,14 +13,17 @@ void SetVal(data_t *arr_ptr, data_type_t type /* data_t.dt */, void *data /* dat
 	switch (type)
 	{
 		case INT:
+			arr_ptr->dt = INT;
 			arr_ptr->d.i_var = *(int *)data;
 			break;
 			
 		case FLOAT:
+			arr_ptr->dt = FLOAT;
 			arr_ptr->d.f_var = *(float *)data;
 			break;
 			
 		case STRING:
+			arr_ptr->dt = STRING;
 			arr_ptr->d.s_var = (char *)data;
 			break;
 			
@@ -53,15 +56,15 @@ void PrintVal(data_t *arr_ptr)
 	switch (arr_ptr->dt)
 	{
 		case INT:
-			printf("%d\n", (int )arr_ptr->d.i_var);
+			printf("Int is: %d\n", (int )arr_ptr->d.i_var);
 			break;
 		
 		case FLOAT:
-			printf("%f\n", (float )arr_ptr->d.f_var);
+			printf("Float is: %f\n", (float )arr_ptr->d.f_var);
 			break;
 		
 		case STRING:
-			printf("%s\n", (char *)&arr_ptr->d.i_var);
+			printf("String is: %s\n", (char *)&arr_ptr->d.i_var);
 			break;
 		
 		default:
