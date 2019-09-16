@@ -11,25 +11,32 @@ typedef union DataVar
 
 typedef struct 
 {
-	data_type_t dt;
-	data_var_t d;
+	data_type_t dt; /* data type the user requests */
+	data_var_t d; /* the val itself */
 } data_t;
 
 void SetVal(data_t *arr, data_type_t type /* data_t.dt */, void *data /* data_t.d */)
 {
+	if (NULL == arr_ptr)
+	{
+		return NULL;
+	}
 	
-}
-
-void *GetVal(data_t *arr, )
-{
+	arr_ptr->dt = type;
 	
-	return /**/;
+	switch(type)
+		case INT:
+			(void *)&arr_ptr->d.i_var = data;
+			break;
+		case FLOAT:
+			(void *)&arr_ptr->d.f_var = data;
+			break;
+		case STRING:
+			(void *)&arr_ptr->d.s_var = data;
+			break;
+		default:
+			break;
 }
-
-data_t arr[5];
-
-arr.d = {int,float. char*}
-arr.dt = {INT,FLOAT,STRING};
 
 void *GetVal(data_t *arr, size_t index)
 {
