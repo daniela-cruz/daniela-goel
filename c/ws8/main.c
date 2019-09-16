@@ -51,6 +51,7 @@ static void TestPolimorphism()
 	GetVal(arr_ptr++, &new_f);
 	GetVal(arr_ptr, new_s);
 	printf("%s\n", new_s);
+	free(new_s);
 	
 	printf("\nPrinting values:\n");
 	PrintVal(arr_ptr--);
@@ -58,6 +59,8 @@ static void TestPolimorphism()
 	PrintVal(arr_ptr);
 	
 	printf("\nFree values. . . \n");
+	FreeVal(&arr[0]);
+	FreeVal(&arr[1]);
 	FreeVal(&arr[2]);
 }
 
