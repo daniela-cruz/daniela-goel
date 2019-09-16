@@ -1,5 +1,6 @@
-#include <stdio.h>
-#include <stdlib.h>
+#include <stdio.h> /* printf */
+#include <stdlib.h> /* malloc */
+#include <assert.h> /* assert */
 
 #include "ws8.h"
 
@@ -15,52 +16,52 @@ int main()
 
 static void TestPolimorphism()
 {
-	data_t *arr_ptr;
-	int i_data = 3, new_i = 57; 
-	float f_data = 12.7, new_f = 2.1817;
-	char *new_s = malloc(20);
-	char *s_data = "yo";
+	data_t arr[3];
+	int i_data = 3;
+	float f_data = 12.7;
+	char s_data[7] = "yo";
+	size_t i = 0;
+	void *new_s = NULL;
+	
+	new_s = malloc(20);
+	assert(new_s);
 	
 	printf("\nPolimorphism test:\n");
 	printf("\nSetting values. . .\n");
-	
-	arr_ptr = arr;
+
 	SetVal(&arr[0], INT, &i_data);
-	arr_ptr++;
 	SetVal(&arr[1], FLOAT, &f_data);
-	arr_ptr++;
 	SetVal(&arr[2], STRING, s_data);
 	
 	printf("\nPrinting values:\n");
-	PrintVal(arr_ptr--);
-	PrintVal(arr_ptr--);
-	PrintVal(arr_ptr);
+	for (; i < 3; i++)
+	{
+		PrintVal(&arr[i]);
+	}
 	
 	printf("\nAdding values. . .\n");
-	AddVal(arr_ptr++, 12);
-	AddVal(arr_ptr++, 12);	
-	AddVal(arr_ptr, 12);	
+	
+	for (i = 0; i < 3; i++)
+	{
+		AddVal(&arr[i], 12.7);
+	}
 	
 	printf("\nPrinting values:\n");
-	PrintVal(arr_ptr--);
-	PrintVal(arr_ptr--);
-	PrintVal(arr_ptr);
+	for (i = 0; i < 3; i++)
+	{
+		PrintVal(&arr[i]);
+	}
 	
 	printf("\nGetting values. . .\n");
-	GetVal(arr_ptr++, &new_i);
-	GetVal(arr_ptr++, &new_f);
-	GetVal(arr_ptr, new_s);
-	printf("%s\n", new_s);
-	free(new_s);
-	
-	printf("\nPrinting values:\n");
-	PrintVal(arr_ptr--);
-	PrintVal(arr_ptr--);
-	PrintVal(arr_ptr);
+	GetVal(&arr[2], new_s);
+	printf("%s", new_s);
 	
 	printf("\nFree values. . . \n");
-	FreeVal(&arr[0]);
-	FreeVal(&arr[1]);
-	FreeVal(&arr[2]);
+	for (i = 0; i < 3; i++)
+	{
+		FreeVal(&arr[i]);
+	}
+	
+	free(new_s);
 }
 
