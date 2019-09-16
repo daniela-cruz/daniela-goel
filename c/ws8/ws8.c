@@ -1,39 +1,27 @@
 #include <stdio.h> /* printf */
 #include <assert.h> /* assert */
+#include <string.h> /* strcat */
 
-typedef enum {INT, FLOAT, STRING} data_type_t;
+#include "ws8.h" /* data_t */
 
-typedef union DataVar
+void SetVal(data_t *arr_ptr, data_type_t type /* data_t.dt */, void *data /* data_t.d */)
 {
-	int i_var;
-	float f_var;
-	char *s_var;
-} data_var_t;
-
-typedef struct 
-{
-	data_type_t dt; /* data type the user requests */
-	data_var_t d; /* the val itself */
-} data_t;
-
-void SetVal(data_t *arr, data_type_t type /* data_t.dt */, void *data /* data_t.d */)
-{
-	assert(arr);
+	assert(arr_ptr);
 	
 	arr_ptr->dt = type;
 	
 	switch (type)
 	{
 		case INT:
-			(void *)&arr_ptr->d.i_var = (int)data;
+			arr_ptr->d.i_var = *(int *)data;
 			break;
 			
 		case FLOAT:
-			(void *)&arr_ptr->d.f_var = (float)data;
+			arr_ptr->d.f_var = *(float *)data;
 			break;
 			
 		case STRING:
-			(void *)&arr_ptr->d.s_var = (char *)data;
+			arr_ptr->d.s_var = (char *)data;
 			break;
 			
 		default:
@@ -43,11 +31,9 @@ void SetVal(data_t *arr, data_type_t type /* data_t.dt */, void *data /* data_t.
 
 void *GetVal(data_t *arr_ptr)
 {
-	assert(arr);
+	assert(arr_ptr);
 	
-	data_t type = arr_ptr->dt;
-	
-	switch (type)
+	switch (arr_ptr->dt)
 	{
 		case INT:
 			return (void*)&arr_ptr->d.i_var;
@@ -59,20 +45,19 @@ void *GetVal(data_t *arr_ptr)
 			return (void*)&arr_ptr->d.s_var;
 	}
 	
+	return NULL;
 }
 
 void PrintVal(data_t *arr_ptr)
 {
-	data_t type = arr_ptr->dt;
-	
-	switch (type)
+	switch (arr_ptr->dt)
 	{
 		case INT:
-			printf("%d\n", (int)&arr_ptr->d.i_var);
+			printf("%d\n", (int )arr_ptr->d.i_var);
 			break;
 		
 		case FLOAT:
-			printf("%lf\n", (float)&arr_ptr->d.f_var);
+			printf("%f\n", (float )arr_ptr->d.f_var);
 			break;
 		
 		case STRING:
@@ -85,23 +70,25 @@ void PrintVal(data_t *arr_ptr)
 	}
 }
 
-void *AddVal(data_t *arr_ptr, void *add_value)
+void AddVal(data_t *arr_ptr, void *add_value)
 {
-	data_t type = arr_ptr->dt;
-	
-	switch (type)
+	switch (arr_ptr->dt)
 	{
-		case INT:
-			return ((int)&arr_ptr->d.i_var + (int)add_value);
+		case (INT):
+			arr_ptr->d.i_var += *(int *)add_value;
+			break;
 		
-		case FLOAT:
-			return ((float)&arr_ptr->d.f_var + (float)add_value);
+		case (FLOAT):
+			arr_ptr->d.f_var += *(float *)add_value;
+			break;
 		
-		case STRING:
-			return strcat((char *)&arr_ptr->d.s_var, (char *)add_value);
+		case (STRING):
+			strcat(arr_ptr->d.s_var, (char *)add_value);
+			break;
 		
 		default:
 			printf("Error: cannot perform addition.\n");
 			break;
 	}
 }
+
