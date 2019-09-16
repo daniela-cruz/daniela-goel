@@ -1,30 +1,32 @@
 #include <stdio.h> /* printf */
+#include <stdlib.h> /* malloc */
 #include <assert.h> /* assert */
 #include <string.h> /* strcat */
 
 #include "ws8.h" /* data_t */
 
-void SetVal(data_t *arr_ptr, data_type_t type /* data_t.dt */, void *data /* data_t.d */)
+void SetVal(data_t *var, data_type_t type /* data_t.dt */, void *data /* data_t.d */)
 {
-	assert(arr_ptr);
+	assert(var);
 	
-	arr_ptr->dt = type;
+	var->dt = type;
 	
 	switch (type)
 	{
 		case INT:
-			arr_ptr->dt = INT;
-			arr_ptr->d.i_var = *(int *)data;
+			var->dt = INT;
+			var->d.i_var = *(int *)data;
 			break;
 			
 		case FLOAT:
-			arr_ptr->dt = FLOAT;
-			arr_ptr->d.f_var = *(float *)data;
+			var->dt = FLOAT;
+			var->d.f_var = *(float *)data;
 			break;
 			
 		case STRING:
-			arr_ptr->dt = STRING;
-			arr_ptr->d.s_var = (char *)data;
+			var->dt = STRING;
+			var->d.s_var = malloc(strlen((char *)data) + 1);
+			var->d.s_var = strcpy(var->d.s_var, (char *)data);
 			break;
 			
 		default:
@@ -32,39 +34,39 @@ void SetVal(data_t *arr_ptr, data_type_t type /* data_t.dt */, void *data /* dat
 	}
 }
 
-void *GetVal(data_t *arr_ptr)
+extern void GetVal(data_t *val, void *new_data)
 {
-	assert(arr_ptr);
+	assert(var);
 	
-	switch (arr_ptr->dt)
+	switch (var->dt)
 	{
 		case INT:
-			return (void*)&arr_ptr->d.i_var;
+			return (void*)&var->d.i_var;
 		
 		case FLOAT:
-			return (void*)&arr_ptr->d.f_var;
+			return (void*)&var->d.f_var;
 		
 		case STRING:
-			return (void*)&arr_ptr->d.s_var;
+			return (void*)&var->d.s_var;
 	}
 	
 	return NULL;
 }
 
-void PrintVal(data_t *arr_ptr)
+void PrintVal(data_t *var)
 {
-	switch (arr_ptr->dt)
+	switch (var->dt)
 	{
 		case INT:
-			printf("Int is: %d\n", (int )arr_ptr->d.i_var);
+			printf("Int is: %d\n", (int)var->d.i_var);
 			break;
 		
 		case FLOAT:
-			printf("Float is: %f\n", (float )arr_ptr->d.f_var);
+			printf("Float is: %f\n", (float)var->d.f_var);
 			break;
 		
 		case STRING:
-			printf("String is: %s\n", (char *)&arr_ptr->d.i_var);
+			printf("String is: %s\n", (char *)&var->d.s_var);
 			break;
 		
 		default:
@@ -73,20 +75,21 @@ void PrintVal(data_t *arr_ptr)
 	}
 }
 
-void AddVal(data_t *arr_ptr, void *add_value)
+void AddVal(data_t *var, void *add_value) /* turn add vl to*/
 {
-	switch (arr_ptr->dt)
+	switch (var->dt)
 	{
 		case (INT):
-			arr_ptr->d.i_var += *(int *)add_value;
+			var->d.i_var += *(int *)add_value;
 			break;
 		
 		case (FLOAT):
-			arr_ptr->d.f_var += *(float *)add_value;
+			var->d.f_var += *(float *)add_value;
 			break;
 		
 		case (STRING):
-			strcat(arr_ptr->d.s_var, (char *)add_value);
+			var->d.s_var = malloc(strlen(var->d.s_var) + strlen((char *)add_value) + 1);
+			var->d.s_var = strcat(var->d.s_var, (char *)add_value);
 			break;
 		
 		default:

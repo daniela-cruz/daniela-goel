@@ -36,7 +36,7 @@ static void TestPolimorphism()
 	printf("\nAdding values. . .\n");
 	AddVal(arr_ptr++, &i_data);
 	AddVal(arr_ptr++, &f_data);	
-	AddVal(arr_ptr, s_data);	
+	AddVal(arr_ptr, &s_data);	
 	
 	printf("\nPrinting values:\n");
 	PrintVal(arr_ptr--);
