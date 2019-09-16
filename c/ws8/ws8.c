@@ -73,6 +73,7 @@ void AddVal(data_t *val, int add_value) /* turn add vl to*/
 			
 			val->d.s_var = realloc(val->d.s_var, strlen(val->d.s_var) + strlen(buffer) + 1);
 			val->d.s_var = strcat(val->d.s_var, buffer);
+			free(buffer); buffer = NULL;
 			break;
 		
 		default:
@@ -95,6 +96,50 @@ void GetVal(data_t *val, void *new_data)
 		
 		case (STRING):
 			val->d.s_var = strcpy((char *)new_data, (char *)val->d.s_var);
+			break;
+		
+		default:
+			printf("Error: cannot asign new value.\n");
+			break;
+	}
+}
+
+extern void GetType(data_t *val, data_type_t *new_data)
+{
+	switch (val->dt)
+	{
+		case (INT):
+			*new_data = val->d.i_var;
+			break;
+		
+		case (FLOAT):
+			*new_data = val->d.f_var;
+			break;
+		
+		case (STRING):
+			*new_data = val->d.s_var;
+			break;
+		
+		default:
+			printf("Error: cannot get type value.\n");
+			break;
+	}
+}
+
+void FreeVal(data_t *val)
+{
+	switch (val->dt)
+	{
+		case (INT):
+			val->d.i_var = 0;
+			break;
+		
+		case (FLOAT):
+			val->d.f_var = 0;
+			break;
+		
+		case (STRING):
+			free(val->d.s_var); val->d.s_var = NULL;
 			break;
 		
 		default:

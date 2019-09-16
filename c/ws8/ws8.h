@@ -18,10 +18,14 @@ typedef struct
 
 extern void SetVal(data_t *val, data_type_t type /* data_t.dt */, void *data /* data_t.d */);
 
-extern void GetVal(data_t *val, void *new_data);
-
 extern void PrintVal(data_t *val);
 
 extern void AddVal(data_t *val, int add_value);
+
+extern void GetVal(data_t *val, void *new_data);
+
+extern void GetType(data_t *val, data_type_t *new_data);
+
+extern void FreeVal(data_t *val);
 
 #endif

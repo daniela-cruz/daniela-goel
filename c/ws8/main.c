@@ -3,6 +3,8 @@
 
 #include "ws8.h"
 
+data_t arr[3];
+
 static void TestPolimorphism();
 
 int main()
@@ -13,11 +15,9 @@ int main()
 
 static void TestPolimorphism()
 {
-	data_t arr[3];
 	data_t *arr_ptr;
 	int i_data = 3, new_i = 57; 
 	float f_data = 12.7, new_f = 2.1817;
-	/*char *s_data = "ggfdgfgfgfgf", */
 	char *new_s = malloc(20);
 	char *s_data = "yo";
 	
@@ -53,8 +53,11 @@ static void TestPolimorphism()
 	printf("%s\n", new_s);
 	
 	printf("\nPrinting values:\n");
-	PrintVal(&arr[0]);
-	PrintVal(&arr[1]);
-	PrintVal(&arr[2]);
+	PrintVal(arr_ptr--);
+	PrintVal(arr_ptr--);
+	PrintVal(arr_ptr);
+	
+	printf("\nFree values. . . \n");
+	FreeVal(&arr[2]);
 }
 
