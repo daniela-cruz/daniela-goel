@@ -5,28 +5,25 @@
 
 #include "ws8.h" /* data_t */
 
-void SetVal(data_t *var, data_type_t type /* data_t.dt */, void *data /* data_t.d */)
+void SetVal(data_t *val, data_type_t type /* data_t.dt */, void *data /* data_t.d */)
 {
-	assert(var);
+	assert(val);
 	
-	var->dt = type;
+	val->dt = type;
 	
 	switch (type)
 	{
 		case INT:
-			var->dt = INT;
-			var->d.i_var = *(int *)data;
+			val->d.i_var = *(int *)data;
 			break;
 			
 		case FLOAT:
-			var->dt = FLOAT;
-			var->d.f_var = *(float *)data;
+			val->d.f_var = *(float *)data;
 			break;
 			
 		case STRING:
-			var->dt = STRING;
-			var->d.s_var = malloc(strlen((char *)data) + 1);
-			var->d.s_var = strcpy(var->d.s_var, (char *)data);
+			val->d.s_var = malloc(strlen((char *) data) + 1);
+			strcpy(val->d.s_var, (char *)data);
 			break;
 			
 		default:
@@ -34,39 +31,20 @@ void SetVal(data_t *var, data_type_t type /* data_t.dt */, void *data /* data_t.
 	}
 }
 
-extern void GetVal(data_t *val, void *new_data)
+void PrintVal(data_t *val)
 {
-	assert(var);
-	
-	switch (var->dt)
+	switch (val->dt)
 	{
 		case INT:
-			return (void*)&var->d.i_var;
-		
-		case FLOAT:
-			return (void*)&var->d.f_var;
-		
-		case STRING:
-			return (void*)&var->d.s_var;
-	}
-	
-	return NULL;
-}
-
-void PrintVal(data_t *var)
-{
-	switch (var->dt)
-	{
-		case INT:
-			printf("Int is: %d\n", (int)var->d.i_var);
+			printf("Int is: %d\n", (int)val->d.i_var);
 			break;
 		
 		case FLOAT:
-			printf("Float is: %f\n", (float)var->d.f_var);
+			printf("Float is: %f\n", (float)val->d.f_var);
 			break;
 		
 		case STRING:
-			printf("String is: %s\n", (char *)&var->d.s_var);
+			printf("String is: %s\n", (char *) val->d.s_var);
 			break;
 		
 		default:
@@ -75,21 +53,26 @@ void PrintVal(data_t *var)
 	}
 }
 
-void AddVal(data_t *var, void *add_value) /* turn add vl to*/
+void AddVal(data_t *val, int add_value) /* turn add vl to*/
 {
-	switch (var->dt)
+	char *buffer = NULL;
+	switch (val->dt)
 	{
 		case (INT):
-			var->d.i_var += *(int *)add_value;
+			val->d.i_var += add_value;
 			break;
 		
 		case (FLOAT):
-			var->d.f_var += *(float *)add_value;
+			val->d.f_var += add_value;
 			break;
 		
 		case (STRING):
-			var->d.s_var = malloc(strlen(var->d.s_var) + strlen((char *)add_value) + 1);
-			var->d.s_var = strcat(var->d.s_var, (char *)add_value);
+			buffer = malloc(10); /* max int digits possible */
+			
+			sprintf(buffer, "%d", add_value);
+			
+			val->d.s_var = realloc(val->d.s_var, strlen(val->d.s_var) + strlen(buffer) + 1);
+			val->d.s_var = strcat(val->d.s_var, buffer);
 			break;
 		
 		default:
@@ -98,3 +81,24 @@ void AddVal(data_t *var, void *add_value) /* turn add vl to*/
 	}
 }
 
+void GetVal(data_t *val, void *new_data)
+{
+	switch (val->dt)
+	{
+		case (INT):
+			val->d.i_var = *(int *)new_data;
+			break;
+		
+		case (FLOAT):
+			val->d.f_var = *(float *)new_data;
+			break;
+		
+		case (STRING):
+			val->d.s_var = strcpy((char *)new_data, (char *)val->d.s_var);
+			break;
+		
+		default:
+			printf("Error: cannot asign new value.\n");
+			break;
+	}
+}

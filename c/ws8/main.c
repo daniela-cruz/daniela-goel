@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <stdlib.h>
 
 #include "ws8.h"
 
@@ -14,19 +15,21 @@ static void TestPolimorphism()
 {
 	data_t arr[3];
 	data_t *arr_ptr;
-	int i_data = 3;
-	float f_data = 12.7;
-	char *s_data = "hell";
+	int i_data = 3, new_i = 57; 
+	float f_data = 12.7, new_f = 2.1817;
+	/*char *s_data = "ggfdgfgfgfgf", */
+	char *new_s = malloc(20);
+	char *s_data = "yo";
 	
 	printf("\nPolimorphism test:\n");
 	printf("\nSetting values. . .\n");
 	
 	arr_ptr = arr;
-	SetVal(arr_ptr, INT, &i_data);
+	SetVal(&arr[0], INT, &i_data);
 	arr_ptr++;
-	SetVal(arr_ptr, FLOAT, &f_data);
+	SetVal(&arr[1], FLOAT, &f_data);
 	arr_ptr++;
-	SetVal(arr_ptr, STRING, &s_data);
+	SetVal(&arr[2], STRING, s_data);
 	
 	printf("\nPrinting values:\n");
 	PrintVal(arr_ptr--);
@@ -34,13 +37,24 @@ static void TestPolimorphism()
 	PrintVal(arr_ptr);
 	
 	printf("\nAdding values. . .\n");
-	AddVal(arr_ptr++, &i_data);
-	AddVal(arr_ptr++, &f_data);	
-	AddVal(arr_ptr, &s_data);	
+	AddVal(arr_ptr++, 12);
+	AddVal(arr_ptr++, 12);	
+	AddVal(arr_ptr, 12);	
 	
 	printf("\nPrinting values:\n");
 	PrintVal(arr_ptr--);
 	PrintVal(arr_ptr--);
 	PrintVal(arr_ptr);
+	
+	printf("\nGetting values. . .\n");
+	GetVal(arr_ptr++, &new_i);
+	GetVal(arr_ptr++, &new_f);
+	GetVal(arr_ptr, new_s);
+	printf("%s\n", new_s);
+	
+	printf("\nPrinting values:\n");
+	PrintVal(&arr[0]);
+	PrintVal(&arr[1]);
+	PrintVal(&arr[2]);
 }
 

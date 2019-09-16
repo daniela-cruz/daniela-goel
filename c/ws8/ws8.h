@@ -22,6 +22,6 @@ extern void GetVal(data_t *val, void *new_data);
 
 extern void PrintVal(data_t *val);
 
-extern void AddVal(data_t *val, void *add_value);
+extern void AddVal(data_t *val, int add_value);
 
 #endif
