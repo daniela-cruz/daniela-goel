@@ -133,4 +133,6 @@ void FreeVal(data_t *val)
 			printf("Error: cannot asign new value.\n");
 			break;
 	}
+	
+	val->dt = 0;
 }

@@ -1,19 +1,11 @@
 #include <stdio.h>
-
-typedef  void (*func_ptr_t)();
-
-void foo()
-{
-	printf("I'm Foo!\n");
-}
+#define MY_SIZEOF(type) (char *)(&type + 1) - (char *)(&type)
 
 int main()
 {
-	func_ptr_t foo_ptr = NULL;
+	int arr[10];
 	
-	foo_ptr = &foo;
 	
-	foo_ptr();
-	
+	printf("%ld", MY_SIZEOF(arr));
 	return 0;
 }
