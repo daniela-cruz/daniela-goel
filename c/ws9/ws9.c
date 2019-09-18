@@ -74,3 +74,13 @@ void *MemSet(void *s, int c, size_t n)
 	
 	return s;
 }
+
+void *MemCpy(void *dest, const void *src, size_t n)
+{
+	if (strlen(dest) < n)
+	{
+		dest = realloc(dest, n);
+	}
+	
+	return dest;
+}
