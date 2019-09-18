@@ -3,7 +3,7 @@
 #include <assert.h> /* assert */
 #include <string.h> /* memset */
 
-const char system_word = sizeof(size_t);
+const size_t system_word = sizeof(size_t);
 
 
 char s1[] = "I am a string and I have manyyyyy characters!";
@@ -16,7 +16,7 @@ void *MemSet(void *s, int c, size_t n);
 int main()
 {	
 	char *s = s1;
-	MemSet(&s1[2], c, 16);
+	MemSet(s + 2, c, 34);
 	printf("%s\n", s);
 	
 	return 0;
@@ -29,47 +29,40 @@ void *MemSet(void *s, int c, size_t n)
 {
 	char *buffer = NULL;
 	char *s_char_cpy = NULL;
-	size_t *s_size_t_cpy = NULL;
 	int i = 0;
 	size_t address = 0;
 
 	assert(s);
-	address = (int)s;
-	s_size_t_cpy = (size_t*)s;
 	s_char_cpy = (char *)s;
 	buffer = malloc(system_word);
 	assert(buffer);
 
 	/* while s' address doesn't align with system_word, copy byte by byte: */
-	while ((0 != address % system_word) && (0 < n))
+	while ((0 != (size_t)s_char_cpy % system_word) && (0 < n))
 	{
 	*s_char_cpy = c;
-	address = (int)s_char_cpy;
 	s_char_cpy++;
 	n--;
 	}
 
 	 /* pointer is aligned, if n is higher than system_word, copy word by word: */
-	if (system_word <= (char)n)
+	if (system_word <= n)
 	{
-		s_size_t_cpy = (size_t *)s_char_cpy; /* continue from where we left off */
-		
 		/* create a word sized buffer fulll of c: */
-		for (; i < system_word; i++, buffer++)
+		for (; i < system_word; i++)
 		{
-			*buffer = c;
+			*(buffer + i) = c;
 		}
 		
 		/* copy word by word: */
-		while (system_word < (char)n)
+		while (system_word < n)
 		{
-			*s_size_t_cpy = *buffer;
+			*(size_t *) s_char_cpy = *(size_t *) buffer;
 			n -= system_word;
-			s_size_t_cpy++;
+			s_char_cpy+=system_word;
 		}
 		
-		s_char_cpy = (char *)s_size_t_cpy; /* continue from where we left off */
-		/*free(buffer); buffer = NULL;*/
+		free(buffer); buffer = NULL;
 	}
 	
 	/* copy to tail: */
