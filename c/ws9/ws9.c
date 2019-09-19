@@ -31,7 +31,7 @@ int main()
 	
 	src = s2;
 	dest = s1;
-	/*dest = memmove(src + 22, src, 40);*/
+	dest = memmove(src + 22, src, 40);
 	dest = MemMove(src + 22, src, 40);
 	dest -=22;
 	printf("%s\n", dest);
@@ -166,7 +166,6 @@ static void MemCpyTest()
 /*
 * memmove reimplmentation:
 */
-/*
 void *MemMove(void *dest, const void *src, size_t n)
 {
 	size_t *src_cpy = NULL;
@@ -178,51 +177,61 @@ void *MemMove(void *dest, const void *src, size_t n)
 	assert(dest);
 	
 	src_cpy = (size_t *)src;
+	src_char_cp = (char *)src_cpy;
 	dest_cpy = (size_t *)dest;
+	dest_char_cpy = (char *)dest_cpy;
 	
-	if (n > strlen(dest))
+	/* make sure n is not passing allocated memory */
+	
+	if (n > strlen(dest)) 
 	{
 		n = strlen(dest) + 1;
 	}
 	
-	if (dest_cpy < src_cpy) 
+	 /* make sure n is not passing allocated memory */
+	if (n > strlen(src))
+	{
+		n = strlen(src) + 1;
+	}
+	
+	/* handle case of dest overlapping src */
+	if (dest_cpy > src_cpy) 
 	{
 
-		for (; ((0 != (size_t)dest_cpy % system_word) && (0 < n)); 
-				dest_cpy++, src_cpy++, n -= system_word)
+		for (; ((0 != (size_t)src_char_cp % system_word) && (0 < n)); 
+				dest_cpy++, src_char_cp++, n --)
 		{
-			*dest_cpy = *src_cpy;
+			*dest_char_cpy = *src_char_cp;
 		}
 		
 
-		src_char_cp = (char *)src_cpy;
-		dest_char_cpy = (char *)dest_cpy;
+		src_cpy = (size_t *)src_char_cp;
+		dest_cpy = (size_t *)dest_char_cpy;
 		
-		for (; 0 < n; n--, dest_char_cpy++, src_char_cp++)
+		for (; system_word < n; n -= system_word, dest_cpy++, src_cpy++)
 		{
-			*dest_char_cpy = *src_char_cp;
+			*dest_cpy = *src_cpy;
 		}
 	}
 	
+	/* handle if dest address is after source */
 	else 
 	{
-
-		for (; ((0 != (size_t)dest_cpy % system_word) && (0 < n)); 
-				dest_cpy--, src_cpy--, n -= system_word)
-		{
-			*dest_cpy = *src_cpy;
-		}
-		
-
-		src_char_cp = (char *)src_cpy;
-		dest_char_cpy = (char *)dest_cpy;
-		
-		for (; 0 < n; n--, dest_char_cpy--, src_char_cp--)
+		/* if address n */
+		for (; ((0 != (size_t)dest_char_cpy % system_word) && (0 < n)); 
+				dest_char_cpy--, src_char_cp--, n --)
 		{
 			*dest_char_cpy = *src_char_cp;
+		}
+		
+		src_cpy = (size_t *)src_char_cp;
+		dest_cpy = (size_t *)dest_char_cpy;
+		
+		for (; system_word < n; n -= system_word, dest_cpy--, src_cpy--)
+		{
+			*dest_cpy = *src_cpy;
 		}
 	}
 	
 	return dest;
 }
-*/
