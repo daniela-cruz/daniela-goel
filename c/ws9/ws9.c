@@ -1,5 +1,6 @@
 #include <stdio.h> /* printf */
 #include <stdlib.h> /* malloc, free */
+#include <stddef.h> /* size_t, ptrdiff_t */
 #include <assert.h> /* assert */
 #include <string.h> /* memset */
 
@@ -12,12 +13,28 @@ char c = '.';
 
 /* exercise 1: */
 void *MemSet(void *s, int c, size_t n);
+static void MemSetTest();
+
+void *MemCpy(void *dest, const void *src, size_t n);
+static void MemCpyTest();
+
+void *MemMove(void *dest, const void *src, size_t n);
 
 int main()
 {	
-	char *s = s1;
-	MemSet(s + 2, c, 34);
-	printf("%s\n", s);
+	char s2[] = "all kinds of characters and words to test if this is working";
+	char *dest = NULL;
+	char *src = NULL;
+	
+/*	MemSetTest();*/
+/*	MemCpyTest();*/
+	
+	src = s2;
+	dest = s1;
+	/*dest = memmove(src + 22, src, 40);*/
+	dest = MemMove(src + 22, src, 40);
+	dest -=22;
+	printf("%s\n", dest);
 	
 	return 0;
 }
@@ -30,7 +47,6 @@ void *MemSet(void *s, int c, size_t n)
 	char *buffer = NULL;
 	char *s_char_cpy = NULL;
 	int i = 0;
-	size_t address = 0;
 
 	assert(s);
 	s_char_cpy = (char *)s;
@@ -40,9 +56,9 @@ void *MemSet(void *s, int c, size_t n)
 	/* while s' address doesn't align with system_word, copy byte by byte: */
 	while ((0 != (size_t)s_char_cpy % system_word) && (0 < n))
 	{
-	*s_char_cpy = c;
-	s_char_cpy++;
-	n--;
+		*s_char_cpy = c;
+		s_char_cpy++;
+		n--;
 	}
 
 	 /* pointer is aligned, if n is higher than system_word, copy word by word: */
@@ -75,12 +91,138 @@ void *MemSet(void *s, int c, size_t n)
 	return s;
 }
 
+static void MemSetTest()
+{
+	char *s = s1;
+	MemSet(s + 2, c, 34);
+	printf("%s\n", s);
+}
 void *MemCpy(void *dest, const void *src, size_t n)
 {
-	if (strlen(dest) < n)
+	size_t *src_cpy = NULL;
+	size_t *dest_cpy = NULL;
+	char *src_char_cp = NULL;
+	char *dest_char_cpy = NULL;
+	
+	assert(src);
+	assert(dest);
+	
+	src_cpy = (size_t *)src;
+	dest_cpy = (size_t *)dest;
+	src_char_cp = (char *)src;
+	dest_char_cpy = (char *)dest;
+	
+	/* while dest's address doesn't align with system_word, copy byte by byte: */
+	while ((0 != (size_t)dest_char_cpy % system_word) && (0 < n))
 	{
-		dest = realloc(dest, n);
+		*dest_char_cpy = *src_char_cp;
+		dest_char_cpy++;
+		src_char_cp++;
+		n--;
+	}
+	
+	/* continue from where we left off */
+	src_cpy = (size_t *)src_char_cp;
+	dest_cpy = (size_t *)dest_char_cpy;
+	
+	
+	while (system_word < n)
+	{
+		*dest_cpy = *src_cpy;
+		dest_cpy++;
+		src_cpy++;
+		n -= system_word;
+	}
+	
+	src_char_cp = (char *)src_cpy;
+	dest_char_cpy = (char *)dest_cpy;
+	
+	while (0 < n)
+	{
+		*dest_char_cpy = *src_char_cp;
+		dest_char_cpy++;
+		src_char_cp++;
+		n --;
 	}
 	
 	return dest;
 }
+
+static void MemCpyTest()
+{
+	char *dest = NULL;
+	char *src = "all kinds of nonsense and a string that is longer than the original string, you see?";
+	
+	dest = malloc(strlen(s1) + 1);
+	
+	dest = strcpy(dest, s1);
+	
+	MemCpy(dest + 30, src, 17);
+	printf("%s\n", dest);
+	
+	free(dest);
+}
+
+/*
+* memmove reimplmentation:
+*/
+/*
+void *MemMove(void *dest, const void *src, size_t n)
+{
+	size_t *src_cpy = NULL;
+	size_t *dest_cpy = NULL;
+	char *src_char_cp = NULL;
+	char *dest_char_cpy = NULL;
+	
+	assert(src);
+	assert(dest);
+	
+	src_cpy = (size_t *)src;
+	dest_cpy = (size_t *)dest;
+	
+	if (n > strlen(dest))
+	{
+		n = strlen(dest) + 1;
+	}
+	
+	if (dest_cpy < src_cpy) 
+	{
+
+		for (; ((0 != (size_t)dest_cpy % system_word) && (0 < n)); 
+				dest_cpy++, src_cpy++, n -= system_word)
+		{
+			*dest_cpy = *src_cpy;
+		}
+		
+
+		src_char_cp = (char *)src_cpy;
+		dest_char_cpy = (char *)dest_cpy;
+		
+		for (; 0 < n; n--, dest_char_cpy++, src_char_cp++)
+		{
+			*dest_char_cpy = *src_char_cp;
+		}
+	}
+	
+	else 
+	{
+
+		for (; ((0 != (size_t)dest_cpy % system_word) && (0 < n)); 
+				dest_cpy--, src_cpy--, n -= system_word)
+		{
+			*dest_cpy = *src_cpy;
+		}
+		
+
+		src_char_cp = (char *)src_cpy;
+		dest_char_cpy = (char *)dest_cpy;
+		
+		for (; 0 < n; n--, dest_char_cpy--, src_char_cp--)
+		{
+			*dest_char_cpy = *src_char_cp;
+		}
+	}
+	
+	return dest;
+}
+*/
