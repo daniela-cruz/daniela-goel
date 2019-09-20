@@ -2,23 +2,15 @@
 #include <stdlib.h> /* malloc, free */
 #include <stddef.h> /* size_t, ptrdiff_t */
 #include <assert.h> /* assert */
-#include <string.h> /* memset */
+#include <string.h> /* strlen */
 
-char Itoa(const int n);
+#include "itoa.h" /* for all functions bellow */
+
 static void ItoaTest();
 
-int AtoiBase10(const char *nptr);
 static void AtoiBase10Test();
 
-int AtoiBase36(const char *nptr);
 static void AtoiBase36Test();
-
-int main()
-{
-	AtoiBase36Test();
-	
-	return 0;
-}
 
 /* turn an int to char */
 char Itoa(const int n)
