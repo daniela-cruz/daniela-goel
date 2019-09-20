@@ -3,8 +3,11 @@
 #include <stddef.h> /* size_t, ptrdiff_t */
 #include <assert.h> /* assert */
 #include <string.h> /* memset */
+#include <stdint.h> /* uint16_t */
 
 #include "itoa.h" /* itoa */
+
+#define IS_LITTLE_ENDIAN !(*(uint16_t *)"\0\xff" < 0x100)
 
 size_t IsLittleEndian();
 static void PrintIdenticalChars(const char *s1, const char *s2, const char *s3);
@@ -13,6 +16,7 @@ static void PrintIdenticalCharsTest();
 int main()
 {
 	IsLittleEndian();
+	printf("\nIs little endian macro: %d\n", IS_LITTLE_ENDIAN);
 	PrintIdenticalCharsTest();
 	
 	return 0;
