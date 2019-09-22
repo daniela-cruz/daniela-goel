@@ -1,6 +1,8 @@
 #ifndef __BIT_ARRAY_H__
 #define __BIT_ARRAY_H__
 
+#include <stddef.h> /* size_t */
+
 typedef size_t bit_arr_t; /* an array of 64 bits*/
 
 /* Create a new bit array */
