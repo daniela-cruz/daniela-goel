@@ -38,11 +38,21 @@ bit_arr_t BitArrFlip(bit_arr_t arr, int bit_location);
 /* count number of set bits */
 size_t BitArrCountOn(bit_arr_t arr);
 
+/* count number of set bits 
+* using a LUT table init table if not initialized before
+*/
+size_t BitArrCountOnLUT(bit_arr_t arr);
+
 /* count number of off bits */
 size_t BitArrCountOff(bit_arr_t arr);
 
 /* mirror bit array */
 bit_arr_t BitArrMirror(bit_arr_t arr);
+
+/* mirror bit array
+* using a LUT table init table if not initialized before
+*/
+bit_arr_t BitArrMirrorLUT(bit_arr_t arr);
 
 /* convert array to a string */
 char *BitArrToString(char *dest, bit_arr_t src);

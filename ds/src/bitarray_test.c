@@ -44,10 +44,26 @@ int main()
 
 static void IsOnTest()
 {
-	bit_arr_t arr = 11;
+	bit_arr_t arr[] = {11, 15};
+	int expected_resul[] = {0, 1};
+	size_t i = 0, arr_size = 0;
+	
+	arr_size = sizeof(arr) / sizeof(bit_arr_t);
 	
 	printf("\nIsOn test is on...\n");
-	printf("%d\n", BitArrIsOn(arr, 2));	
+	
+	for (; i < arr_size; i++)
+	{
+		if ((BitArrIsOn(arr[i], 2)) == expected_resul[i])
+		{
+			printf("SUCCESS!\n");
+		}
+		else
+		{
+			printf("Failure!\n");
+			printf("Received result is: %d\n", BitArrIsOn(arr[i], 2));	
+		}
+	}
 	
 }
 

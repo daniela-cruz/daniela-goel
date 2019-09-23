@@ -1,10 +1,61 @@
 #include <assert.h> /* assert */
 #include <stddef.h> /* size_t */
 #include <string.h> /* strlen */
+#include <limits.h> /* UCHAR_MAX */
 
 #include "bitarray.h" /* all bit array functions below */
 
 static void Reverse (char *buffer);
+static void BitArrInitLUT();
+static size_t CountBits(size_t num);
+
+static size_t bit_arr_LUT[UCHAR_MAX + 1] = {0};
+
+/* create a LUT that contains number of set bits of each number from 0 to 255 */
+static void BitArrInitLUT()
+{
+	size_t i = 0;
+	
+	for (; i < UCHAR_MAX; i++)
+	{
+		bit_arr_LUT[i] = CountBits(i);
+	}
+	
+	bit_arr_LUT[UCHAR_MAX] = 1; /* last sentinel to mark the LUT is already initialized */
+}
+
+static size_t CountBits(size_t num)
+{
+	size_t bit_counter = 0;
+	size_t mask = 1;
+	
+	while (0 < num)
+	{
+		if (1 == (num & mask))
+		{
+			bit_counter++;
+		}
+		
+		num >>= 1;
+	}
+	
+	return bit_counter;
+}
+
+size_t BitArrCountOnLUT(bit_arr_t arr)
+{
+	if (1 != bit_arr_LUT[UCHAR_MAX])
+	{
+		BitArrInitLUT();
+	}
+	
+	return bit_arr_LUT[arr];
+}
+
+bit_arr_t BitArrMirrorLUT(bit_arr_t arr)
+{
+	
+}
 
 /* 1 if a particular bit is set on else 0 */
 int BitArrIsOn(bit_arr_t arr, int bit_location)
@@ -124,7 +175,7 @@ bit_arr_t BitArrRotR(bit_arr_t arr, size_t n)
 	n %= arr_size;
 	
 	/* create a mask with word - n bits */
-	for (; i < arr_size - n; i++)
+	for (; i < arr_size - n - 1; i++)
 	{
 		mask = 1;
 		mask <<= 1;
