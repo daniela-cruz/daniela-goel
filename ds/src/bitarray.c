@@ -1,7 +1,10 @@
 #include <assert.h> /* assert */
 #include <stddef.h> /* size_t */
+#include <string.h> /* strlen */
 
 #include "bitarray.h" /* all bit array functions below */
+
+static void Reverse (char *buffer);
 
 /* 1 if a particular bit is set on else 0 */
 int BitArrIsOn(bit_arr_t arr, int bit_location)
@@ -235,11 +238,30 @@ char *BitArrToString(char *dest, bit_arr_t src)
 	
 	for (i = 0 ; i < arr_size ; i++)
 	{
-		*(dest + i) = (arr % 2) + '0' ;
-		arr /= 2;
+		*(dest + i) = (src % 2) + '0' ;
+		src /= 2;
 	}
 	
-	reverse(dest);
+	Reverse(dest);
 	
 	return dest;	
 }
+
+static void Reverse (char *buffer)
+{
+	char temp;
+	size_t i = 0;
+	size_t len = 0;
+	
+	len = strlen(buffer) -1;
+	
+	for (i=0 ; i <= len / 2 ; i++)
+	{
+		temp = *(buffer + i);
+		*(buffer + i) = *(buffer + len - i);
+		*(buffer + len - i) = temp;
+	}	
+}	
+	
+
+

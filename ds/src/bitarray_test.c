@@ -1,4 +1,5 @@
 #include <stdio.h> /* printf */
+#include <stdlib.h> /* malloc, free */
 #include <stddef.h> /* size_t */
 
 #include "bitarray.h" /* all bit array functions below */
@@ -151,8 +152,8 @@ static void ToStringTest()
 	
 	dest = malloc(65);
 	
-	printf("\ToString bit test:\n");
-	printf("%ld\n", BitArrToString(dest, src));
+	printf("\nToString bit test:\n");
+	printf("%s\n", BitArrToString(dest, src));
 	
 	free(dest); dest = NULL;
 }
