@@ -16,19 +16,24 @@ const size_t wordsize = sizeof(bit_arr_t) * 8;
 
 int main()
 {
-	bit_arr_t arr = 1;
-	BitArrMirrorLUT(arr);
+	bit_arr_t arr = 3;
 	
+	arr = BitArrMirrorLUT(arr);
 	printf("%lu\n", arr);
+	
+	arr = BitArrMirrorLUT(arr);
+	
+	printf("%lu\n", BitArrMirrorLUT(arr));
+	
 	return 0;
 }
 
 bit_arr_t BitArrCountOnLUT(bit_arr_t arr)
 {	
 	int count = 0;
-	bit_arr_t mask = 255;
+	bit_arr_t mask = UCHAR_MAX - 1;
 
-	if(count_lut[UCHAR_MAX + 1] == 0)
+	if (0 == (count_lut[UCHAR_MAX + 1]))
 	{
 		BitArrCountLUTInit();
 	}
