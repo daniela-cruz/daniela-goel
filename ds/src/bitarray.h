@@ -12,7 +12,7 @@ int BitArrIsOn(bit_arr_t arr, int bit_location);
 int BitArrIsOff(bit_arr_t arr, int bit_location);
 
 /* set on a single bit within the array */
-bit_arr_t BitArrSet(bit_arr_t arr, int bit_location, int is_set);
+bit_arr_t BitArrSet(bit_arr_t arr, size_t bit_location, int is_set);
 
 /* set on all bits in array */
 bit_arr_t BitArrSetAll(bit_arr_t arr);
@@ -42,9 +42,9 @@ size_t BitArrCountOn(bit_arr_t arr);
 size_t BitArrCountOff(bit_arr_t arr);
 
 /* mirror bit array */
-bit_arr_t Mirror(bit_arr_t arr);
+bit_arr_t BitArrMirror(bit_arr_t arr);
 
 /* convert array to a string */
-char *ToString(char *dest, bit_arr_t src);
+char *BitArrToString(char *dest, bit_arr_t src);
 
 #endif /* __BIT_ARRAY_H__ */

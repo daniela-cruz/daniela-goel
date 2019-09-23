@@ -25,7 +25,7 @@ int BitArrIsOff(bit_arr_t arr, int bit_location)
 }
 
 /* set on a single bit within the array */
-bit_arr_t BitArrSet(bit_arr_t arr, int bit_location, int is_set)
+bit_arr_t BitArrSet(bit_arr_t arr, size_t bit_location, int is_set)
 {
 	bit_arr_t mask = 1;
 	
@@ -199,7 +199,47 @@ size_t BitArrCountOff(bit_arr_t arr)
 }
 
 /* mirror bit array */
-bit_arr_t Mirror(bit_arr_t arr);
+bit_arr_t BitArrMirror(bit_arr_t arr)
+{
+	bit_arr_t mask_r = 1;
+	bit_arr_t mask_l = 1;
+	int first = 0, last = 0;
+	size_t arr_size = 0;
+	size_t i = 0;
+	
+	arr_size =  sizeof(bit_arr_t) * 8; 
+	mask_l <<= (arr_size - 1); /* mask_l is pushed left to msb */
+	
+	for (i = 0; i < arr_size / 2 ; i++)
+	{
+		first = ((arr & mask_r) == mask_r); /* first will receive arr's lsb value, 1 if the bit is on 0 if off */
+		last = ((arr & mask_l) == mask_l); /* last will receive arr's msb value, 1 if the bit is on 0 if off */
+		
+		arr = BitArrSet(arr, i, last); /* move value of last to first */
+		arr = BitArrSet(arr, (arr_size - i - 1), first); /* move value of first to last */
+		
+		mask_r <<= 1; /* forward mask_r to left bit */
+		mask_l >>= 1; /* forward mask_l to right bit */
+	}
+		
+	return arr;
+}
 
 /* convert array to a string */
-char *ToString(char *dest, bit_arr_t src);
+char *BitArrToString(char *dest, bit_arr_t src)
+{
+	size_t i = 0;
+	size_t arr_size = 0;
+	
+	arr_size =  sizeof(bit_arr_t) * 8; 
+	
+	for (i = 0 ; i < arr_size ; i++)
+	{
+		*(dest + i) = (arr % 2) + '0' ;
+		arr /= 2;
+	}
+	
+	reverse(dest);
+	
+	return dest;	
+}

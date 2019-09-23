@@ -18,6 +18,8 @@ static void CountOffTest();
 static void RotLTest();
 static void RotRTest();
 static void FlipTest();
+static void MirrorTest();
+static void ToStringTest();
 
 int main()
 {
@@ -33,6 +35,8 @@ int main()
 	RotLTest();
 	RotRTest();
 	FlipTest();
+	MirrorTest();
+	ToStringTest();
 	
 	return 0;
 }
@@ -130,4 +134,25 @@ static void FlipTest()
 	printf("\nFlip bit test:\n");
 	printf("%ld\n", BitArrFlip(arr, 3));
 
+}
+
+static void MirrorTest()
+{
+	bit_arr_t arr = 57552;
+	
+	printf("\nMirror bit test:\n");
+	printf("%ld\n", BitArrMirror(arr));
+}
+
+static void ToStringTest()
+{
+	bit_arr_t src = 57552;
+	char *dest = NULL;
+	
+	dest = malloc(65);
+	
+	printf("\ToString bit test:\n");
+	printf("%ld\n", BitArrToString(dest, src));
+	
+	free(dest); dest = NULL;
 }
