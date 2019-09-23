@@ -5,11 +5,15 @@
 
 #include "bitarray.h" /* all bit array functions below */
 
-static void Reverse (char *buffer);
+size_t BitArrCountOnLUT(bit_arr_t arr);
 static void BitArrInitLUT();
 static size_t CountBits(size_t num);
+static void Reverse (char *buffer);
 
-static size_t bit_arr_LUT[UCHAR_MAX + 1] = {0};
+bit_arr_t BitArrMirrorLUT(bit_arr_t arr);
+static void BitArrMirrorInitLUT();
+
+static bit_arr_t bit_arr_LUT[UCHAR_MAX + 1] = {0};
 
 /* create a LUT that contains number of set bits of each number from 0 to 255 */
 static void BitArrInitLUT()
@@ -41,22 +45,77 @@ static size_t CountBits(size_t num)
 	
 	return bit_counter;
 }
-
+/*
 size_t BitArrCountOnLUT(bit_arr_t arr)
 {
+	size_t on_count = 0;
+	size_t nibble_size = 0;
+	size_t i = 0;
+	bit_arr_t mask = 0xFF;
+	
+	nibble_size = sizeof(arr);
+	
 	if (1 != bit_arr_LUT[UCHAR_MAX])
 	{
 		BitArrInitLUT();
 	}
 	
-	return bit_arr_LUT[arr];
+	i = mask & (bit_arr_LUT >> (nibble_size * 7));
+	count += bit_arr_LUT[i];
+	i = mask & (bit_arr_LUT >> (nibble_size * 6));
+	count += bit_arr_LUT[i];
+	i = mask & (bit_arr_LUT >> (nibble_size * 5));
+	count += bit_arr_LUT[i];
+	i = mask & (bit_arr_LUT >> (nibble_size * 4));
+	count += bit_arr_LUT[i];
+	i = mask & (bit_arr_LUT >> (nibble_size * 3));
+	count += bit_arr_LUT[i];
+	i = mask & (bit_arr_LUT >> (nibble_size * 2));
+	count += bit_arr_LUT[i];
+	i = mask & (bit_arr_LUT >> (nibble_size));
+	count += bit_arr_LUT[i];
+	i = mask & it_arr_LUT[i];
+	count += bit_arr_LUT[i];
+	
+	return count;
 }
-
-bit_arr_t BitArrMirrorLUT(bit_arr_t arr)
+*/
+/*
+*	LUT for Mirror bit array initialization: 
+*/
+static void BitArrMirrorInitLUT()
 {
+	size_t i = 0;
+	size_t arr_size = 0;
+	bit_arr_t arr;
+	
+	arr_size = sizeof(arr) * 8;
+	
 	
 }
 
+
+static bit_arr_t BitFlipper(bit_arr_t arr, size_t size)
+{
+	bit_arr_t temp = 0;
+	
+	temp = arr >> (size / 2);
+	arr <<= (size / 2);
+	
+	return arr | temp;
+}
+
+/*
+bit_arr_t BitArrMirrorLUT(bit_arr_t arr)
+{
+	if (2 != bit_arr_LUT[UCHAR_MAX])
+	{
+		BitArrMirrorInitLUT();
+	}
+	
+	return bit_arr_LUT[arr];
+}
+*/
 /* 1 if a particular bit is set on else 0 */
 int BitArrIsOn(bit_arr_t arr, int bit_location)
 {
