@@ -14,6 +14,8 @@ bit_arr_t BitArrMirrorLUT(bit_arr_t arr);
 static void BitArrMirrorInitLUT();
 
 static bit_arr_t bit_arr_LUT[UCHAR_MAX + 1] = {0};
+static bit_arr_t mirror_lut[UCHAR_MAX + 1] = {0};
+const size_t word_size = sizeof(bit_arr_t) * 8;
 
 /* create a LUT that contains number of set bits of each number from 0 to 255 */
 static void BitArrInitLUT()
@@ -116,6 +118,7 @@ bit_arr_t BitArrMirrorLUT(bit_arr_t arr)
 	return bit_arr_LUT[arr];
 }
 */
+
 /* 1 if a particular bit is set on else 0 */
 int BitArrIsOn(bit_arr_t arr, int bit_location)
 {

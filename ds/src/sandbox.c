@@ -12,7 +12,7 @@ typedef unsigned char lut_bits;
 static lut_bits count_lut[UCHAR_MAX + 2] = {0};
 static lut_bits mirror_lut[UCHAR_MAX + 2] = {0};
 
-const size_t wordsize = sizeof(bit_arr_t) * 8;
+const size_t word_size = sizeof(bit_arr_t) * 8;
 
 int main()
 {
@@ -50,14 +50,14 @@ bit_arr_t BitArrMirrorLUT(bit_arr_t arr)
 {
 	bit_arr_t new_arr = 0;
 	unsigned char start = 0;
-	unsigned char end = wordsize - sizeof(bit_arr_t);
+	unsigned char end = word_size - sizeof(bit_arr_t);
 	
 	if(mirror_lut[UCHAR_MAX + 1] == 0)
 	{
 		BitArrMirrorLUTInit();
 	}
 	
-	for (start = 0 ; start < end ; start += wordsize / sizeof(bit_arr_t), end -= wordsize / sizeof(bit_arr_t))
+	for (start = 0 ; start < end ; start += word_size / sizeof(bit_arr_t), end -= word_size / sizeof(bit_arr_t))
 	{
 		bit_arr_t start_mask = 255;
 		bit_arr_t end_mask = 255;
@@ -90,11 +90,11 @@ static void BitArrMirrorLUTInit()
 	size_t i = 0;
 	bit_arr_t mask = 0;
 		
-	for(; i < UCHAR_MAX; i += (wordsize / 8))
+	for(; i < UCHAR_MAX; i += (word_size / 8))
 	{
 		bit_arr_t temp_arr = i;
 		size_t j = 0;
-		for(j = 1; j < wordsize / 8; j++)
+		for(j = 1; j < word_size / 8; j++)
 		{
 			temp_arr <<= 8;
 			temp_arr += i+j;
@@ -104,7 +104,7 @@ static void BitArrMirrorLUTInit()
 		
 		mask = 255;
 		
-		for(j = 0; j < wordsize / 8; j++)
+		for(j = 0; j < word_size / 8; j++)
 		{
 			mask &= temp_arr;
 			mirror_lut[i+j] = (unsigned char) mask;
