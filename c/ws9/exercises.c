@@ -7,7 +7,7 @@
 
 #include "itoa.h" /* itoa */
 
-#define IS_LITTLE_ENDIAN !(*(uint16_t *)"\0\xff" < 0x100)
+#define IS_LITTLE_ENDIAN *(&"1") ? 1 : 0
 
 size_t IsLittleEndian();
 static void PrintIdenticalChars(const char *s1, const char *s2, const char *s3);

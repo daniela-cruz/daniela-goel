@@ -4,14 +4,14 @@
 #include <assert.h> /* assert */
 #include <string.h> /* memset */
 
+#include "itoa.h" /* AtoiBase10 */
+
 const size_t system_word = sizeof(size_t);
 
 
-char s1[] = "I am a string and I have manyyyyy characters!";
-char c = '.';
+static char s1[] = "I am a string and I have manyyyyy characters!";
+static char c = '.';
 
-
-/* exercise 1: */
 void *MemSet(void *s, int c, size_t n);
 static void MemSetTest();
 
@@ -19,22 +19,19 @@ void *MemCpy(void *dest, const void *src, size_t n);
 static void MemCpyTest();
 
 void *MemMove(void *dest, const void *src, size_t n);
+static void MemMoveTest();
+
+static void AtoiBase10Test();
+static void ItoaTest();
 
 int main()
 {	
-	char s2[] = "all kinds of characters and words to test if this is working";
-	char *dest = NULL;
-	char *src = NULL;
+	MemSetTest();
+	MemCpyTest();
+	MemMoveTest();
 	
-/*	MemSetTest();*/
-/*	MemCpyTest();*/
-	
-	src = s2;
-	dest = s1;
-	dest = memmove(src + 22, src, 40);
-	dest = MemMove(src + 22, src, 40);
-	dest -=22;
-	printf("%s\n", dest);
+	AtoiBase10Test();
+	ItoaTest();
 	
 	return 0;
 }
@@ -97,6 +94,10 @@ static void MemSetTest()
 	MemSet(s + 2, c, 34);
 	printf("%s\n", s);
 }
+
+/*
+* Reimplementation of string lib's memcpy:
+*/
 void *MemCpy(void *dest, const void *src, size_t n)
 {
 	size_t *src_cpy = NULL;
@@ -234,4 +235,47 @@ void *MemMove(void *dest, const void *src, size_t n)
 	}
 	
 	return dest;
+}
+
+static void MemMoveTest()
+{
+	char s2[] = "all kinds of characters and words to test if this is working";
+	char *dest = NULL;
+	char *src = NULL;
+	
+	src = s2;
+	dest = s1;
+	dest = MemMove(src + 22, src, 40);
+	dest -=22;
+	printf("%s\n", dest);
+}
+
+static void AtoiBase10Test()
+{
+	char *char_num = "-79";
+	
+	printf("\nitoa test\nCharacter was: %s and now it is: %d\n", char_num, AtoiBase10(char_num));
+}
+
+static void ItoaTest()
+{
+	int num_char = 12345;
+	char *dest = NULL;
+	
+	dest = malloc(11);
+	printf("\nitoa test\nInteger was: %d and now it is: %s\n", num_char, Itoa(dest, num_char));
+	
+	free(dest); dest = NULL;
+}
+
+static void AtoiBase36Test()
+{
+	ptrdiff_t from = 0, base = 36;
+	char *ch_to_int = "0123456789a";
+	char *dest = NULL;
+	
+	dest = malloc(11);
+	printf("%d\n", AtoiBase36(dest, ch_to_int, base));
+	
+	free(dest); dest = NULL;
 }
