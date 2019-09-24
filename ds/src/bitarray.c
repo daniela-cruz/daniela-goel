@@ -7,32 +7,42 @@
 
 size_t BitArrCountOnLUT(bit_arr_t arr);
 static void BitArrInitLUT(); /* will init on first BitArrCountOnLUT call */
+static size_t CountSetBitsRecursive(size_t num); /* recursively count set bist word by word */
 static void Reverse (char *buffer);
 
 bit_arr_t BitArrMirrorLUT(bit_arr_t arr);
 static void BitArrMirrorInitLUT(); /* will init on first BitArrMirrorLUT call */
 
-static bit_arr_t bit_arr_LUT[UCHAR_MAX + 1] = {0};
-static bit_arr_t bit_mirror_LUT[UCHAR_MAX + 1] = {0};
+static bit_arr_t bit_arr_LUT[UCHAR_MAX + 2] = {0};
+static bit_arr_t bit_mirror_LUT[UCHAR_MAX + 2] = {0};
+const size_t nibble = 8;
 const size_t word_size = sizeof(bit_arr_t) * 8;
 
 /* create a LUT that contains number of set bits of each number from 0 to 255 */
 static void BitArrInitLUT()
 {
-	bit_arr_t i = 0, count = 0;
-	size_t nibble_size = 0;
-	size_t mask = 0xFF;
+	bit_arr_t i = 0, j = 0, count = 0;
 	bit_arr_t arr = 0;
+	bit_arr_t mask = 0xFF;
 	
-	nibble_size = sizeof(arr);
-	
-	for (; i < UCHAR_MAX; i++)
+	/* */
+	for (i = 0; i < UCHAR_MAX + 2; i++)
 	{
-		bit_arr_LUT[i] = BitArrCountOn(i);
+		arr = i;
+		for (j = 0; j < ((word_size / nibble) - 1); j++)
+		{
+			arr &= mask;
+			count += BitArrCountOn(arr);
+			arr >>= nibble;
+		}
+		
+		bit_arr_LUT[i] = count;
+		count = 0;
 	}
 	
-	bit_arr_LUT[UCHAR_MAX] = 1; /* last sentinel to mark the LUT is already initialized */
+	bit_arr_LUT[UCHAR_MAX + 1] = 1;
 }
+
 
 size_t BitArrCountOnLUT(bit_arr_t arr)
 {
@@ -42,7 +52,7 @@ size_t BitArrCountOnLUT(bit_arr_t arr)
 	
 	nibble_size = sizeof(arr);
 	
-	if (1 != bit_arr_LUT[UCHAR_MAX])
+	if (1 != bit_arr_LUT[UCHAR_MAX + 1])
 	{
 		BitArrInitLUT();
 	}
@@ -239,7 +249,7 @@ size_t BitArrCountOn(bit_arr_t arr)
 {
 	bit_arr_t mask = 1;
 	size_t counter = 0;
-	
+
 	while (0 < arr)
 	{
 		if (1 == (arr & mask))
@@ -249,7 +259,7 @@ size_t BitArrCountOn(bit_arr_t arr)
 		
 		arr >>= 1;
 	}
-	
+
 	return counter;
 }
 
