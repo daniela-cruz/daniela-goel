@@ -23,7 +23,8 @@ static void FlipTest();
 static void MirrorTest();
 static void ToStringTest();
 
-static void InitLutTest();
+static void CountSetLUTTest();
+static void MirrorLUTTest();
 
 int main()
 {
@@ -40,8 +41,9 @@ int main()
 	RotRTest();
 	FlipTest();
 	MirrorTest();
-	ToStringTest();*/
-	InitLutTest();
+	ToStringTest();
+	CountSetLUTTest();*/
+	MirrorLUTTest();
 	
 	return 0;
 }
@@ -179,10 +181,9 @@ static void ToStringTest()
 }
 
 /* LUT tests: */
-static void InitLutTest()
+static void CountSetLUTTest()
 {
 	size_t i = 0;
-	size_t set_bits = 0;
 	bit_arr_t arr[] = {0, 1, 2, 3, 4, 5, 6, 15, 31, 255};
 
 	printf("\nInit LUT test:\n");
@@ -191,4 +192,22 @@ static void InitLutTest()
 	{
 		printf("Set bits in %ld is: %ld\n", arr[i], BitArrCountOnLUT(arr[i]));
 	}
+}
+
+static void MirrorLUTTest()
+{
+	size_t i = 0;
+	bit_arr_t arr[] = {1, 0, 3, 255};
+	char *dest = NULL;
+	
+	dest = malloc(65);
+	
+	for (i = 0; i < 4; i++)
+	{
+		arr[i] = BitArrMirrorLUT(arr[i]);
+		dest = BitArrToString(dest, arr[i]);
+		printf("Mirror of %ld is: %s\n", arr[i], dest);
+	}
+	
+	free(dest);
 }

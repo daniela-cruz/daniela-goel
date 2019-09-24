@@ -65,20 +65,31 @@ size_t BitArrCountOnLUT(bit_arr_t arr)
 */
 static void BitArrMirrorInitLUT()
 {
-	size_t i = 0;
-	bit_arr_t arr;
+	size_t i = 0, j = 0;
+	bit_arr_t mask = 0xFF;
+	bit_arr_t arr = 0, temp = 0;
 	
-	for (; i < UCHAR_MAX; i++)
-	{
-		bit_mirror_LUT[i] = BitArrMirror(i);
+	for (i = 0; i < UCHAR_MAX + 2; i++)
+	{		
+		for (j = 0; j < (word_size / nibble); j++)
+		{
+			arr = i;
+			arr >>= (nibble * j);
+			arr &= mask;
+			temp |= BitArrMirror(arr);
+			temp <<= nibble;
+		}
+		
+		bit_mirror_LUT[i] = temp;
+		temp = 0;
 	}
 	
-	bit_mirror_LUT[UCHAR_MAX] = 1; /* last sentinel to mark the LUT is already initialized */
+	bit_mirror_LUT[UCHAR_MAX + 1] = 1; /* last sentinel to mark the LUT is already initialized */
 }
 
 bit_arr_t BitArrMirrorLUT(bit_arr_t arr)
 {
-	if (1 != bit_arr_LUT[UCHAR_MAX])
+	if (1 != bit_arr_LUT[UCHAR_MAX + 1])
 	{
 		BitArrMirrorInitLUT();
 	}
@@ -294,16 +305,13 @@ bit_arr_t BitArrMirror(bit_arr_t arr)
 	arr_size =  sizeof(bit_arr_t) * 8; 
 	mask_l <<= (arr_size - 1); /* mask_l is pushed left to msb */
 	
-	for (i = 0; i < arr_size / 2 ; i++)
+	for (i = 0; i < arr_size / 2 ; i++, mask_r <<= 1, mask_l >>= 1)
 	{
 		first = ((arr & mask_r) == mask_r); /* first will receive arr's lsb value, 1 if the bit is on 0 if off */
 		last = ((arr & mask_l) == mask_l); /* last will receive arr's msb value, 1 if the bit is on 0 if off */
 		
 		arr = BitArrSet(arr, i, last); /* move value of last to first */
 		arr = BitArrSet(arr, (arr_size - i - 1), first); /* move value of first to last */
-		
-		mask_r <<= 1; /* forward mask_r to left bit */
-		mask_l >>= 1; /* forward mask_l to right bit */
 	}
 		
 	return arr;
