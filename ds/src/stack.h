@@ -6,8 +6,8 @@
 typedef struct stack stack_t;
 
 /*
-* create a stack using the sizeof element 
-* and the size for the cells number
+* create a stack using the sizeof element and the size for the cells number
+* The user will have to call StkDestroy in order to free the allocation created on create
 */
 stack_t *StkCreate(size_t size);
 
