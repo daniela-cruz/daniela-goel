@@ -6,19 +6,17 @@
 
 #include "itoa.h" /* for all functions bellow */
 
-static void Reverse (char *buffer);
-
-static void AtoiBase10Test();
-
-static void AtoiBase36Test();
+static void ReverseDigits (char *dest);
 
 /* turn an int to char */
 char *Itoa(char *dest, int num_src)
 {
 	ptrdiff_t i = 0;
-	int to_char = 0; /* int thar holde a char value */
+	int to_char = 0; /* int that holds a char value */
 	char * dest_cpy = dest; 
 	int base = 10;
+	
+	assert(dest);
 	
 	if (0 == num_src)
 	{
@@ -39,24 +37,26 @@ char *Itoa(char *dest, int num_src)
 		*(dest + i) = (char)(to_char); 
 	}
 	
-	Reverse(dest);
+	ReverseDigits(dest);
 	
 	return dest_cpy;
 }
 
-static void Reverse (char *buffer)
+static void ReverseDigits (char *dest)
 {
 	char temp;
 	size_t i = 0;
 	size_t len = 0;
 	
-	len = strlen(buffer) -1;
+	assert(dest);
+	
+	len = strlen(dest) -1;
 	
 	for (; i <= len / 2 ; i++)
 	{
-		temp = *(buffer + i);
-		*(buffer + i) = *(buffer + len - i);
-		*(buffer + len - i) = temp;
+		temp = *(dest + i);
+		*(dest + i) = *(dest + len - i);
+		*(dest + len - i) = temp;
 	}	
 }	
 
@@ -69,9 +69,10 @@ int AtoiBase10(const char *nptr)
  	int sign = 1;
  	int base = 10;
 	
+	assert(nptr);
 	len = strlen(nptr);
 	
-	if (*nptr == '-')
+	if ('-' == *nptr)
 	{
 		sign = -1;  
 		nptr++;
@@ -95,25 +96,26 @@ char *AtoiBase36(int num, char *dest, int base)
 {
 	ptrdiff_t i = 0;
 	int digit_sum = 0;
-	char * dest_copy = dest; 
-		
-	if (num < 0)
+	char * dest_copy = NULL; 
+	
+	assert(dest);
+	dest_copy = dest;
+	
+	if (0 > num)
 	{
 		num *= -1;
 		*dest = (char) '-';  
 		dest++; 
 	}
 	
-	for (i = 0 ; num != 0 ; i++)
+	for (i = 0 ; num != 0 ; i++, num /= base)
 	{
 		digit_sum = num % base; /* get lsd of number in new base */
-		digit_sum +=  ((digit_sum >= 0) && (digit_sum <= 9)) ? '0' : '7';
-				 
-		*(dest + i) = (char)(digit_sum); 
-		 num /= base; 
+		digit_sum +=  ((digit_sum >= 0) && (digit_sum <= 9)) ? '0' : '7';	 
+		*(dest + i) = (char)(digit_sum);   
 	}
 	
-	Reverse(dest);
+	ReverseDigits(dest);
 	
 	return dest_copy;
 }

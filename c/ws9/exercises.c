@@ -51,7 +51,7 @@ size_t IsLittleEndian()
 static void PrintIdenticalChars(const char *s1, const char *s2, const char *s3)
 {
 	size_t i = 0, j =0;
-	size_t abc_len = 'Z' - 'A' + 1;
+	size_t abc_len = 'Z' - 'A' + 1; 
 	char *letters = NULL;
 	
 	assert(s1);
@@ -61,7 +61,7 @@ static void PrintIdenticalChars(const char *s1, const char *s2, const char *s3)
 	letters = malloc(abc_len + 1);
 	assert(letters);
 	
-	/* initialize letters arr to zeros */
+	/* initialize letters arr to zero charachters */
 	for (; i < abc_len; i++)
 	{
 		*(letters + i) = '0';
@@ -73,7 +73,7 @@ static void PrintIdenticalChars(const char *s1, const char *s2, const char *s3)
 	{
 		for (j = 0; j < abc_len; j++)
 		{
-			if ('A' + j == *(s1 + i))
+			if (('A' + j) == *(s1 + i))
 			{
 				*(letters + j) = '1';
 			}
@@ -84,7 +84,7 @@ static void PrintIdenticalChars(const char *s1, const char *s2, const char *s3)
 	{
 		for (j = 0; j < abc_len; j++)
 		{
-			if (('A' + j == *(s2 + i)) && ('1' == *(letters + j)))
+			if ((('A' + j) == *(s2 + i)) && ('1' == *(letters + j)))
 			{
 				*(letters + j) = '2';
 			}
