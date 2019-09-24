@@ -1,22 +1,25 @@
+#include <stdio.h> /* printf */
+#define __STDC_WANT_IEC_60559_BFP_EXT__
 #include <assert.h> /* assert */
 #include <stddef.h> /* size_t */
 #include <string.h> /* strlen */
 #include <limits.h> /* UCHAR_MAX */
 
+
 #include "bitarray.h" /* all bit array functions below */
 
 size_t BitArrCountOnLUT(bit_arr_t arr);
 static void BitArrInitLUT(); /* will init on first BitArrCountOnLUT call */
-static size_t CountSetBitsRecursive(size_t num); /* recursively count set bist word by word */
 static void Reverse (char *buffer);
 
 bit_arr_t BitArrMirrorLUT(bit_arr_t arr);
 static void BitArrMirrorInitLUT(); /* will init on first BitArrMirrorLUT call */
+static char BitArrMirrorFlipperLUT(char arr);
+static char BitArrSetLUT(char arr, size_t bit_location, int is_set);
 
 static bit_arr_t bit_arr_LUT[UCHAR_MAX + 2] = {0};
 static bit_arr_t bit_mirror_LUT[UCHAR_MAX + 2] = {0};
-const size_t nibble = 8;
-const size_t word_size = sizeof(bit_arr_t) * 8;
+const size_t word_size = sizeof(bit_arr_t) * CHAR_BIT;
 
 /* create a LUT that contains number of set bits of each number from 0 to 255 */
 static void BitArrInitLUT()
@@ -24,16 +27,16 @@ static void BitArrInitLUT()
 	bit_arr_t i = 0, j = 0, count = 0;
 	bit_arr_t arr = 0;
 	bit_arr_t mask = 0xFF;
-	
-	/* */
+
 	for (i = 0; i < UCHAR_MAX + 2; i++)
 	{
 		arr = i;
-		for (j = 0; j < ((word_size / nibble) - 1); j++)
+		
+		for (j = 0; j < ((word_size / CHAR_BIT) - 1); j++)
 		{
 			arr &= mask;
 			count += BitArrCountOn(arr);
-			arr >>= nibble;
+			arr >>= CHAR_BIT;
 		}
 		
 		bit_arr_LUT[i] = count;
@@ -43,15 +46,8 @@ static void BitArrInitLUT()
 	bit_arr_LUT[UCHAR_MAX + 1] = 1;
 }
 
-
 size_t BitArrCountOnLUT(bit_arr_t arr)
 {
-	size_t nibble_size = 0;
-	size_t i = 0;
-	size_t mask = 0xFF;
-	
-	nibble_size = sizeof(arr);
-	
 	if (1 != bit_arr_LUT[UCHAR_MAX + 1])
 	{
 		BitArrInitLUT();
@@ -63,28 +59,76 @@ size_t BitArrCountOnLUT(bit_arr_t arr)
 /*
 *	LUT for Mirror bit array initialization: 
 */
+
 static void BitArrMirrorInitLUT()
 {
-	size_t i = 0, j = 0;
-	bit_arr_t mask = 0xFF;
-	bit_arr_t arr = 0, temp = 0;
+	bit_arr_t arr = 0;
+    bit_arr_t mask = 0xFF;
+    size_t i = 0 , j = 0;
+    char temp = (char) arr & mask;
+    
+    for (i = 0; i < UCHAR_MAX; i += CHAR_WIDTH)
+    {
+        arr = i;
+        
+        for (j = 1; j < CHAR_BIT; j++)
+        {
+            arr <<= CHAR_BIT;
+            arr |= i + j;
+        }
+        
+        arr = BitArrMirror(arr);
+        
+        for (j = 0; j < CHAR_BIT; j++)
+        {
+            temp = (char) arr & mask;
+            bit_mirror_LUT[i + j] = temp;
+            arr >>= CHAR_BIT;
+        }
+    }
+
+	bit_mirror_LUT[UCHAR_MAX + 1] = 1; 
+}
+
+
+/* Exactly like BitArrMirro but function receives char */
+static char BitArrMirrorFlipperLUT(char arr)
+{
+	char mask_r = 1;
+	char mask_l = 1;
+	int first = 0, last = 0;
+	size_t arr_size = CHAR_BIT;
+	size_t i = 0;
 	
-	for (i = 0; i < UCHAR_MAX + 2; i++)
-	{		
-		for (j = 0; j < (word_size / nibble); j++)
-		{
-			arr = i;
-			arr >>= (nibble * j);
-			arr &= mask;
-			temp |= BitArrMirror(arr);
-			temp <<= nibble;
-		}
+	mask_l <<= (arr_size - 1); /* mask_l is pushed left to msb */
+	
+	for (i = 0; i < arr_size / 2 ; i++, mask_r <<= 1, mask_l >>= 1)
+	{
+		first = ((arr & mask_r) == mask_r); /* first will receive arr's lsb value, 1 if the bit is on 0 if off */
+		last = ((arr & mask_l) == mask_l); /* last will receive arr's msb value, 1 if the bit is on 0 if off */
 		
-		bit_mirror_LUT[i] = temp;
-		temp = 0;
+		arr = BitArrSetLUT(arr, i, last); /* move value of last to first */
+		arr = BitArrSetLUT(arr, (arr_size - i - 1), first); /* move value of first to last */
+	}
+		
+	return arr;
+}
+
+/* set on a single bit within the array */
+static char BitArrSetLUT(char arr, size_t bit_location, int is_set)
+{
+	bit_arr_t mask = 1;
+	
+	mask <<= bit_location;
+	
+	if (0 == is_set)
+	{
+		arr &= ~mask;
+		
+		return arr;
 	}
 	
-	bit_mirror_LUT[UCHAR_MAX + 1] = 1; /* last sentinel to mark the LUT is already initialized */
+	return arr |= mask;
 }
 
 bit_arr_t BitArrMirrorLUT(bit_arr_t arr)

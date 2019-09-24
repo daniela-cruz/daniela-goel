@@ -202,11 +202,15 @@ static void MirrorLUTTest()
 	
 	dest = malloc(65);
 	
+	printf("\nMirror LUT test:\n");
+	
+	BitArrMirrorLUT(arr[i]);
+	
 	for (i = 0; i < 4; i++)
 	{
 		arr[i] = BitArrMirrorLUT(arr[i]);
 		dest = BitArrToString(dest, arr[i]);
-		printf("Mirror of %ld is: %s\n", arr[i], dest);
+		printf("Mirror of %ld is: %s\n", i, dest);
 	}
 	
 	free(dest);
