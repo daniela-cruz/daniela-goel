@@ -1,6 +1,7 @@
 #include <stdio.h> /* printf */
 #include <stdlib.h> /* malloc, free */
 #include <stddef.h> /* size_t */
+#include <limits.h> /* UCHAR_MAX */
 
 #include "bitarray.h" /* all bit array functions below */
 
@@ -22,9 +23,11 @@ static void FlipTest();
 static void MirrorTest();
 static void ToStringTest();
 
+static void IntitLutTest();
+
 int main()
 {
-	IsOnTest();
+	/*IsOnTest();
 	IsOffTest();
 	SetAllTest();
 	ResetAllTest();
@@ -37,7 +40,8 @@ int main()
 	RotRTest();
 	FlipTest();
 	MirrorTest();
-	ToStringTest();
+	ToStringTest();*/
+	IntitLutTest();
 	
 	return 0;
 }
@@ -172,4 +176,20 @@ static void ToStringTest()
 	printf("%s\n", BitArrToString(dest, src));
 	
 	free(dest); dest = NULL;
+}
+
+/* LUT tests: */
+static void IntitLutTest()
+{
+	size_t i = 0;
+	size_t set_bits = 0;
+	bit_arr_t arr[] = {1, 2, 3, 4, 5, 6, 15};
+	
+	printf("\nIniti LUT test:\n");
+	
+	for (; i < 7; i++)
+	{
+		set_bits = BitArrCountOnLUT(arr[i]);
+		printf("%ld\n", set_bits);
+	}
 }
