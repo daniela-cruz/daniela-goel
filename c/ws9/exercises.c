@@ -59,54 +59,49 @@ static void PrintIdenticalChars(const char *s1, const char *s2, const char *s3)
 	assert(s3);
 	
 	letters = malloc(abc_len + 1);
-	assert(letters);
+	
+	if (NULL == letters)
+	{
+		perror("Malloc failed");
+	}
 	
 	/* initialize letters arr to zero charachters */
 	for (; i < abc_len; i++)
 	{
-		*(letters + i) = '0';
+		*(letters + i) = 0;
 	}
 	
-	*(letters + abc_len + 1) = '\0';
+	*(letters + abc_len) = '\0';
 	
 	for (i = 0; i < strlen(s1); i++)
 	{
-		for (j = 0; j < abc_len; j++)
+		if (0 == letters[*(s1 + i) - 'A'])
 		{
-			if (('A' + j) == *(s1 + i))
-			{
-				*(letters + j) = '1';
-			}
+			letters[*(s1 + i) - 'A']++;
 		}
 	}
 	
 	for (i = 0; i < strlen(s2); i++)
 	{
-		for (j = 0; j < abc_len; j++)
+		if (1 == letters[*(s2 + i)  - 'A'])
 		{
-			if ((('A' + j) == *(s2 + i)) && ('1' == *(letters + j)))
-			{
-				*(letters + j) = '2';
-			}
+			letters[*(s2 + i)  - 'A']++;
 		}
 	}
 	
 	for (i = 0; i < strlen(s3); i++)
 	{
-		for (j = 0; j < abc_len; j++)
+		if (2 == letters[*(s3 + i)  - 'A'])
 		{
-			if (('A' + j == *(s3 + i)) && ('2' == *(letters + j)))
-			{
-				*(letters + j) = '3';
-			}
+			letters[*(s3 + i)  - 'A']++;
 		}
 	}
 	
 	for (i = 0; i < abc_len; i++)
 	{	
-		if ('2' == *(letters + i))
+		if (2 == *(letters + i))
 		{		
-			printf("%c\n", (char)(i + 'A'));
+			printf("%c\n", (i + 'A'));
 		}
 	}
 	
@@ -116,6 +111,9 @@ static void PrintIdenticalChars(const char *s1, const char *s2, const char *s3)
 static void PrintIdenticalCharsTest()
 {
 	char *s1 = "ABCB", *s2 = "BCDEF", *s3 = "CDGH";
+	
+	printf("\n3 arrays test:\n");
+	
 	PrintIdenticalChars(s1, s2, s3);
 }
 
@@ -147,12 +145,13 @@ static void Atoi10Test()
 static void Atoi36Test()
 {
 	int num = 0;
-	int src = 35;
+	int src = 123456789;
 	char *dest = NULL;
 	
 	dest = malloc(11);
-	dest = AtoiBase36(src, dest, 36);
+	dest = AtoiBase36(src, dest, 16);
 	
 	printf("\nAtoi36 test\n");
 	printf("Source is: %d and dest is: %s\n", src, dest);
+	free(dest); dest = NULL;
 }

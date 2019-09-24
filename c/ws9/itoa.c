@@ -37,7 +37,7 @@ char *Itoa(char *dest, int num_src)
 		*(dest + i) = (char)(to_char); 
 	}
 	
-	ReverseDigits(dest);
+	ReverseDigits(dest); 
 	
 	return dest_cpy;
 }
