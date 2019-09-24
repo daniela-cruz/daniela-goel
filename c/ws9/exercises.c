@@ -12,12 +12,19 @@
 size_t IsLittleEndian();
 static void PrintIdenticalChars(const char *s1, const char *s2, const char *s3);
 static void PrintIdenticalCharsTest();
+static void ItoaTest();
+static void Atoi10Test();
+static void Atoi36Test();
+
 
 int main()
 {
 	IsLittleEndian();
 	printf("\nIs little endian macro: %d\n", IS_LITTLE_ENDIAN);
 	PrintIdenticalCharsTest();
+	ItoaTest();
+	Atoi10Test();
+	Atoi36Test();
 	
 	return 0;
 }
@@ -99,7 +106,7 @@ static void PrintIdenticalChars(const char *s1, const char *s2, const char *s3)
 	{	
 		if ('2' == *(letters + i))
 		{		
-			printf("%c\n", Itoa(i));
+			printf("%c\n", (char)(i + 'A'));
 		}
 	}
 	
@@ -112,3 +119,40 @@ static void PrintIdenticalCharsTest()
 	PrintIdenticalChars(s1, s2, s3);
 }
 
+static void ItoaTest()
+{
+	char *dest = NULL;
+	int num_src = 123456789;
+	
+	dest = malloc(11);
+	dest = Itoa(dest, num_src);
+	
+	printf("\nItoa test\n");
+	printf("Integers is: %d and char is: %s\n", num_src, dest);
+	
+	free(dest); dest = NULL;
+}
+
+static void Atoi10Test()
+{
+	int num = 0;
+	char *dest = "987654";
+	
+	num = AtoiBase10(dest);
+	
+	printf("\nAtoi10 test\n");
+	printf("Integers is: %d and char is: %s\n", num, dest);
+}
+
+static void Atoi36Test()
+{
+	int num = 0;
+	int src = 35;
+	char *dest = NULL;
+	
+	dest = malloc(11);
+	dest = AtoiBase36(src, dest, 36);
+	
+	printf("\nAtoi36 test\n");
+	printf("Source is: %d and dest is: %s\n", src, dest);
+}

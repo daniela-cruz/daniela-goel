@@ -91,31 +91,30 @@ int AtoiBase10(const char *nptr)
 }
 
 /* turn abc chars and numeric chars to integers */
-int AtoiBase36(char *dest, const char *nptr, int base)
+char *AtoiBase36(int num, char *dest, int base)
 {
-	int int_value = 0;
-	size_t i = 0;
-	size_t len = 0;
- 	int sign = 1;
-	
-	len = strlen(nptr);
-	
-	if (*nptr == '-')
-	{
-		sign = -1;  
-		nptr++;
-	}
-	
-	for (; i < len; i++)
-	{
-		if ('9' < (*(nptr + i)) || ('0' > *(nptr + i)))  
-		{
-			break;
-		}
+	ptrdiff_t i = 0;
+	int digit_sum = 0;
+	char * dest_copy = dest; 
 		
-		int_value = int_value * base + (*(nptr + i) - '0');
+	if (num < 0)
+	{
+		num *= -1;
+		*dest = (char) '-';  
+		dest++; 
 	}
 	
-	return int_value*sign;
+	for (i = 0 ; num != 0 ; i++)
+	{
+		digit_sum = num % base; /* get lsd of number in new base */
+		digit_sum +=  ((digit_sum >= 0) && (digit_sum <= 9)) ? '0' : '7';
+				 
+		*(dest + i) = (char)(digit_sum); 
+		 num /= base; 
+	}
+	
+	Reverse(dest);
+	
+	return dest_copy;
 }
 
