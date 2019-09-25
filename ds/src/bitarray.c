@@ -67,7 +67,7 @@ bit_arr_t BitArrMirrorLUT(bit_arr_t arr)
 {
 	if (1 != bit_mirror_LUT[UCHAR_MAX + 1])
 	{
-		BitArrMirrorInitLUT2();
+		BitArrMirrorInitLUT();
 	}
 	
 	/*
@@ -151,40 +151,6 @@ static unsigned char CharMirror(unsigned char byte)
 	}
  
 	return byte;
-}
-
-static size_t *BitArrInitMirrorLUT()
-{
-	size_t i = 0;
-
-	for (; UCHAR_MAX + 2 > i; i++)
-	{
-		bit_mirror_LUT[i] = CharMirror(i);
-	}
-	
-	bit_mirror_LUT[UCHAR_MAX + 1] = 1;
-}
-
-
-bit_arr_t BitArrMirrorLUT(bit_arr_t arr)
-{
-	unsigned char lsb = 0, msb = 0;
-	size_t mask_r = 0xFF, mask_l = 0xFF;
-	int i = 0;
-
-	for (i = 0; i < CHAR_BIT / 2; i++)
-	{
-		lsb = bit_mirror_LUT[mask_r & (arr >> i * CHAR_BIT)];
-		msb = bit_mirror_LUT[mask_l & (arr >> (UCHAR_MAX + 1 - i * CHAR_BIT))];
-
-		arr = arr & ~(mask_r << i* CHAR_BIT);
-		arr = arr | (msb << (i * CHAR_BIT));
-
-		arr = arr & ~(mask_l << UCHAR_MAX + 1 - i * CHAR_BIT);
-		arr = arr | (lsb << (UCHAR_MAX + 1 - i * CHAR_BIT));
-	}
- 
-	return arr;
 }
 
 

@@ -204,7 +204,7 @@ static void MirrorLUTTest()
 	
 	printf("\nMirror LUT test:\n");
 	
-	arr_test = BitArrMirrorLUT2(7);
+	arr_test = BitArrMirrorLUT(7);
 	
 	printf("Mirror of %ld is: %ld\n", 7, arr_test);
 	
