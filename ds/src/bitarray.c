@@ -326,9 +326,7 @@ bit_arr_t BitArrMirrorLUT(bit_arr_t arr)
 	}
 	
 	return mirrored_arr;
-
 }
-
 
 /***********************************************
 * Internal functions for BitArr II: LUT	 *
