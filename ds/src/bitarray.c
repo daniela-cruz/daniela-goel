@@ -20,98 +20,11 @@ static bit_arr_t bit_arr_LUT[UCHAR_MAX + 2] = {0};
 static unsigned char bit_mirror_LUT[UCHAR_MAX + 2] = {0};
 const size_t word_size = sizeof(bit_arr_t) * CHAR_BIT;
 
-/* create a LUT that contains number of set bits of each number from 0 to 255 */
-static void BitArrInitLUT()
-{
-	bit_arr_t i = 0, j = 0, count = 0;
-	bit_arr_t arr = 0;
-	bit_arr_t mask = 0xFF;
-
-	for (i = 0; i < UCHAR_MAX + 1; i++)
-	{
-		arr = i;
-		
-		for (j = 0; j < ((word_size / CHAR_BIT) - 1); j++)
-		{
-			arr &= mask;
-			count += BitArrCountOn(arr);
-			arr >>= CHAR_BIT;
-		}
-		
-		bit_arr_LUT[i] = count;
-		count = 0;
-	}
-	
-	bit_arr_LUT[UCHAR_MAX + 1] = 1;
-}
-
-size_t BitArrCountOnLUT(bit_arr_t arr)
-{
-	if (1 != bit_arr_LUT[UCHAR_MAX + 1])
-	{
-		BitArrInitLUT();
-	}
-	
-	return bit_arr_LUT[arr];
-}
-
-/*
-*	LUT for Mirror bit arr initialization: 
-*/
-bit_arr_t BitArrMirrorLUT(bit_arr_t arr)
-{
-	unsigned char right = 0;
-	size_t i = (sizeof(bit_arr_t) * 8) - 8;
-	bit_arr_t rra = 0;
-	unsigned char* lut_mirror = NULL;
-	
-	i = (sizeof(bit_arr_t) * 8) - 8;
-	
-	if (0 == bit_mirror_LUT[UCHAR_MAX + 1])
-	{
-		BitArrMirrorInitLUT();
-	}
-	
-	
-	for ( ; 0 < arr; arr >>= 8, i -= 8)
-	{
-		right = arr & 0xFF;
-		rra |= (((unsigned char)bit_mirror_LUT[right]) << i);
-	}
-	
-	return rra;
-
-}
-
-static void BitArrMirrorInitLUT()
-{
-	unsigned char arr_ch = 0;
-	size_t i = 0;
-	for(i = 0; i < UCHAR_MAX + 1; i++)
-	{
-		arr_ch = CharMirror(i);
-		bit_mirror_LUT[i] = arr_ch;
-	}
-}
-
-static unsigned char CharMirror(unsigned char byte)
-{
-	unsigned char byte_mirror = 0;
-	unsigned char mask = 1;
-	int i = 0;
-	
-	mask &= byte;
-	byte_mirror |= mask;
-	for (i = 0; i < CHAR_BIT - 1; i++, mask = 1)
-	{
-		byte_mirror <<= 1;
-		byte >>= 1;
-		mask &= byte;
-		byte_mirror |= mask;
-	}
-	return byte_mirror;
-}
-
+/******************************************
+*												*
+*		BitArr functions phase I:		*
+*												*
+******************************************/
 
 /* 1 if a particular bit is set on else 0 */
 int BitArrIsOn(bit_arr_t arr, int bit_location)
@@ -122,7 +35,6 @@ int BitArrIsOn(bit_arr_t arr, int bit_location)
 	
 	return (arr & mask) ? 1 : 0;
 }
-
 
 /* 1 if a particular bit is set off else 0 */
 int BitArrIsOff(bit_arr_t arr, int bit_location)
@@ -150,6 +62,7 @@ bit_arr_t BitArrSet(bit_arr_t arr, size_t bit_location, int is_set)
 	
 	return arr |= mask;
 }
+
 
 /* set on all bits in arr */
 bit_arr_t BitArrSetAll(bit_arr_t arr)
@@ -213,13 +126,13 @@ bit_arr_t BitArrRotL(bit_arr_t arr, size_t n)
 	/* get n portion of arr using  arr AND mask */
 	temp = mask & arr;
 	
-	/* shift arr n times right */
+	/* shift arr n times mirror_LUT_index */
 	arr <<= arr_size - n;
 	
 	return temp | arr;
 }
 
-/* rotate arr right n times */
+/* rotate arr mirror_LUT_index n times */
 bit_arr_t BitArrRotR(bit_arr_t arr, size_t n)
 {
 	bit_arr_t temp = 0;
@@ -243,7 +156,7 @@ bit_arr_t BitArrRotR(bit_arr_t arr, size_t n)
 	/* shift temp n times left */
 	temp <<= n;
 	
-	/* shift arr n times right */
+	/* shift arr n times mirror_LUT_index */
 	arr >>= arr_size - n;
 	
 	return temp | arr;
@@ -351,6 +264,9 @@ char *BitArrToString(char *dest, bit_arr_t src)
 	return dest;	
 }
 
+/***************************************
+* Internal functions for BitArr I	 *
+****************************************/
 static void Reverse (char *buffer)
 {
 	char temp;
@@ -366,6 +282,108 @@ static void Reverse (char *buffer)
 		*(buffer + len - i) = temp;
 	}	
 }	
-	
 
+
+/******************************************
+*												*
+*		 BitArr functions II: LUT		*
+*												*
+******************************************/
+
+/* initialize LUT on first call */
+size_t BitArrCountOnLUT(bit_arr_t arr)
+{
+	if (1 != bit_arr_LUT[UCHAR_MAX + 1])
+	{
+		BitArrInitLUT();
+	}
+	
+	return bit_arr_LUT[arr];
+}
+
+/**	LUT for Mirror bit arr initialization:  **/
+bit_arr_t BitArrMirrorLUT(bit_arr_t arr)
+{
+	unsigned char mirror_LUT_index = 0;
+	size_t mask = 0XFF;
+	size_t i = 0;
+	bit_arr_t mirrored_arr = 0;
+	unsigned char* lut_mirror = NULL;
+	
+	i = (sizeof(bit_arr_t) * CHAR_BIT) - CHAR_BIT;
+	
+	if (0 == bit_mirror_LUT[UCHAR_MAX + 1])
+	{
+		BitArrMirrorInitLUT();
+	}
+	
+	for 	(i = (sizeof(bit_arr_t) * CHAR_BIT) - CHAR_BIT; 
+			 0 < i; 
+			 arr >>= CHAR_BIT, i -= CHAR_BIT)
+	{
+		mirror_LUT_index = arr & mask;
+		mirrored_arr |= (((size_t)bit_mirror_LUT[mirror_LUT_index]) << i);
+	}
+	
+	return mirrored_arr;
+
+}
+
+
+/***********************************************
+* Internal functions for BitArr II: LUT	 *
+***********************************************/
+/* create a LUT that contains number of set bits of each number from 0 to 255 */
+static void BitArrInitLUT()
+{
+	bit_arr_t i = 0, j = 0, count = 0;
+	bit_arr_t arr = 0;
+	bit_arr_t mask = 0xFF;
+
+	for (i = 0; i < UCHAR_MAX + 1; i++)
+	{
+		arr = i;
+		
+		for (j = 0; j < ((word_size / CHAR_BIT) - 1); j++)
+		{
+			arr &= mask;
+			count += BitArrCountOn(arr);
+			arr >>= CHAR_BIT;
+		}
+		
+		bit_arr_LUT[i] = count;
+		count = 0;
+	}
+	
+	bit_arr_LUT[UCHAR_MAX + 1] = 1;
+}
+
+static void BitArrMirrorInitLUT()
+{
+	unsigned char arr_ch = 0;
+	size_t i = 0;
+	for(i = 0; i < UCHAR_MAX + 1; i++)
+	{
+		arr_ch = CharMirror(i);
+		bit_mirror_LUT[i] = arr_ch;
+	}
+}
+
+static unsigned char CharMirror(unsigned char byte)
+{
+	unsigned char byte_mirror = 0;
+	unsigned char mask = 1;
+	int i = 0;
+	
+	mask &= byte;
+	byte_mirror |= mask;
+	for (i = 0; i < CHAR_BIT - 1; i++, mask = 1)
+	{
+		byte_mirror <<= 1;
+		byte >>= 1;
+		mask &= byte;
+		byte_mirror |= mask;
+	}
+	return byte_mirror;
+}
 
