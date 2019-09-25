@@ -60,15 +60,27 @@ size_t BitArrCountOnLUT(bit_arr_t arr)
 */
 bit_arr_t BitArrMirrorLUT(bit_arr_t arr)
 {
+	unsigned char right = 0;
+	size_t i = (sizeof(bit_arr_t) * 8) - 8;
+	bit_arr_t rra = 0;
+	unsigned char* lut_mirror = NULL;
+	
+	i = (sizeof(bit_arr_t) * 8) - 8;
+	
 	if (0 == bit_mirror_LUT[UCHAR_MAX + 1])
 	{
 		BitArrMirrorInitLUT();
 	}
-	/*
-	* MIRROR BYTE BY BYTE USING THE LUT TABLE
-	*/
 	
-	return bit_mirror_LUT[arr];
+	
+	for ( ; 0 < arr; arr >>= 8, i -= 8)
+	{
+		right = arr & 0xFF;
+		rra |= (((unsigned char)bit_mirror_LUT[right]) << i);
+	}
+	
+	return rra;
+
 }
 
 static void BitArrMirrorInitLUT()
