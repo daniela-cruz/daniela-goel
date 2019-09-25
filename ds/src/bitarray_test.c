@@ -197,21 +197,24 @@ static void CountSetLUTTest()
 static void MirrorLUTTest()
 {
 	size_t i = 0;
-	bit_arr_t arr[] = {1, 0, 3, 255};
+	bit_arr_t arr[] = {1, 0, 3, 255}, arr_test = 0;
 	char *dest = NULL;
 	
 	dest = malloc(65);
 	
 	printf("\nMirror LUT test:\n");
 	
-	BitArrMirrorLUT(arr[i]);
+	arr_test = BitArrMirrorLUT2(7);
 	
+	printf("Mirror of %ld is: %ld\n", 7, arr_test);
+	
+	/*
 	for (i = 0; i < 4; i++)
 	{
 		arr[i] = BitArrMirrorLUT(arr[i]);
 		dest = BitArrToString(dest, arr[i]);
 		printf("Mirror of %ld is: %s\n", i, dest);
 	}
-	
+	*/
 	free(dest);
 }

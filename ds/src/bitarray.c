@@ -6,15 +6,19 @@
 #include <limits.h> /* UCHAR_MAX */
 
 
-#include "bitarray.h" /* all bit array functions below */
+#include "bitarray.h" /* all bit arr functions below */
 
 size_t BitArrCountOnLUT(bit_arr_t arr);
 static void BitArrInitLUT(); /* will init on first BitArrCountOnLUT call */
 static void Reverse (char *buffer);
 
 bit_arr_t BitArrMirrorLUT(bit_arr_t arr);
-static void BitArrMirrorInitLUT(); /* will init on first BitArrMirrorLUT call */
-static char BitArrMirrorFlipperLUT(char arr);
+static void BitArrMirrorInitLUT();
+static unsigned char BitArrMirrorFlipperLUT2(char arr);
+static char BitArrSetLUT2(char arr, size_t bit_location, char is_set);
+
+static unsigned char CharMirror(unsigned char byte);
+static void BitArrInitMirrorLUT(); /* will init on first BitArrMirrorLUT call */
 static char BitArrSetLUT(char arr, size_t bit_location, int is_set);
 
 static bit_arr_t bit_arr_LUT[UCHAR_MAX + 2] = {0};
@@ -57,65 +61,63 @@ size_t BitArrCountOnLUT(bit_arr_t arr)
 }
 
 /*
-*	LUT for Mirror bit array initialization: 
+*	LUT for Mirror bit arr initialization: 
 */
+bit_arr_t BitArrMirrorLUT(bit_arr_t arr)
+{
+	if (1 != bit_mirror_LUT[UCHAR_MAX + 1])
+	{
+		BitArrMirrorInitLUT2();
+	}
+	
+	/*
+	* MIRROR BYTE BY BYTE USING THE LUT TABLE
+	*/
+	
+	return arr;
+}
 
 static void BitArrMirrorInitLUT()
 {
-	bit_arr_t arr = 0;
-    bit_arr_t mask = 0xFF;
-    size_t i = 0 , j = 0;
-    char temp = (char) arr & mask;
-    
-    for (i = 0; i < UCHAR_MAX; i += CHAR_WIDTH)
-    {
-        arr = i;
-        
-        for (j = 1; j < CHAR_BIT; j++)
-        {
-            arr <<= CHAR_BIT;
-            arr |= i + j;
-        }
-        
-        arr = BitArrMirror(arr);
-        
-        for (j = 0; j < CHAR_BIT; j++)
-        {
-            temp = (char) arr & mask;
-            bit_mirror_LUT[i + j] = temp;
-            arr >>= CHAR_BIT;
-        }
-    }
+	unsigned char arr = 0;
+	size_t i = 0;
 
-	bit_mirror_LUT[UCHAR_MAX + 1] = 1; 
+	for (i = 1; i < CHAR_BIT; i++)
+	{
+		arr = i;
+		arr = BitArrMirrorFlipperLUT2(arr); /* TODO: check if flipper works*/
+		bit_mirror_LUT[i] = arr;
+	}
+
+	bit_mirror_LUT[UCHAR_MAX + 1] = 1; /* last sentinel is set to 1 indicating lut is initialized*/
 }
 
-
-/* Exactly like BitArrMirro but function receives char */
-static char BitArrMirrorFlipperLUT(char arr)
+/* Exactly like BitArrMirror but function receives char */
+static unsigned char BitArrMirrorFlipperLUT2(char arr)
 {
 	char mask_r = 1;
 	char mask_l = 1;
-	int first = 0, last = 0;
-	size_t arr_size = CHAR_BIT;
+	char first = 0, last = 0;
+	size_t arr_size = 0; 
 	size_t i = 0;
 	
+	arr_size = CHAR_BIT;
 	mask_l <<= (arr_size - 1); /* mask_l is pushed left to msb */
 	
-	for (i = 0; i < arr_size / 2 ; i++, mask_r <<= 1, mask_l >>= 1)
+	for (; i < arr_size / 2 ; i++, mask_r <<= 1, mask_l >>= 1)
 	{
 		first = ((arr & mask_r) == mask_r); /* first will receive arr's lsb value, 1 if the bit is on 0 if off */
 		last = ((arr & mask_l) == mask_l); /* last will receive arr's msb value, 1 if the bit is on 0 if off */
 		
-		arr = BitArrSetLUT(arr, i, last); /* move value of last to first */
-		arr = BitArrSetLUT(arr, (arr_size - i - 1), first); /* move value of first to last */
+		arr = BitArrSetLUT2(arr, i, last); /* move value of last to first */
+		arr = BitArrSetLUT2(arr, (arr_size - i - 1), first); /* move value of first to last */
 	}
 		
 	return arr;
 }
 
 /* set on a single bit within the array */
-static char BitArrSetLUT(char arr, size_t bit_location, int is_set)
+static char BitArrSetLUT2(char arr, size_t bit_location, char is_set)
 {
 	bit_arr_t mask = 1;
 	
@@ -131,14 +133,58 @@ static char BitArrSetLUT(char arr, size_t bit_location, int is_set)
 	return arr |= mask;
 }
 
-bit_arr_t BitArrMirrorLUT(bit_arr_t arr)
+static unsigned char CharMirror(unsigned char byte)
 {
-	if (1 != bit_arr_LUT[UCHAR_MAX + 1])
+	int is_on_r = 0, is_on_l = 0;
+	size_t mask_r = 1, mask_l = 1;
+	int i = 0;
+
+	mask_l <<= (CHAR_BIT - 1);
+
+	for (; i < CHAR_BIT / 2; i++, mask_r <<= 1, mask_l >>= 1)
 	{
-		BitArrMirrorInitLUT();
+		is_on_r = ((mask_r & byte) == mask_r);
+		is_on_l = ((mask_l & byte) == mask_l);
+
+		byte = BitArrSet(byte, i, is_on_l);
+		byte = BitArrSet(byte, CHAR_BIT -1 - i, is_on_r);
+	}
+ 
+	return byte;
+}
+
+static size_t *BitArrInitMirrorLUT()
+{
+	size_t i = 0;
+
+	for (; UCHAR_MAX + 2 > i; i++)
+	{
+		bit_mirror_LUT[i] = CharMirror(i);
 	}
 	
-	return bit_arr_LUT[arr];
+	bit_mirror_LUT[UCHAR_MAX + 1] = 1;
+}
+
+
+bit_arr_t BitArrMirrorLUT(bit_arr_t arr)
+{
+	unsigned char lsb = 0, msb = 0;
+	size_t mask_r = 0xFF, mask_l = 0xFF;
+	int i = 0;
+
+	for (i = 0; i < CHAR_BIT / 2; i++)
+	{
+		lsb = bit_mirror_LUT[mask_r & (arr >> i * CHAR_BIT)];
+		msb = bit_mirror_LUT[mask_l & (arr >> (UCHAR_MAX + 1 - i * CHAR_BIT))];
+
+		arr = arr & ~(mask_r << i* CHAR_BIT);
+		arr = arr | (msb << (i * CHAR_BIT));
+
+		arr = arr & ~(mask_l << UCHAR_MAX + 1 - i * CHAR_BIT);
+		arr = arr | (lsb << (UCHAR_MAX + 1 - i * CHAR_BIT));
+	}
+ 
+	return arr;
 }
 
 
@@ -163,7 +209,7 @@ int BitArrIsOff(bit_arr_t arr, int bit_location)
 	return (~(arr & mask)) ? 1 : 0;
 }
 
-/* set on a single bit within the array */
+/* set on a single bit within the arr */
 bit_arr_t BitArrSet(bit_arr_t arr, size_t bit_location, int is_set)
 {
 	bit_arr_t mask = 1;
@@ -180,7 +226,7 @@ bit_arr_t BitArrSet(bit_arr_t arr, size_t bit_location, int is_set)
 	return arr |= mask;
 }
 
-/* set on all bits in array */
+/* set on all bits in arr */
 bit_arr_t BitArrSetAll(bit_arr_t arr)
 {
 	arr |= ~0;
@@ -188,7 +234,7 @@ bit_arr_t BitArrSetAll(bit_arr_t arr)
 	return arr;
 }
 
-/* set off all bits in array*/
+/* set off all bits in arr*/
 bit_arr_t BitArrResetAll(bit_arr_t arr)
 {
 	arr &= 0;
@@ -337,7 +383,7 @@ size_t BitArrCountOff(bit_arr_t arr)
 	return counter;
 }
 
-/* mirror bit array */
+/* mirror bit arr */
 bit_arr_t BitArrMirror(bit_arr_t arr)
 {
 	bit_arr_t mask_r = 1;
@@ -361,7 +407,7 @@ bit_arr_t BitArrMirror(bit_arr_t arr)
 	return arr;
 }
 
-/* convert array to a string */
+/* convert arr to a string */
 char *BitArrToString(char *dest, bit_arr_t src)
 {
 	size_t i = 0;

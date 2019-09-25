@@ -50,11 +50,11 @@ static void BitArrMirrorInitLUT2()
 			arr >>= CHAR_BIT * j;
 			arr &= mask;
 			arr = BitArrMirrorFlipperLUT2(arr);
-			temp |= arr;
-			temp <<= CHAR_BIT * j;
+			/*temp |= arr;*/
+			/*temp <<= CHAR_BIT * j;*/
+			bit_mirror_LUT[i] = arr;
 		}
 		
-		bit_mirror_LUT[i] = temp;
 		temp = 0;
 	}
 
