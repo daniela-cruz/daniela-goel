@@ -10,38 +10,24 @@ stack_t
 	size_t index;
 }
 
-/*
-* create a stack using the sizeof element 
-* and the size for the cells number
-*/
-stack_t *StkCreate(size_t size);
-
-/*
-* remove element from stack
-*/
+stack_t *StkCreate(size_t element_capacity, size_t size)
+{
+    struct stack *pt = (struct stack*)malloc(sizeof(struct stack));
+ 
+    pt->maxsize = capacity;
+    pt->top = -1;
+    pt->items = (int*)malloc(sizeof(int) * capacity);
+ 
+    return pt;
+}
 void *StkPop(stack_t *element_ptr);
 
-/*
-* add element to stack
-*/
 void StkPush(stack_t *element_ptr);
 
-/*
-* get value of element from stack
-*/
 void *StkPeek(const stack_t *element_ptr);
 
-/*
-* get elements amount in stack
-*/
 size_t StkCount(const stack_t *element_ptr);
 
-/*
-* returns 0 if stack is empty or 1 if full
-*/
 int StkIsEmpty(const stack_t *element_ptr);
 
-/*
-* destroy stack
-*/
 void StkDestroy(stack_t *element_ptr);
