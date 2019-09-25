@@ -5,38 +5,37 @@
 
 typedef struct stack stack_t;
 
-/* create a stack using the sizeof element and the size for the cells number
- * The user will have to call StkDestroy in order to free the allocation created on create */
-stack_t *StkCreate(size_t element_capacity, size_t size);
+/* creates a stack of <size> members
+   recieves number of members that the stack can fill
+   and the size of the argument the stack is expected
+   to save. 										   */
+stack_t *StkCreate(size_t stack_size, size_t element_capacity);
 
-/*
-* remove element from stack
-*/
-void *StkPop(stack_t *element_ptr);
+/* Pops the last inserted member in the stack
+   returns it to the user.
+   pop when stack is empty returns NULL
+   ** Must assign return to a variable **
+   otherwise behaviour is undefined.	   			   */
+void StkPop(stack_t *element_ptr);
 
-/*
-* add element to stack
-*/
-void StkPush(stack_t *element_ptr);
+/* Push the requested value into the stack.
+   push when stack is full is undefined.	 		   */
+void  StkPush(stack_t *element_ptr, void *data);
 
-/*
-* get value of element from stack
-*/
+/* Peeks at the last inserted member in the stack
+   returns it to the user.							   
+   unlike pop it does not remove it from the stack.  
+   peek when stack is empty is undefined.			   */
 void *StkPeek(const stack_t *element_ptr);
 
-/*
-* get elements amount in stack
-*/
+/* Counts the inserted member in the stack
+   returns it to the user.							   */
 size_t StkCount(const stack_t *element_ptr);
 
-/*
-* returns 0 if stack is empty or 1 if full
-*/
+/* Returns 1 if stack is empty, 0 if not.			   */
 int StkIsEmpty(const stack_t *element_ptr);
 
-/*
-* destroy stack
-*/
+/* destroys the stack 								   */
 void StkDestroy(stack_t *element_ptr);
 
 #endif /* __STACK_H__ */
