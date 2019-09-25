@@ -12,10 +12,7 @@ typedef struct stack stack_t;
 stack_t *StkCreate(size_t stack_size, size_t element_capacity);
 
 /* Pops the last inserted member in the stack
-   returns it to the user.
-   pop when stack is empty returns NULL
-   ** Must assign return to a variable **
-   otherwise behaviour is undefined.	   			   */
+   pop when stack is empty returns NULL */
 void StkPop(stack_t *element_ptr);
 
 /* Push the requested value into the stack.
@@ -23,9 +20,7 @@ void StkPop(stack_t *element_ptr);
 void  StkPush(stack_t *element_ptr, void *data);
 
 /* Peeks at the last inserted member in the stack
-   returns it to the user.							   
-   unlike pop it does not remove it from the stack.  
-   peek when stack is empty is undefined.			   */
+   returns it to the user.							  			   */
 void *StkPeek(const stack_t *element_ptr);
 
 /* Counts the inserted member in the stack

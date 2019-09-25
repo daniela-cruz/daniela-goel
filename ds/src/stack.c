@@ -1,5 +1,4 @@
-#include <stdio.h> /* printf */
-#include <stdlib.h> /* malloc, free */
+#include <stdlib.h> /* malloc, calloc, free */
 #include <stddef.h> /* size_t */
 #include <assert.h> /* assert */
 #include <string.h> /* memcpy */
@@ -51,5 +50,6 @@ int StkIsEmpty(const stack_t *stk)
 
 void StkDestroy(stack_t *stk)
 {	
-	free(stk); stk = NULL;
+	free(stk->elements);
+
 }
