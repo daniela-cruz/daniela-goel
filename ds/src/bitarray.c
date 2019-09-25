@@ -337,12 +337,15 @@ static void BitArrInitLUT()
 	bit_arr_t i = 0, j = 0, count = 0;
 	bit_arr_t arr = 0;
 	bit_arr_t mask = 0xFF;
+	size_t item_size = 0; /* in bytes */
+	
+	item_size = sizeof(bit_arr_t);
 
 	for (i = 0; i < UCHAR_MAX + 1; i++)
 	{
 		arr = i;
 		
-		for (j = 0; j < ((word_size / CHAR_BIT) - 1); j++)
+		for (j = 0; j < item_size; j++)
 		{
 			arr &= mask;
 			count += BitArrCountOn(arr);

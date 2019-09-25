@@ -41,9 +41,9 @@ int main()
 	RotRTest();
 	FlipTest();
 	MirrorTest();
-	ToStringTest();
-	CountSetLUTTest();*/
-	MirrorLUTTest();
+	ToStringTest();*/
+	CountSetLUTTest();
+	/*MirrorLUTTest();*/
 	
 	return 0;
 }
@@ -188,9 +188,9 @@ static void CountSetLUTTest()
 
 	printf("\nInit LUT test:\n");
 	
-	for (; i < 10; i++)
+	for (; i < 256; i++)
 	{
-		printf("Set bits in %ld is: %ld\n", arr[i], BitArrCountOnLUT(arr[i]));
+		printf("Set bits in %ld is: %ld\n", i, BitArrCountOnLUT(i));
 	}
 }
 

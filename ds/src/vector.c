@@ -28,14 +28,23 @@ vector_t *VectorCreate(size_t element_size, size_t size)
 
 void VectorDestroy(vector_t *vector_ptr);
 
-void *VectorGetItemAddress(vector_t *vector_ptr, size_t index);
+void *VectorGetItemAddress(vector_t *vector_ptr, size_t index)
+{
+        return (char *)vector_ptr->buffer + index;
+}
 
 int VectorPushBack(vector_t *vector_ptr, const void *data);
 
 int VectorPopBack(vector_t * vector_ptr);
 
-size_t VectorSize(const vector_t *vector_ptr);
+size_t VectorSize(const vector_t *vector_ptr)
+{
+	return vector_ptr->size;
+}
 
-size_t VectorCapacity(const vector_t *vector_ptr);
+size_t VectorCapacity(const vector_t *vector_ptr)
+{
+	return vector_ptr->capacity;
+}
 
 int VectorReserve(const vector_t *vector_ptr, size_t new_capacity);
