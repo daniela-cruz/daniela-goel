@@ -22,9 +22,9 @@ vector_t *VectorCreate(size_t element_size, size_t size)
 {
 	vector_t *vector_arr = NULL;
 	
-	vector_arr = malloc(sizeof(vector_t));
+	vector_arr = calloc(sizeof(vector_t),1);
 	vector_arr->ele_size = element_size;
-    vector_arr->data = calloc(vector_arr->ele_size, vector_arr->size * vector_arr->capacity);
+    vector_arr->data = calloc(vector_arr->ele_size, vector_arr->size);
 	vector_arr->capacity = size;
     vector_arr->size = 0;
     
@@ -45,10 +45,11 @@ void *VectorGetItemAddress(vector_t *vector_ptr, size_t index)
 
 int VectorPushBack(vector_t *vector_ptr, const void *new_data)
 {
-	if (vector_ptr->capacity == vector_ptr->size) /* if no more room left for new data*/
+	/* if no more room left for new data*/
+	if (vector_ptr->capacity == vector_ptr->size) 
 	{
-		vector_ptr = realloc(vector_ptr->data, 
-								   (vector_ptr->ele_size) * (vector_ptr->capacity * capacity_factor));
+		vector_ptr->data = realloc(vector_ptr->data, 
+						(vector_ptr->ele_size) * (vector_ptr->capacity * capacity_factor));
 		vector_ptr->capacity *= capacity_factor;
 	}
 
@@ -59,14 +60,27 @@ int VectorPushBack(vector_t *vector_ptr, const void *new_data)
 		return FAILURE;
 	}
 
+	vector_ptr->size++;
 	memcpy((char *)vector_ptr->data + (vector_ptr->ele_size * vector_ptr->size), 
 				 new_data, vector_ptr->ele_size);
-	vector_ptr->size++;
 	
 	return SUCCESS;
 }
 
-int VectorPopBack(vector_t * vector_ptr);
+int VectorPopBack(vector_t * vector_ptr)
+{
+	enum status_t status = SUCCESS;
+	*(((char *)vector_ptr->data) + (vector_ptr->size * vector_ptr->ele_size)) = 0;
+	
+    vector_ptr->size--;
+
+    if (((0 < vector_ptr->size) && vector_ptr->capacity) == (vector_ptr->capacity / capacity_factor))
+    {
+        status = VectorReserve(vector_ptr, vector_ptr->capacity / capacity_factor);
+	}
+	
+	return status;
+}
 
 size_t VectorSize(const vector_t *vector_ptr)
 {
@@ -78,17 +92,20 @@ size_t VectorCapacity(const vector_t *vector_ptr)
 	return vector_ptr->capacity;
 }
 
-int VectorReserve(const vector_t *vector_ptr, size_t new_capacity)
+int VectorReserve(vector_t *vector_ptr, size_t new_capacity)
 {
 	if (new_capacity > vector_ptr->capacity)
 	{
 		vector_ptr->capacity = new_capacity;
+		vector_ptr->data = realloc(vector_ptr->data, 
+				(vector_ptr->ele_size) * (vector_ptr->capacity * capacity_factor));
 	}
 	
-	if (vector_ptr->capacity == vector_ptr->size) /* if no more room left for new data*/
+	if (!vector_ptr)
 	{
-		vector_ptr = realloc(vector_ptr->data, 
-						(vector_ptr->ele_size) * (vector_ptr->capacity * capacity_factor));
-		vector_ptr->capacity *= capacity_factor;
+		perror("Could nor reserve space");
+		return FAILURE;
 	}
+	
+	return SUCCESS;
 }

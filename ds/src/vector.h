@@ -32,6 +32,6 @@ size_t VectorSize(const vector_t *vector_ptr);
 size_t VectorCapacity(const vector_t *vector_ptr);
 
 /* returns 0 if push realloc succeeds or 1 if failed */
-int VectorReserve(const vector_t *vector_ptr, size_t new_capacity);
+int VectorReserve(vector_t *vector_ptr, size_t new_capacity);
 
 #endif /* __VECTOR_H__ */

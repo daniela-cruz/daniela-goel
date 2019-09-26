@@ -50,6 +50,7 @@ int StkIsEmpty(const stack_t *stk)
 
 void StkDestroy(stack_t *stk)
 {	
-	free(stk->elements);
+	free(stk->elements); stk->elements = NULL;
+	free(stk); stk = NULL;
 
 }
