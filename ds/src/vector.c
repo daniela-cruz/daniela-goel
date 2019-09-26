@@ -24,9 +24,9 @@ vector_t *VectorCreate(size_t element_size, size_t size)
 	
 	vector_arr = calloc(sizeof(vector_t),1);
 	vector_arr->ele_size = element_size;
+    vector_arr->size = size;
     vector_arr->data = calloc(vector_arr->ele_size, vector_arr->size);
 	vector_arr->capacity = size;
-    vector_arr->size = 0;
     
     return vector_arr;
 }
@@ -39,7 +39,6 @@ void VectorDestroy(vector_t *vector_ptr)
 
 void *VectorGetItemAddress(vector_t *vector_ptr, size_t index)
 {
-        
         return (char *)vector_ptr->data + (index * vector_ptr->ele_size);
 }
 
@@ -51,13 +50,11 @@ int VectorPushBack(vector_t *vector_ptr, const void *new_data)
 		vector_ptr->data = realloc(vector_ptr->data, 
 						(vector_ptr->ele_size) * (vector_ptr->capacity * capacity_factor));
 		vector_ptr->capacity *= capacity_factor;
-	}
-
-	if (!vector_ptr)
-	{	
-		perror("Push failed.");
 		
-		return FAILURE;
+		if (!vector_ptr->data)
+		{	
+			perror("Push failed.");
+		}
 	}
 
 	vector_ptr->size++;

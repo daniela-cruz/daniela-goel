@@ -11,13 +11,13 @@ int main()
 {
 	/*VectorCreateTest();*/
 	
-	vector_t *vector = VectorCreate(15,4);
+	vector_t *vector = VectorCreate(4,15);
 	int a = 20;
 	int *p = NULL;
 	int i = 0;
 	
-	printf("vector size: %ld\n", VectorSize(vector));
-	printf("vector capacity: %ld\n", VectorCapacity(vector));
+	printf("\nvector SIZE test: %ld\n", VectorSize(vector));
+	printf("\nvector CAPACITY test: %ld\n", VectorCapacity(vector));
 	
 	for(i = 0; i < 10; i++)
 	{
@@ -29,8 +29,8 @@ int main()
 	printf("push 20\n\n");
 	VectorPushBack(vector, &a);
 	
-	printf("vector size: %ld\n", VectorSize(vector));
-	printf("vector capacity: %ld\n", VectorCapacity(vector));
+	printf("\nvector SIZE test: %ld\n", VectorSize(vector));
+	printf("\nvector CAPACITY test: %ld\n", VectorCapacity(vector));
 	
 	for(i = 0; i < 10; i++)
 	{
@@ -42,8 +42,8 @@ int main()
 	printf("pop\n");
 	VectorPopBack(vector);
 	
-	printf("vector size: %ld\n", VectorSize(vector));
-	printf("vector capacity: %ld\n", VectorCapacity(vector));
+	printf("\nvector SIZE test: %ld\n", VectorSize(vector));
+	printf("\nvector CAPACITY test: %ld\n", VectorCapacity(vector));
 	
 	printf("\n");
 	
