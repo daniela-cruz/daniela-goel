@@ -9,13 +9,11 @@
 
 sll_node_t *SLLCreateNode(void *data, sll_node_t *next)
 {
-	sll_node_t * next_cpy;
-
-	next_cpy = (sll_node_t *) malloc(sizeof(sll_node_t));
+	next = (sll_node_t *) malloc(sizeof(sll_node_t));
 	next->item = data;
 	next->next_node = NULL;
 
-	return next_cpy;
+	return next;
 }
 
 /* 		Frees all pointers from the provided pointer onward.
