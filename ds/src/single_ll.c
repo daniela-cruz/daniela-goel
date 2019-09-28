@@ -64,7 +64,28 @@ sll_node_t *SLLInsertAfter(sll_node_t *target, sll_node_t *new_node)
 /* 		Counts on the items in the linked list 												*/
 size_t SLLCount(const sll_node_t *root);
 
-int SLLForeach(sll_node_t *root, sll_foreach_action *func, const void *func_param);
+int SLLForeach(sll_node_t *root, sll_foreach_action func, const void *func_param)
+{
+	void *param_cpy = NULL;
+	sll_node_t *current_node = NULL;
+	int status = 0;
+	
+	param_cpy = ( void *)func_param;
+	
+	for (current_node = root; 
+			NULL != current_node; 
+			current_node = current_node->next_node)
+	{
+		if (1 == func(current_node->item, param_cpy))
+		{
+			perror("ForEach function failed.\n");
+			status = 1;
+			break;
+		}
+	}
+	
+	return status;
+}
 
 sll_node_t *SLLFind(const sll_node_t *root, sll_find func, const void *func_param)
 {

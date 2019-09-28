@@ -16,6 +16,9 @@ static sll_node_t *SLLFlipTest(sll_node_t *root);
 static void SLLFindTest(sll_node_t *root);
 static int FindIntInList(void *param, void *root);
 
+static void ForEachTest(sll_node_t *root);
+static int ForEachAdd10(void *data, void *param);
+
 int main()
 {
 	SLLTest();
@@ -36,7 +39,7 @@ static void SLLTest()
 	SLLHasLoopTest(list);
 	SLLFlipTest(list);
 	SLLFindTest(list);
-	
+	ForEachTest(list);
 	/***********************/
 	printf("\nFree all test. . . \n");
 	SLLFreeAll(list);
@@ -231,14 +234,39 @@ static int FindIntInList(void *list_item, void *param)
 	return is_found;
 }
 
-static void ForEAchTest(sll_node_t *root)
+static void ForEachTest(sll_node_t *root)
 {
 	int incrementor = 10;
+	int item_cpy = 0;
 	
-	SLLForeach(root, (sll_foreach_action)ForEachAdd10, (void *)&incrementor);
+	item_cpy = *(int *)root->item;
+	
+	printf("\nFor each test. . . \n");
+	if (!SLLForeach(root, (sll_foreach_action)ForEachAdd10, (void *)&incrementor))
+	{
+		printf("SUCCESS!\n");
+		printf("Incremented input test:\n");
+		
+		if (*(int *)root->item == (item_cpy + incrementor))
+		{
+			printf("SUCCESS!\n");
+		}
+		else
+		{
+			printf("Failure! Item was not incremented correctly. Value is: %d and old value is: %d\n", 
+					*(int *)root->item, item_cpy);
+		}
+	}
+	
+	else
+	{
+		printf("Failure! Function returned failure status.\n");
+	}
 }
 
 static int ForEachAdd10(void *data, void *param)
 {
-
+	*(int *)data += *(int *)param;
+	
+	return 0;
 }
