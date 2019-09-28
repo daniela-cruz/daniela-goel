@@ -17,7 +17,7 @@ int BitArrIsOn(bit_arr_t arr, int bit_location);
 /* 1 if a particular bit is set off else 0 */
 int BitArrIsOff(bit_arr_t arr, int bit_location);
 
-/* set on a single bit within the array */
+/* set on ot off a single bit within the array according to the user's request */
 bit_arr_t BitArrSet(bit_arr_t arr, size_t bit_location, int is_set);
 
 /* set on all bits in array */
@@ -26,11 +26,13 @@ bit_arr_t BitArrSetAll(bit_arr_t arr);
 /* set off all bits in array*/
 bit_arr_t BitArrResetAll(bit_arr_t arr);
 
-/* set a particular bit on */
-size_t BitArrSetOn(bit_arr_t arr, int n);
+/* 		set a particular bit on. 
+ * 		If the user provides an n higher than arr_size - 1 
+ * 		or lower than zero the behavior is undefined 			*/
+bit_arr_t BitArrSetOn(bit_arr_t arr, int n);
 
 /* set a particular bit off. If the user provided wrong input there's an undefined behavior */
-size_t BitArrSetOff(bit_arr_t arr, int n);
+bit_arr_t BitArrSetOff(bit_arr_t arr, int n);
 
 /* rotate arr left n times */
 bit_arr_t BitArrRotL(bit_arr_t arr, size_t n);
@@ -51,18 +53,17 @@ size_t BitArrCountOff(bit_arr_t arr);
 bit_arr_t BitArrMirror(bit_arr_t arr);
 
 /******************************************
-*												*
-*		 BitArr functions II: LUT		*
-*												*
+*															*
+*		 BitArr functions II: LUT				*
+*															*
 ******************************************/
 
-/* initializes LUT on first call afterwhich an imidiate value can be withdrawn form */
+/* 		initializes LUT on first call form which 
+ * 		an imidiate value can be withdrawn 		 				*/
 size_t BitArrCountOnLUT(bit_arr_t arr);
 
-
-/* mirror bit array
-* using a LUT table init table if not initialized before
-*/
+/* 		mirror bit array
+* 		using a LUT table init table if not initialized before 	*/
 bit_arr_t BitArrMirrorLUT(bit_arr_t arr);
 
 /* convert array to a string */
