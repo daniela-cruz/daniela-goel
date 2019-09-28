@@ -26,10 +26,10 @@ sll_node_t *SLLCreateNode(void *data, sll_node_t *next);
  * 		If SLLFreeAll recieves a NULL: behaviour is undefined.				*/
 void SLLFreeAll(sll_node_t *root);
 
-/* 		Removes provided pointer from the linked list.
+/* 		Removes provided pointer from the linked list and returns new root.
  * 		If <target> has no previous node, next will become root. 
  * 		If <target> has a next, it will be assigned to previous node.			*/
-void SLLRemove(sll_node_t *target);
+sll_node_t *SLLRemove(sll_node_t *target);
 
 /* 		Removes <target>'s next node.														*/
 void SLLRemoveAfter(sll_node_t *target);

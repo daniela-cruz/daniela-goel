@@ -19,6 +19,11 @@ static int FindIntInList(void *param, void *root);
 static void ForEachTest(sll_node_t *root);
 static int ForEachAdd10(void *data, void *param);
 
+static void IntersectionTest(sll_node_t *root);
+
+static sll_node_t *RemoveTest(sll_node_t *target);
+static void CounterTest(sll_node_t *root);
+
 int main()
 {
 	SLLTest();
@@ -28,7 +33,7 @@ int main()
 
 static void SLLTest()
 {
-	sll_node_t *list = NULL;
+	sll_node_t *list = NULL, *list_cpy = NULL;
 	int num = 123;
 	
 	list = (sll_node_t *)SLLCreateNodeTest(num, list);
@@ -36,10 +41,15 @@ static void SLLTest()
 	/***********************/
 	list = SLLInsertTest(list);
 	SLLInsertAfterTest(list);
+	CounterTest(list);
 	SLLHasLoopTest(list);
 	SLLFlipTest(list);
 	SLLFindTest(list);
 	ForEachTest(list);
+	IntersectionTest(list);
+	CounterTest(list);
+	list_cpy = RemoveTest(list);
+	CounterTest(list_cpy);
 	/***********************/
 	printf("\nFree all test. . . \n");
 	SLLFreeAll(list);
@@ -269,4 +279,49 @@ static int ForEachAdd10(void *data, void *param)
 	*(int *)data += *(int *)param;
 	
 	return 0;
+}
+
+static void IntersectionTest(sll_node_t *root)
+{
+	sll_node_t *root2 = NULL, *is_found = NULL;
+	int num_5 = 654;
+	
+	printf("\nIntersection test. . . \n");
+	root2 = SLLCreateNode((void *)&num_5, root2);
+	root2->next_node = root->next_node;
+	is_found = SLLFindIntersection(root, root2);
+	
+	if (is_found == root->next_node)
+	{
+		printf("SUCCESS!\n");
+	}
+	else
+	{
+		printf("Failure! Could not find intersection although there is supposed to be one.\n");
+	}
+}
+
+static sll_node_t *RemoveTest(sll_node_t *target)
+{
+	sll_node_t *target_cpy = NULL;
+	
+	printf("\nRemove test. . . \n");
+	target_cpy = target->next_node;
+	target= SLLRemove(target);
+
+	if (target_cpy == target)
+	{
+		printf("SUCCESS!\n");
+	}
+	else
+	{
+		printf("Failure! Target was not removed.\n");
+	}
+	
+	return target;
+}
+
+static void CounterTest(sll_node_t *root)
+{
+	printf("\nCount test shows: %lu nodes.\n", SLLCount(root));
 }

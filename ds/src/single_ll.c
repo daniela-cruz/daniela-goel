@@ -35,13 +35,24 @@ void SLLFreeAll(sll_node_t *root)
 	free(root); root = NULL;
 }
 
-/* 		Removes provided pointer from the linked list.
- * 		If <target> has no previous node, next will become root. 
- * 		If <target> has a next, it will be assigned to previous node.				*/
-void SLLRemove(sll_node_t *target);
+sll_node_t *SLLRemove(sll_node_t *target)
+{
+	sll_node_t *temp_node = NULL;
+	
+	temp_node = target->next_node;
+	target->next_node = NULL;
+	
+	return temp_node;
+}
 
-/* 		Removes <target>'s next node.														*/
-void SLLRemoveAfter(sll_node_t *target);
+void SLLRemoveAfter(sll_node_t *target)
+{
+	sll_node_t *temp_node = NULL;
+	
+	temp_node = target->next_node->next_node;
+	target->next_node->next_node = NULL;
+	target->next_node= temp_node;
+}
 
 sll_node_t *SLLInsert(sll_node_t *root, sll_node_t *new_node)
 {
@@ -61,8 +72,19 @@ sll_node_t *SLLInsertAfter(sll_node_t *target, sll_node_t *new_node)
 	return new_node;
 }
 
-/* 		Counts on the items in the linked list 												*/
-size_t SLLCount(const sll_node_t *root);
+size_t SLLCount(const sll_node_t *root)
+{
+	size_t counter = 0;
+	sll_node_t *current_node = NULL;
+	
+	for (current_node = (sll_node_t *)root; 
+			NULL != current_node; 
+			current_node = current_node->next_node, counter++)
+	{
+	}
+	
+	return counter;
+}
 
 int SLLForeach(sll_node_t *root, sll_foreach_action func, const void *func_param)
 {
