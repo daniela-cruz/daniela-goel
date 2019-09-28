@@ -6,36 +6,32 @@
 
 #include "single_ll.h" /* sll_node_t */
 
-
 sll_node_t *SLLCreateNode(void *data, sll_node_t *next)
 {
-	next = (sll_node_t *) malloc(sizeof(sll_node_t));
-	next->item = data;
+	sll_node_t *new_node = NULL;
+	
+	new_node = malloc(sizeof(next));
+	
+	if (NULL == new_node)
+	{
+		perror("Could not allocate memory for Create.");
+	}
+
+	new_node->item = data;
+	next = new_node;
 	next->next_node = NULL;
 
-	return next;
+	return new_node;
 }
 
-/* 		Frees all pointers from the provided pointer onward.
- * 		If SLLFreeAll recieves a NULL: behaviour is undefined.					*/
 void SLLFreeAll(sll_node_t *root)
 {
-	sll_node_t *runner = NULL;
-	
-	runner = root;
-	
-	/* find last node */
-	for (; NULL != root->next_node;)
+	if (NULL != root->next_node)
 	{
-		runner = root;
-		
-		for (; NULL != root->next_node->next_node;)
-		{
-			runner->next_node = runner->next_node->next_node;
-			free(runner->next_node); runner->next_node = NULL;
-		}
+		SLLFreeAll(root->next_node);
 	}
 	
+	root->next_node = NULL;
 	free(root); root = NULL;
 }
 
@@ -47,50 +43,90 @@ void SLLRemove(sll_node_t *target);
 /* 		Removes <target>'s next node.														*/
 void SLLRemoveAfter(sll_node_t *target);
 
-void SLLInsert(sll_node_t *root, sll_node_t *new_node)
+sll_node_t *SLLInsert(sll_node_t *root, sll_node_t *new_node)
 {
-	sll_node_t *temp_node = NULL;
+		new_node->next_node = root;
 	
-	temp_node->next_node = root->next_node;
-	root->next_node = new_node;
-	new_node->next_node = temp_node->next_node;
+	return new_node;
 }
 
-void SLLInsertAfter(sll_node_t *target, sll_node_t *new_node)
+sll_node_t *SLLInsertAfter(sll_node_t *target, sll_node_t *new_node)
 {
 	sll_node_t *temp_node = NULL;
 	
-	temp_node->next_node = new_node->next_node; /* new node's target's next address */
-	new_node->next_node = target->next_node;
-	target->next_node = temp_node->next_node; /*  */
+	temp_node = target->next_node;
+	target->next_node = new_node;
+	new_node->next_node = temp_node;
+
+	return new_node;
 }
 
 /* 		Counts on the items in the linked list 												*/
 size_t SLLCount(const sll_node_t *root);
 
-int SLLForeach(sll_node_t root, sll_foreach_action func, const void *func_param);
+int SLLForeach(sll_node_t *root, sll_foreach_action *func, const void *func_param);
 
-sll_node_t *SLLFind(const sll_node_t root, sll_find func, const void *func_param);
-
-void SLLFlip(sll_node_t *root)
+sll_node_t *SLLFind(const sll_node_t *root, sll_find func, const void *func_param)
 {
-	sll_node_t *temp_node = NULL;
+	sll_node_t * temp_node = NULL;
+	void *item_cpy = NULL;
+	void *param_cpy = NULL;
 	
-		
+	temp_node = (sll_node_t *)root;
+	item_cpy = temp_node->item;
+	param_cpy = (void *)func_param;
+	
+	for (; NULL != temp_node; temp_node = temp_node->next_node)
+	{
+		if (func(item_cpy, param_cpy))
+		{
+			return (sll_node_t *)temp_node;
+		}
+	}
+	
+	return NULL;
+}
+
+sll_node_t *SLLFlip(sll_node_t *root)
+{
+	sll_node_t *temp_node = NULL, *current_node = NULL, *new_root = NULL;
+	
+	/* promote new_root to last node and temp to one before last */
+	for (new_root = root; 
+			NULL != new_root->next_node; 
+			temp_node = new_root, new_root = new_root->next_node)
+	{
+	}
+	
+	/* start from last node and change new_root->next_node to previus node */
+	for (current_node = new_root; 
+			current_node != root; 
+			current_node = temp_node, temp_node = temp_node->next_node)
+	{
+		for (temp_node = root; 
+				temp_node->next_node != current_node; 
+				temp_node = temp_node->next_node)
+		{
+		}
+	}
+
+	root->next_node = NULL;
+	
+	return new_root;
 }
 
 int SLLHasLoop(const sll_node_t *root)
 {
-	sll_node_t *slow_p = (sll_node_t *)root, *fast_p = (sll_node_t *)root; 
-
-	while (slow_p && fast_p && fast_p->next_node) 
+	sll_node_t *slow_p = NULL, *fast_p = NULL; 
+	
+	slow_p = (sll_node_t *)root;
+	fast_p = (sll_node_t *)root; 
+	
+	for (; slow_p && fast_p && fast_p->next_node; 
+			slow_p = slow_p->next_node, fast_p = fast_p->next_node->next_node) 
 	{ 
-		slow_p = slow_p->next_node; 
-		fast_p = fast_p->next_node->next_node; 
-		
 		if (slow_p == fast_p) 
 		{ 
-		    printf("Found Loop"); 
 		    return 1; 
 		} 
 	} 
