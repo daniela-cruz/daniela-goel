@@ -48,7 +48,7 @@ size_t SLLCount(const sll_node_t *root);
 
 /*		receives root, function pointer and parameter as arguments and 
  *		performs the desired action over the entire list 								*/
-int SLLForeach(sll_node_t *root, sll_foreach_action func, const void *func_param);
+int SLLForEach(sll_node_t *root, sll_foreach_action func, const void *func_param);
 
 sll_node_t *SLLFind(const sll_node_t *root, sll_find func, const void *func_param);
 

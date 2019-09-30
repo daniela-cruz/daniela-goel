@@ -36,12 +36,12 @@ void SLLFreeAll(sll_node_t *root)
 
 sll_node_t *SLLRemove(sll_node_t *target)
 {
-	sll_node_t *temp_node = NULL;
+	sll_node_t *next_node = NULL;
 	
-	temp_node = target->next_node;
-	free(target); target = NULL;
+	next_node = target->next_node;
+	free(target);
 	
-	return temp_node;
+	return next_node;
 }
 
 
@@ -90,7 +90,7 @@ size_t SLLCount(const sll_node_t *root)
 	return counter;
 }
 
-int SLLForeach(sll_node_t *root, sll_foreach_action func, const void *func_param)
+int SLLForEach(sll_node_t *root, sll_foreach_action func, const void *func_param)
 {
 	sll_node_t *current = NULL;
 	int status = 1;
@@ -102,13 +102,6 @@ int SLLForeach(sll_node_t *root, sll_foreach_action func, const void *func_param
 			status = 0;
 			break;
 		}
-		
-		if (1 == func(current->item, (void *)func_param))
-		{
-			perror("ForEach function failed.\n");
-			status = 1;
-			break;
-		}
 	}
 	
 	return status;
@@ -116,16 +109,11 @@ int SLLForeach(sll_node_t *root, sll_foreach_action func, const void *func_param
 
 sll_node_t *SLLFind(const sll_node_t *root, sll_find func, const void *func_param)
 {
-	sll_node_t * temp_node = NULL;
-	void *param_cpy = NULL;
-	
-	param_cpy = (void *)func_param;
-	
-	for (temp_node = (sll_node_t *)root; NULL != temp_node; temp_node = temp_node->next_node)
+	for(;NULL != root; root = root->next_node)
 	{
-		if (func(temp_node->item, param_cpy))
+		if (func(root->item, (void *)func_param))
 		{
-			return (sll_node_t *)temp_node;
+			return (sll_node_t *)root;
 		}
 	}
 	
@@ -169,15 +157,15 @@ int SLLHasLoop(const sll_node_t *root)
 
 sll_node_t *SLLFindIntersection(const sll_node_t *root1, const sll_node_t *root2)
 {
-	sll_node_t *root1_cpy = NULL, *root2_cpy = NULL;
+	sll_node_t *root2_start = NULL;	
 
-	for (root1_cpy = (sll_node_t *)root1; NULL != root1_cpy->next_node; root1_cpy = root1_cpy->next_node)
+	for (; NULL != root1 ; root1 = root1->next_node)
 	{
-		for (root2_cpy = (sll_node_t *)root2; NULL != root2_cpy->next_node; root2_cpy = root2_cpy->next_node)
+		for (root2_start = (sll_node_t *)root2; NULL != root2_start ; root2_start = root2_start->next_node)
 		{
-			if (root1_cpy == root2_cpy)
+			if (root1 == root2_start)
 			{
-				return root1_cpy;
+				return (sll_node_t *)root1;
 			}
 		}
 	}
