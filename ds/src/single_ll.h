@@ -32,7 +32,8 @@ void SLLFreeAll(sll_node_t *root);
 sll_node_t *SLLRemove(sll_node_t *target);
 
 /* 		Removes <target>'s next node.														*/
-void SLLRemoveAfter(sll_node_t *target);
+
+sll_node_t *SLLRemoveAfter(sll_node_t *target);
 
 /* 		Inserts <new node> to the linked list before <target>.
  * 		If <target> has no previous node, <new node> will become root	*/

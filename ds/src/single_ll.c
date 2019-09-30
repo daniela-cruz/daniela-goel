@@ -1,38 +1,34 @@
-#include <stdio.h> /* pfrintf */
 #include <stdlib.h> /* malloc, calloc, free */
 #include <stddef.h> /* size_t */
-#include <assert.h> /* assert */
-#include <string.h> /* memcpy */
-
+ #include <stdio.h> /* perror */
+ 
 #include "single_ll.h" /* sll_node_t */
 
 sll_node_t *SLLCreateNode(void *data, sll_node_t *next)
 {
 	sll_node_t *new_node = NULL;
 	
-	new_node = malloc(sizeof(next));
+	new_node = malloc(sizeof(sll_node_t));
 	
 	if (NULL == new_node)
 	{
-		perror("Could not allocate memory for Create.");
+		perror("Could not allocate memory for new node.");
 	}
 
 	new_node->item = data;
-	next = new_node;
-	next->next_node = NULL;
+	new_node->next_node = next;
 
 	return new_node;
 }
 
 void SLLFreeAll(sll_node_t *root)
 {
-	if (NULL != root->next_node)
-	{
-		SLLFreeAll(root->next_node);
-	}
+	sll_node_t *temp_node = NULL;
 	
-	root->next_node = NULL;
-	free(root); root = NULL;
+	for (temp_node = root; NULL != root; temp_node = root, root = root->next_node)
+	{
+		free(temp_node); temp_node = NULL;
+	}
 }
 
 sll_node_t *SLLRemove(sll_node_t *target)
@@ -40,23 +36,27 @@ sll_node_t *SLLRemove(sll_node_t *target)
 	sll_node_t *temp_node = NULL;
 	
 	temp_node = target->next_node;
-	target->next_node = NULL;
+	free(target); target = NULL;
 	
 	return temp_node;
 }
 
-void SLLRemoveAfter(sll_node_t *target)
+
+sll_node_t *SLLRemoveAfter(sll_node_t *target)
 {
 	sll_node_t *temp_node = NULL;
 	
-	temp_node = target->next_node->next_node;
-	target->next_node->next_node = NULL;
-	target->next_node= temp_node;
+	temp_node = target->next_node;
+	target->next_node = target->next_node->next_node;
+	free(temp_node); temp_node = NULL;
+	
+	return target;
 }
 
 sll_node_t *SLLInsert(sll_node_t *root, sll_node_t *new_node)
 {
-		new_node->next_node = root;
+	root->next_node = new_node->next_node;
+	new_node->next_node = root;
 	
 	return new_node;
 }
@@ -69,17 +69,17 @@ sll_node_t *SLLInsertAfter(sll_node_t *target, sll_node_t *new_node)
 	target->next_node = new_node;
 	new_node->next_node = temp_node;
 
-	return new_node;
+	return target;
 }
 
 size_t SLLCount(const sll_node_t *root)
 {
-	size_t counter = 0;
-	sll_node_t *current_node = NULL;
+	size_t counter = 1;
+	sll_node_t *current = NULL;
 	
-	for (current_node = (sll_node_t *)root; 
-			NULL != current_node; 
-			current_node = current_node->next_node, counter++)
+	for (current = (sll_node_t *)root; 
+			(NULL != current) && (NULL != current->next_node); 
+			current = current->next_node, counter++)
 	{
 	}
 	
@@ -89,16 +89,16 @@ size_t SLLCount(const sll_node_t *root)
 int SLLForeach(sll_node_t *root, sll_foreach_action func, const void *func_param)
 {
 	void *param_cpy = NULL;
-	sll_node_t *current_node = NULL;
+	sll_node_t *current = NULL;
 	int status = 0;
 	
 	param_cpy = ( void *)func_param;
 	
-	for (current_node = root; 
-			NULL != current_node; 
-			current_node = current_node->next_node)
+	for (current = root; 
+			NULL != current; 
+			current = current->next_node)
 	{
-		if (1 == func(current_node->item, param_cpy))
+		if (1 == func(current->item, param_cpy))
 		{
 			perror("ForEach function failed.\n");
 			status = 1;
@@ -132,7 +132,7 @@ sll_node_t *SLLFind(const sll_node_t *root, sll_find func, const void *func_para
 
 sll_node_t *SLLFlip(sll_node_t *root)
 {
-	sll_node_t *temp_node = NULL, *current_node = NULL, *new_root = NULL;
+	sll_node_t *temp_node = NULL, *current = NULL, *new_root = NULL;
 	
 	/* promote new_root to last node and temp to one before last */
 	for (new_root = root; 
@@ -142,12 +142,12 @@ sll_node_t *SLLFlip(sll_node_t *root)
 	}
 	
 	/* start from last node and change new_root->next_node to previus node */
-	for (current_node = new_root; 
-			current_node != root; 
-			current_node = temp_node, temp_node = temp_node->next_node)
+	for (current = new_root; 
+			current != root; 
+			current = temp_node, temp_node = temp_node->next_node)
 	{
 		for (temp_node = root; 
-				temp_node->next_node != current_node; 
+				temp_node->next_node != current; 
 				temp_node = temp_node->next_node)
 		{
 		}
@@ -180,18 +180,11 @@ int SLLHasLoop(const sll_node_t *root)
 sll_node_t *SLLFindIntersection(const sll_node_t *root1, const sll_node_t *root2)
 {
 	sll_node_t *root1_cpy = NULL, *root2_cpy = NULL;
-	
-	root1_cpy = (sll_node_t *)root1;
-	root2_cpy = (sll_node_t *)root2;
-	
-	for (; NULL != root1_cpy->next_node;)
+
+	for (root1_cpy = (sll_node_t *)root1; NULL != root1_cpy->next_node; root1_cpy = root1_cpy->next_node)
 	{
-		root1_cpy = root1_cpy->next_node;
-		
-		for (; NULL != root2_cpy->next_node;)
+		for (root2_cpy = (sll_node_t *)root2; NULL != root2_cpy->next_node; root2_cpy = root2_cpy->next_node)
 		{
-			root2_cpy = root2_cpy->next_node;
-			
 			if (root1_cpy == root2_cpy)
 			{
 				return root1_cpy;

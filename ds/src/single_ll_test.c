@@ -8,8 +8,8 @@
 
 static void SLLTest();
 static sll_node_t *SLLCreateNodeTest(int data, sll_node_t *next);
-static sll_node_t *SLLInsertTest(sll_node_t *root);
-static void SLLInsertAfterTest(sll_node_t *target);
+static sll_node_t *SLLInsertTest(sll_node_t *root, sll_node_t *new_node);
+static sll_node_t *SLLInsertAfterTest(sll_node_t *target, sll_node_t *new_node);
 static void SLLHasLoopTest(sll_node_t *root);
 static sll_node_t *SLLFlipTest(sll_node_t *root);
 
@@ -33,14 +33,20 @@ int main()
 
 static void SLLTest()
 {
-	sll_node_t *list = NULL, *list_cpy = NULL;
-	int num = 123;
+	sll_node_t *list = NULL, *new_node = NULL, *new_node_2 = NULL, *list_cpy = NULL;
+	int num = 123, num_2 = 456, num_3 = 789;
 	
+	CounterTest(list);
 	list = (sll_node_t *)SLLCreateNodeTest(num, list);
-	
+	CounterTest(list);
+	new_node = SLLCreateNode((void *)&num_2, new_node);
+	CounterTest(list);
+	new_node_2 = SLLCreateNode((void *)&num_3, new_node);
 	/***********************/
-	list = SLLInsertTest(list);
-	SLLInsertAfterTest(list);
+	CounterTest(list);
+	list = SLLInsertTest(list, new_node);
+	CounterTest(list);
+	new_node = SLLInsertAfterTest(new_node, new_node_2);
 	CounterTest(list);
 	SLLHasLoopTest(list);
 	SLLFlipTest(list);
@@ -52,37 +58,39 @@ static void SLLTest()
 	CounterTest(list_cpy);
 	/***********************/
 	printf("\nFree all test. . . \n");
-	SLLFreeAll(list);
+	SLLFreeAll(list_cpy);
 }
 
 static sll_node_t *SLLCreateNodeTest(int data, sll_node_t *next)
 {
+	sll_node_t *new_node = NULL;
+	
 	printf("\nCreate SLL test. . . \n");
 	
-	next = SLLCreateNode((void *)&data, next);
+	new_node = SLLCreateNode((void *)&data, next);
 	
-	if (next)
+	if (new_node)
 	{
 		printf("SUCCESS! A pointer was allocated to first node.\n");
-		printf("\nTesting next_node allocation. . .\n");
+		printf("1. Testing next_node allocation. . .\n");
 		
-		if (!next->next_node)
+		if (!new_node->next_node)
 		{
 			printf("SUCCESS!\n");
-			printf("\nTesting data item allocation. . .\n");
+			printf("2. Testing data item allocation. . .\n");
 			
-			if (data == *(int *)(next->item))
+			if (data == *(int *)(new_node->item))
 			{
 				printf("SUCCESS!\n");
-				printf("\nTesting data items are matched. . .\n");
+				printf("3. Testing data items are matched. . .\n");
 				
-				if (data == *(int *)(next->item))
+				if (data == *(int *)(new_node->item))
 				{
 					printf("SUCCESS!\n");
 				}
 				else
 				{
-					printf("Failure! Item content is: %d\n and not: %d!", *(int *)(next->item), data);
+					printf("Failure! Item content is: %d\n and not: %d!", *(int *)(new_node->item), data);
 				}
 			}
 			else
@@ -102,28 +110,18 @@ static sll_node_t *SLLCreateNodeTest(int data, sll_node_t *next)
 		printf("Failure! Pointer was not allocaed at all\n");
 	}
 	
-	return next;
+	return new_node;
 }
 
-sll_node_t *SLLInsertTest(sll_node_t *root)
+static sll_node_t *SLLInsertTest(sll_node_t *root, sll_node_t *new_node)
 {
-	sll_node_t *new_node = NULL, *new_node_2 = NULL;
-	int num_2 = 456, num_3 = 789;
-	
-	assert(root);
-	
-	new_node = SLLCreateNode((void *)&num_2, root);
-	new_node->item = (void *)&num_2;
-	new_node_2 = SLLCreateNode((void *)&num_3, new_node);
-	new_node_2->item = (void *)&num_3;
-	
 	printf("\nInsert test. . .\n");
 	new_node = SLLInsert(root, new_node);
 	
 	if (new_node->next_node == root)
 	{
 		printf("SUCCESS!\n");
-		new_node_2 = SLLInsert(new_node, new_node_2);
+		/*new_node_2 = SLLInsert(new_node, new_node_2);
 
 		if (*(int *)new_node->item == num_2)
 		{
@@ -132,25 +130,20 @@ sll_node_t *SLLInsertTest(sll_node_t *root)
 		else
 		{
 			printf("Failure! new item was not inserted\n");
-		}
+		}*/
 	}
 	else
 	{
 		printf("Failure! new item was not inserted\n");
 	}
 	
-	return new_node_2;
+	return new_node;
 }
 
-static void SLLInsertAfterTest(sll_node_t *target)
+static sll_node_t *SLLInsertAfterTest(sll_node_t *target, sll_node_t *new_node)
 {
-	sll_node_t *new_node = NULL;
-	int num_4 = 321;
-	
-	new_node = SLLCreateNode((void *)&num_4, new_node);
-	
 	printf("\nInsert AFTER test. . .\n");
-	new_node = SLLInsertAfter(target, new_node);
+	target = SLLInsertAfter(target, new_node);
 	
 	if (new_node == target->next_node)
 		{
@@ -161,6 +154,7 @@ static void SLLInsertAfterTest(sll_node_t *target)
 			printf("Failure! Insertion AFTER was not completed.\n");
 		}
 		
+		return target;
 }
 
 static void SLLHasLoopTest(sll_node_t *root)
@@ -325,3 +319,4 @@ static void CounterTest(sll_node_t *root)
 {
 	printf("\nCount test shows: %lu nodes.\n", SLLCount(root));
 }
+
