@@ -25,10 +25,13 @@ void SLLFreeAll(sll_node_t *root)
 {
 	sll_node_t *temp_node = NULL;
 	
-	for (temp_node = root; NULL != root; temp_node = root, root = root->next_node)
+	for (temp_node = root; NULL != root; temp_node = root)
 	{
+		root = temp_node->next_node;
 		free(temp_node); temp_node = NULL;
 	}
+	
+	free(temp_node); temp_node = NULL;
 }
 
 sll_node_t *SLLRemove(sll_node_t *target)
@@ -48,6 +51,7 @@ sll_node_t *SLLRemoveAfter(sll_node_t *target)
 	
 	temp_node = target->next_node;
 	target->next_node = target->next_node->next_node;
+	
 	free(temp_node); temp_node = NULL;
 	
 	return target;
@@ -88,17 +92,18 @@ size_t SLLCount(const sll_node_t *root)
 
 int SLLForeach(sll_node_t *root, sll_foreach_action func, const void *func_param)
 {
-	void *param_cpy = NULL;
 	sll_node_t *current = NULL;
-	int status = 0;
+	int status = 1;
 	
-	param_cpy = ( void *)func_param;
-	
-	for (current = root; 
-			NULL != current; 
-			current = current->next_node)
+	for (current = root; NULL != current; current = current->next_node)
 	{
-		if (1 == func(current->item, param_cpy))
+		if (0 == func(current->item, (void *)func_param))
+		{
+			status = 0;
+			break;
+		}
+		
+		if (1 == func(current->item, (void *)func_param))
 		{
 			perror("ForEach function failed.\n");
 			status = 1;
@@ -112,16 +117,13 @@ int SLLForeach(sll_node_t *root, sll_foreach_action func, const void *func_param
 sll_node_t *SLLFind(const sll_node_t *root, sll_find func, const void *func_param)
 {
 	sll_node_t * temp_node = NULL;
-	void *item_cpy = NULL;
 	void *param_cpy = NULL;
 	
-	temp_node = (sll_node_t *)root;
-	item_cpy = temp_node->item;
 	param_cpy = (void *)func_param;
 	
-	for (; NULL != temp_node; temp_node = temp_node->next_node)
+	for (temp_node = (sll_node_t *)root; NULL != temp_node; temp_node = temp_node->next_node)
 	{
-		if (func(item_cpy, param_cpy))
+		if (func(temp_node->item, param_cpy))
 		{
 			return (sll_node_t *)temp_node;
 		}
@@ -132,30 +134,18 @@ sll_node_t *SLLFind(const sll_node_t *root, sll_find func, const void *func_para
 
 sll_node_t *SLLFlip(sll_node_t *root)
 {
-	sll_node_t *temp_node = NULL, *current = NULL, *new_root = NULL;
-	
-	/* promote new_root to last node and temp to one before last */
-	for (new_root = root; 
-			NULL != new_root->next_node; 
-			temp_node = new_root, new_root = new_root->next_node)
+	sll_node_t *flipped_list = NULL;
+
+	if (NULL == root || NULL == root->next_node) 
 	{
-	}
-	
-	/* start from last node and change new_root->next_node to previus node */
-	for (current = new_root; 
-			current != root; 
-			current = temp_node, temp_node = temp_node->next_node)
-	{
-		for (temp_node = root; 
-				temp_node->next_node != current; 
-				temp_node = temp_node->next_node)
-		{
-		}
+		return root; 
 	}
 
-	root->next_node = NULL;
-	
-	return new_root;
+	flipped_list = SLLFlip(root->next_node); 
+	root->next_node->next_node = root; 
+	root->next_node = NULL; 
+
+	return flipped_list; 
 }
 
 int SLLHasLoop(const sll_node_t *root)
