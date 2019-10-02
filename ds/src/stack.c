@@ -35,22 +35,31 @@ stack_t *StkCreate(size_t stack_size, size_t element_capacity)
 
 void StkPop(stack_t *stk)
 {
+	assert(stk);
+	
 	stk->top--;
 }
 
 void StkPush(stack_t *stk, void *data)
 {
+	assert(stk);
+	assert(data);
+	
 	memcpy((char *)stk->elements + (stk->top * stk->ele_size), data, stk->ele_size);
 	stk->top++;
 }
 
 void *StkPeek(const stack_t *stk)
 {
+	assert(stk);
+	
 	return (char *)stk->elements + ((stk->top-1) * stk->ele_size);
 }
 
 size_t StkCount(const stack_t *stk)
 {
+	assert(stk);
+	
 	return stk->top;
 }
 
@@ -61,6 +70,8 @@ int StkIsEmpty(const stack_t *stk)
 
 void StkDestroy(stack_t *stk)
 {	
+	assert(stk);
+	
 	free(stk->elements); stk->elements = NULL;
 	free(stk); stk = NULL;
 }
