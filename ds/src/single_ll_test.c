@@ -38,22 +38,24 @@ static void SLLTest()
 	
 	CounterTest(list);
 	list = (sll_node_t *)SLLCreateNodeTest(num, list);
-	CounterTest(list);
 	new_node = SLLCreateNode((void *)&num_2, new_node);
-	CounterTest(list);
 	new_node_2 = SLLCreateNode((void *)&num_3, new_node);
 	/***********************/
+	SLLInsertTest(list, new_node);
 	CounterTest(list);
-	list = SLLInsertTest(list, new_node);
-	CounterTest(list);
-	new_node = SLLInsertAfterTest(new_node, new_node_2);
+	SLLInsertAfterTest(new_node, new_node_2);
 	CounterTest(list);
 	SLLHasLoopTest(list);
 	SLLFindTest(list);
 	/*IntersectionTest(list);*/
-	list2 = SLLCreateNode((void *)&num_3, new_node);
-	printf("\nFind INTERSECTION test. . .\t");
-	if (new_node == SLLFindIntersection(list, list2))
+	
+	CounterTest(list);
+	
+	printf("\nFlip test. . . \t\t");
+	list2 = SLLFlip(list);
+	list2 = SLLFlip(list);
+	
+	if (list2 == list)
 	{
 		printf("SUCCESS\n");
 	}
@@ -61,19 +63,15 @@ static void SLLTest()
 	{
 		printf("FAILURE\n");
 	}
-	list2->next_node = NULL;
-	CounterTest(list);
-	SLLFlipTest(list);
+	
 	ForEachTest(list);
 	CounterTest(list);
-	list = RemoveTest(list);
-	CounterTest(list);
-	printf("\nRemove AFTER test. . .\t");
-	list = SLLRemoveAfter(list);
+	/*list = RemoveTest(list);
+	CounterTest(list);*/
 	CounterTest(list);
 	/***********************/
 	printf("\nFree all test. . . \n");
-	SLLFreeAll(list_cpy); SLLFreeAll(list2);
+	SLLFreeAll(list_cpy); 
 }
 
 static sll_node_t *SLLCreateNodeTest(int data, sll_node_t *next)
@@ -135,10 +133,14 @@ static void CounterTest(sll_node_t *root)
 
 static sll_node_t *SLLInsertTest(sll_node_t *root, sll_node_t *new_node)
 {
+	sll_node_t *temp = NULL;
+	
+	temp = root->next_node;
+	
 	printf("\nInsert test. . .\t");
 	new_node = SLLInsert(root, new_node);
 	
-	if (new_node->next_node == root)
+	if (temp == new_node->next_node)
 	{
 		printf("SUCCESS!\n");
 	}
@@ -152,10 +154,12 @@ static sll_node_t *SLLInsertTest(sll_node_t *root, sll_node_t *new_node)
 
 static sll_node_t *SLLInsertAfterTest(sll_node_t *target, sll_node_t *new_node)
 {
+	size_t counter = 0; 
 	printf("\nInsert AFTER test. . .\t");
 	target = SLLInsertAfter(target, new_node);
+	counter = SLLCount(target);
 	
-	if (new_node == target->next_node)
+	if (SLLCount(target) == counter)
 		{
 			printf("SUCCESS!\n");
 		}
@@ -257,6 +261,7 @@ static void ForEachTest(sll_node_t *root)
 	item_cpy = *(int *)root->item;
 	
 	printf("\nFor each test. . . \t");
+	
 	if (!SLLForEach(root, (sll_foreach_action)ForEachAdd10, (void *)&incrementor))
 	{
 		printf("SUCCESS!\n");

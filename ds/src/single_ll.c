@@ -1,6 +1,7 @@
 #include <stdlib.h> /* malloc, calloc, free */
 #include <stddef.h> /* size_t */
- #include <stdio.h> /* perror */
+#include <stdio.h> /* perror */
+#include <assert.h> /* assert */
  
 #include "single_ll.h" /* sll_node_t */
 
@@ -57,10 +58,23 @@ sll_node_t *SLLRemoveAfter(sll_node_t *target)
 	return target;
 }
 
-sll_node_t *SLLInsert(sll_node_t *root, sll_node_t *new_node)
+sll_node_t *SLLInsert(sll_node_t *target, sll_node_t *new_node)
 {
-	root->next_node = new_node->next_node;
-	new_node->next_node = root;
+	sll_node_t *temp_node = NULL;
+	
+	temp_node = SLLCreateNode(new_node->item, target->next_node);
+	
+	if (!temp_node)
+	{
+		perror("SLLInsert ");
+	}
+	
+	new_node->item = target->item;
+	target->item = temp_node->item;
+	target->next_node = new_node;
+	new_node->next_node = temp_node->next_node;
+	
+	free(temp_node); temp_node = NULL;
 	
 	return new_node;
 }
@@ -72,8 +86,8 @@ sll_node_t *SLLInsertAfter(sll_node_t *target, sll_node_t *new_node)
 	temp_node = target->next_node;
 	target->next_node = new_node;
 	new_node->next_node = temp_node;
-
-	return target;
+	
+	return new_node;
 }
 
 size_t SLLCount(const sll_node_t *root)
@@ -94,6 +108,8 @@ int SLLForEach(sll_node_t *root, sll_foreach_action func, const void *func_param
 {
 	sll_node_t *current = NULL;
 	int status = 1;
+	
+	assert(root);
 	
 	for (current = root; NULL != current; current = current->next_node)
 	{
