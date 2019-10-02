@@ -66,12 +66,10 @@ static void SLLTest()
 	
 	ForEachTest(list);
 	CounterTest(list);
-	/*list = RemoveTest(list);
-	CounterTest(list);*/
 	CounterTest(list);
 	/***********************/
 	printf("\nFree all test. . . \n");
-	SLLFreeAll(list_cpy); 
+	SLLFreeAll(list); 
 }
 
 static sll_node_t *SLLCreateNodeTest(int data, sll_node_t *next)
