@@ -24,14 +24,14 @@ void  StkPush(stack_t *element_ptr, void *data);
    		returns it to the user. If stack is empty behavior is undefined		*/
 void *StkPeek(const stack_t *element_ptr);
 
-/* Counts the inserted member in the stack
-   returns it to the user.							   */
+/* 		Counts the inserted member in the stack
+   		returns it to the user.							   								*/
 size_t StkCount(const stack_t *element_ptr);
 
-/* Returns 1 if stack is empty, 0 if not.			   */
+/* 		Returns 1 if stack is empty, 0 if not.									   */
 int StkIsEmpty(const stack_t *element_ptr);
 
-/* destroys the stack 								   */
+/* 		destroys the stack 															   */
 void StkDestroy(stack_t *element_ptr);
 
 #endif /* __STACK_H__ */
