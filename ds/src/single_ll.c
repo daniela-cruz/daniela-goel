@@ -78,7 +78,12 @@ void SLLFlip(sll_node_t *root)
 {
 	sll_node_t *temp_node = NULL;
 	
-		
+	temp_node = root;
+	
+	for (; NULL != temp_node;)
+	{
+	
+	}
 }
 
 int SLLHasLoop(const sll_node_t *root)
