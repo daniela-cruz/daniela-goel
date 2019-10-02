@@ -23,33 +23,36 @@ struct node
 sll_node_t *SLLCreateNode(void *data, sll_node_t *next);
 
 /* 		Frees all pointers from the provided pointer onward.
- * 		If SLLFreeAll recieves a NULL: behaviour is undefined.					*/
+ * 		If SLLFreeAll recieves a NULL: behaviour is undefined.				*/
 void SLLFreeAll(sll_node_t *root);
 
-/* 		Removes provided pointer from the linked list.
+/* 		Removes provided pointer from the linked list and returns new root.
  * 		If <target> has no previous node, next will become root. 
- * 		If <target> has a next, it will be assigned to previous node.				*/
-void SLLRemove(sll_node_t *target);
+ * 		If <target> has a next, it will be assigned to previous node.			*/
+sll_node_t *SLLRemove(sll_node_t *target);
 
 /* 		Removes <target>'s next node.														*/
-void SLLRemoveAfter(sll_node_t *target);
+
+sll_node_t *SLLRemoveAfter(sll_node_t *target);
 
 /* 		Inserts <new node> to the linked list before <target>.
- * 		If <target> has no previous node, <new node> will become root			*/
-void SLLInsert(sll_node_t *root, sll_node_t *new_node);
+ * 		If <target> has no previous node, <new node> will become root	*/
+sll_node_t *SLLInsert(sll_node_t *root, sll_node_t *new_node);
 
 /* 		Inserts <new node> to <target>'s next
- * 		If <target> has a next, it becomes <new node>'s next instead.			*/
-void SLLInsertAfter(sll_node_t *target, sll_node_t *new_node);
+ * 		If <target> has a next, it becomes <new node>'s next instead.		*/
+sll_node_t *SLLInsertAfter(sll_node_t *target, sll_node_t *new_node);
 
 /* 		Counts on the items in the linked list 												*/
 size_t SLLCount(const sll_node_t *root);
 
-int SLLForeach(sll_node_t root, sll_foreach_action func, const void *func_param);
+/*		receives root, function pointer and parameter as arguments and 
+ *		performs the desired action over the entire list 								*/
+int SLLForEach(sll_node_t *root, sll_foreach_action func, const void *func_param);
 
-sll_node_t *SLLFind(const sll_node_t root, sll_find func, const void *func_param);
+sll_node_t *SLLFind(const sll_node_t *root, sll_find func, const void *func_param);
 
-void SLLFlip(sll_node_t *root);
+sll_node_t *SLLFlip(sll_node_t *root);
 
 int SLLHasLoop(const sll_node_t *root);
 

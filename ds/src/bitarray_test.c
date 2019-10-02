@@ -38,11 +38,11 @@ int main()
 	CountOnTest();
 	CountOffTest();
 	RotLTest();
-	RotRTest();
-	FlipTest();
+	RotRTest();*/
+	FlipTest();/*
 	MirrorTest();
 	ToStringTest();*/
-	CountSetLUTTest();
+	/*CountSetLUTTest();*/
 	/*MirrorLUTTest();*/
 	
 	return 0;
