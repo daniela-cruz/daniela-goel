@@ -14,9 +14,9 @@ typedef struct node q_node_t;
 struct node
 {
 	void *item ;
-	q_node_t *prev_node;
-	q_node_t *next_node;
-};
+	q_node_t *prev_;
+	q_node_t *next;
+} node_t;
 
 queue_t *QueueCreate()
 queue_t *new_queue = NULL;
