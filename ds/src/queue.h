@@ -2,7 +2,9 @@
 #define __QUEUE_H__
 #include <stddef.h> /* size_t */
 
+enum status_t {SUCCESS, FAILURE};
 typedef struct queue queue_t;
+
 
 /* 		the user will receive a pointer to the new 
  * 		memory location. If allocation fails the function
@@ -15,10 +17,10 @@ queue_t *QueueCreate();
 void QueueDestroy(queue_t *element);
 
 /*		insert new task to queue. COmplexity: O(1) 		*/
-void QueueEnqueue(queue_t *first, void *data);
+int QueueEnqueue(queue_t *q_first, void *new_data);
 
 /*		remove task from queue. COmplexity: O(1) 		*/
-queue_t *QueueDenqueue(queue_t *element);
+queue_t *QueueDequeue(queue_t *element);
 
 /*		*/
 int QueueIsEmpty(const queue_t *element);

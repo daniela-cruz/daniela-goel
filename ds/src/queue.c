@@ -1,54 +1,114 @@
-#include <stdio.h> /* malloc, realloc */
+#include <stdio.h> /* perror */
+#include <stdlib.h> /* malloc, realloc */
 #include <stddef.h> /* size_t */
 
 #include "queue.h" /* queue_t */
 
+typedef struct node q_node_t;
+
+struct node
+{
+	void *data ;
+	q_node_t *next;
+};
+
 struct queue
 {
 	size_t size;
-	void *front;
-	void *back;
-};
-
-typedef struct node q_node_t;
-struct node
-{
-	void *item ;
-	q_node_t *prev_;
-	q_node_t *next;
-} node_t;
+	q_node_t *front;
+	q_node_t *back;
+} q;
 
 queue_t *QueueCreate()
-queue_t *new_queue = NULL;
 {
-	sll_node_t *new_node = NULL;
+	queue_t *new_queue = NULL;
+	q_node_t *n_front = NULL, *n_back = NULL;
 	
-	new_node = malloc(sizeof(sll_node_t *));
+	new_queue = malloc(sizeof(q_node_t *));
 	
-	if (!new_node)
+	if (!new_queue)
 	{
 		perror("QueueCreate ");
 		return NULL;
 	}
 	
+	n_front = malloc(sizeof(q_node_t *));
 	
+	if (!n_front)
+	{
+		perror("QueueCreate ");
+		return NULL;
+	}
+	
+	n_front->next = NULL;
+	n_front->data = NULL;
+    new_queue->front = n_front;
+    
+	n_back = malloc(sizeof(q_node_t *));
+	
+	if (!n_back)
+	{
+		perror("QueueCreate ");
+		return NULL;
+	}
+	
+	n_back->data = NULL;
+    new_queue->back = n_back; 
+    new_queue->size = 0;
 	
 	return new_queue;
 }
 
 void QueueDestroy(queue_t *element)
 {
-	free();
+	free(element);
 }
 
-queue_t *QueueEnqueue(queue_t *first, void *data);
+int QueueEnqueue(queue_t *queue_1, void *new_data)
+{
+	q_node_t *temp = malloc(sizeof(q_node_t));
+	q_node_t *back_cpy = queue_1->back->next;
+	
+    if (!temp)
+	{
+		return FAILURE;
+	}
+	
+	if (NULL == queue_1->front)
+	{
+		queue_1->front->next = temp;
+	}
+	
+    temp->data = new_data; 
+    temp->next = back_cpy;
+	queue_1->back = temp;
+    queue_1->size++;
+    
+    return SUCCESS;
+}
 
-queue_t *QueueDenqueue(queue_t *element);
+queue_t *QueueDequeue(queue_t *element)
+{
+	q_node_t *temp = NULL;
+	
+	temp = element->front->next->next;
+	free(element->front->next); element->front->next = NULL;
+	element->size--;
+	element->front = temp;
+	
+	return element;
+}
 
-int QueueIsEmpty(queue_t *element);
+int QueueIsEmpty(const queue_t *element)
+{
+	return element->size == 0;
+}
 
-queue_t *QueuePeek(queue_t *element, size_t n);
+queue_t *QueuePeek(const queue_t *element)
+{
+	return (queue_t *)element->front->next;
+}
 
-size_t QueueCount(queue_t *first);
+size_t QueueCount(const queue_t *first);
 
 queue_t *QueueAppend(queue_t *queue1, queue_t *queue2);
