@@ -2,6 +2,8 @@
 #define __QUEUE_H__
 #include <stddef.h> /* size_t */
 
+enum status {SUCCESS, FAILURE};
+
 typedef struct queue queue_t;
 
 /* 		the user will receive a pointer to the new 
@@ -12,7 +14,7 @@ queue_t *QueueCreate();
 /* 		free allocated memory
  * 		the user has to call this function in order to 
  * 		free up all allocated memory after calling create 	*/
-void QueueDestroy(queue_t *element);
+void QueueDestroy(queue_t *queue);
 
 /*		insert new task to queue. COmplexity: O(1) 		*/
 void QueueEnqueue(queue_t *first, void *data);
