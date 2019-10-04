@@ -1,7 +1,16 @@
+<<<<<<< HEAD
 #include <stdlib.h> /*	malloc	*/ 
 #include <stdio.h>  /*  perror	*/
 
 #include "single_ll.h"
+=======
+#include <stdlib.h> /* malloc, calloc, free */
+#include <stddef.h> /* size_t */
+#include <stdio.h> /* perror */
+#include <assert.h> /* assert */
+ 
+#include "single_ll.h" /* sll_node_t */
+>>>>>>> de2cc824853fa2d6539a60525d791a7b25d80bee
 
 sll_node_t *SLLCreateNode(void *data, sll_node_t *next)
 {
@@ -58,7 +67,25 @@ sll_node_t *SLLRemoveAfter(sll_node_t *target)
 
 sll_node_t *SLLInsert(sll_node_t *target, sll_node_t *new_node)
 {
+<<<<<<< HEAD
 	void *new_node_data = new_node->data;
+=======
+	sll_node_t *temp_node = NULL;
+	
+	temp_node = SLLCreateNode(new_node->item, target->next_node);
+	
+	if (!temp_node)
+	{
+		perror("SLLInsert ");
+	}
+	
+	new_node->item = target->item;
+	target->item = temp_node->item;
+	target->next_node = new_node;
+	new_node->next_node = temp_node->next_node;
+	
+	free(temp_node); temp_node = NULL;
+>>>>>>> de2cc824853fa2d6539a60525d791a7b25d80bee
 	
 	new_node->next = target->next;
 	new_node->data = target->data;
@@ -73,7 +100,15 @@ sll_node_t *SLLInsertAfter(sll_node_t *target, sll_node_t *new_node)
 	target->next = new_node;
 	new_node->next = target->next;
 	
+<<<<<<< HEAD
 	return target;	
+=======
+	temp_node = target->next_node;
+	target->next_node = new_node;
+	new_node->next_node = temp_node;
+	
+	return new_node;
+>>>>>>> de2cc824853fa2d6539a60525d791a7b25d80bee
 }
 
 size_t SLLCount(const sll_node_t *root)
@@ -90,7 +125,16 @@ size_t SLLCount(const sll_node_t *root)
 
 int SLLForEach(sll_node_t *root, sll_foreach_func_t func, void *func_param)
 {
+<<<<<<< HEAD
 	for (; NULL != root; root = root->next)
+=======
+	sll_node_t *current = NULL;
+	int status = 1;
+	
+	assert(root);
+	
+	for (current = root; NULL != current; current = current->next_node)
+>>>>>>> de2cc824853fa2d6539a60525d791a7b25d80bee
 	{
 		if (0 != func(root->data, func_param))
 		{
