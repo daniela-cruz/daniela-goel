@@ -14,19 +14,19 @@ queue_t *QueueCreate();
 /* 		free allocated memory
  * 		the user has to call this function in order to 
  * 		free up all allocated memory after calling create 	*/
-void QueueDestroy(queue_t *queue);
+void QueueDestroy(queue_t *q_element);
 
 /*		insert new task to queue. COmplexity: O(1) 		*/
-void QueueEnqueue(queue_t *first, void *data);
+int QueueEnqueue(queue_t *q_element, void *data);
 
 /*		remove task from queue. COmplexity: O(1) 		*/
-queue_t *QueueDenqueue(queue_t *element);
+queue_t *QueueDequeue(queue_t *q_element);
 
 /*		*/
-int QueueIsEmpty(const queue_t *element);
+int QueueIsEmpty(const queue_t *q_element);
 
 /*		peek last element 											*/
-queue_t *QueuePeek(const queue_t *element);
+void *QueuePeek(const queue_t *q_element);
 
 size_t QueueCount(const queue_t *first);
 

@@ -1,20 +1,19 @@
 #include <stdio.h> /* printf */
 
-#include "q1.h" /* all below */
+#include "queue.h" /* all below */
 
 int main()
 {
 	queue_t *q1 = NULL, *q2 = NULL;
-	int *num_ptr = NULL;
 	int size = 3;
 	int arr[] = {0, 0, 0}, arr2[] = {0, 0, 0};
 	int i = 0;
 	
 	/****************CREATE TEST********************/
 	printf("\nCreate test. . . \t");
-	((q1 = QueueCreate()) && (q2 = QueueCreate()) ? printf("SUCCESS!\n") : printf("FAILURE!\n");
+	((q1 = QueueCreate()) && (q2 = QueueCreate())) ? printf("SUCCESS!\n") : printf("FAILURE!\n");
 	
-	printf("creating q1\n\n");
+	/* change values in q1 */
 	for (i = 0; i < size; i++)
 	{
 		arr[i] = i + 1;
@@ -28,40 +27,46 @@ int main()
 	{
 		QueueEnqueue(q1, &arr[i]);
 	}
-	printf("is list empty: %d\n", QueueIsEmpty(q1));
+	
+	/****************ISEMPTY TEST********************/
+	printf("\nIsEmpty test. . .\t");
+	(!QueueIsEmpty(q1)) ? printf("SUCCESS!\n") : printf("FAILURE!\n");	
+	
+	/****************ISEMPTY TEST********************/
+	printf("\nCount test. . .\t\t");	
+	(3 == QueueCount(q1)) ? printf("SUCCESS!\n") : printf("FAILURE!\n");
+	
+	/****************DEQUEUE TEST********************/
+	printf("\nDequeue test. . .\t");	
+	q1 = QueueDequeue(q1);
+	(2 == QueueCount(q1)) ? printf("SUCCESS!\n") : printf("FAILURE!\n");
+	q1 = QueueDequeue(q1);
+	
+	/****************PEEK TEST********************/
+	printf("\nPeek test. . .\t\t");	
+	(3 == *(int *)QueuePeek(q1)) ? printf("SUCCESS!\n") : printf("FAILURE!\n");
 	printf("items in q1: %lu\n", QueueCount(q1));
 	
-	num_ptr = QueueDequeue(q1);
-	printf("\ndequeue: %d\n", *num_ptr);
-	printf("items in q1: %lu\n", QueueCount(q1));
+	/****************APPEND TEST********************/
+	printf("\nAppend test. . .\t");	
 	
-	num_ptr = QueueDequeue(q1);
-	printf("\ndequeue: %d\n", *num_ptr);
-	printf("items in q1: %lu\n", QueueCount(q1));
-	
-	num_ptr = QueuePeek(q1);
-	printf("\npeek: %d\n", *num_ptr);
-	printf("items in q1: %lu\n", QueueCount(q1));
-	
-	printf("\ncreating another q1\n");
-	for(i = 0; i < 3; i++)
+	/* changing values in q2 */
+	for (i = 0; i < 3; i++)
 	{
-		printf("enqueue to second q1: %d\n", arr2[i]);
 		QueueEnqueue(q2, &arr2[i]);
 	}
 	
-	printf("\nappending queues\n");
-	QueueAppend(q1, q2);
-	printf("items in q1: %lu\n\n", QueueCount(q1));
+	q1 = QueueAppend(q1, q2);
+	(4 == QueueCount(q1)) ? printf("SUCCESS!\n") : printf("FAILURE!\n");
+	size = QueueCount(q1);
 	
-	for(i = 0; i < 4; i++)
+	/****************Destroy TEST********************/
+	printf("\nDestroy test. . . check with vlg\n");
+	for (i = 0; i < size; i++)
 	{
-		num_ptr = QueueDequeue(q1);
-		printf("dequeue: %d\n", *num_ptr);
+		q1 = QueueDequeue(q1);
 	}
-	printf("is list empty: %d\n", QueueIsEmpty(q1));
 	
-	printf("\ndestroying queues\n");
 	QueueDestroy(q1);
 	QueueDestroy(q2);
 	
