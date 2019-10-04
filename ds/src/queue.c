@@ -47,8 +47,7 @@ queue_t *QueueCreate()
 
 void QueueDestroy(queue_t *q_element)
 {
-	for (; 	0 < q_element->size; 
-				q_element->front->next = q_element->front->next->next)
+	for (; 	0 < q_element->size; )
 	{
 		QueueDequeue(q_element);
 	}
@@ -73,8 +72,7 @@ int QueueEnqueue(queue_t *q_element, void *data)
 		return FAILURE;
 	}
 	
-	temp = q_element->back->next;
-	temp->next = new_node;
+	q_element->back->next->next = new_node;
 	new_node->data = data;
 	new_node->next = q_element->back;
 	q_element->back->next = new_node;
@@ -89,6 +87,7 @@ queue_t *QueueDequeue(queue_t *q_element)
 	
 	if (1 == q_element->size)
 	{
+		free(q_element->front->next); q_element->front->next = NULL;
 		q_element->front->next = q_element->back; 
 		q_element->back->next = q_element->front;
 		q_element->size = 0;
