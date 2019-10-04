@@ -1,63 +1,86 @@
-#ifndef __SLL_H__
-#define __SLL_H__
+#ifndef __SINGLE_LL_H__
+#define __SINGLE_LL_H__
 
-#include <stddef.h> /* size_t */
+/*	User functions on linked array members
+	typedef for foreach				*/ 
+typedef int(*sll_foreach_func_t)(void *data, void *param);
 
-typedef struct node sll_node_t;
+/*	User functions on linked array members
+	typedef for find				*/
+typedef int(*sll_find_func_t)(const void *data, void *param);
 
-/* 		Function pointer to be passed as an argument to SLLForEach.
- * 		Must recieve and pass the same function signatures as specified.		*/
-typedef int (*sll_foreach_action)(void *data, void *param);	
+typedef struct sll_node sll_node_t;
 
-/* 		Function pointer to be passed as an argument to SLLFind.
- * 		Must recieve and pass the same function signatures as specified.		*/
-typedef int (*sll_find)(const void *data, void *param);
-
-struct node
-{
-	void *item ;
-	sll_node_t *next_node;
+struct sll_node{
+	void *data;
+	sll_node_t *next;
 };
 
-/* 		returns the created root for the user. 												*/
+/* 	*Creates root for new linked list
+		of users data
+	*Returns pointer to the root			*/
 sll_node_t *SLLCreateNode(void *data, sll_node_t *next);
 
-/* 		Frees all pointers from the provided pointer onward.
- * 		If SLLFreeAll recieves a NULL: behaviour is undefined.				*/
+/*	*Remove all nodes from list including root
+	*Complexcity O(n)				*/
 void SLLFreeAll(sll_node_t *root);
 
-/* 		Removes provided pointer from the linked list and returns new root.
- * 		If <target> has no previous node, next will become root. 
- * 		If <target> has a next, it will be assigned to previous node.			*/
+/*	*Removes specified node from linked list
+	*Returns pointer to next node.
+	*Complexity O(1)	
+	*Does not handle last node as an argument	*/
 sll_node_t *SLLRemove(sll_node_t *target);
 
-/* 		Removes <target>'s next node.														*/
-
+/*	*Removes node from linked list, 
+			after specified node.
+	*Returns pointer to next element 		
+	*Complexity O(1)				*/
 sll_node_t *SLLRemoveAfter(sll_node_t *target);
 
-/* 		Inserts <new node> to the linked list before <target>.
- * 		If <target> has no previous node, <new node> will become root	*/
-sll_node_t *SLLInsert(sll_node_t *root, sll_node_t *new_node);
+/*	*Insert a new item before <target>, 
+		re-links adjacent items.
+	*Returns pointer to the next node, in case 
+		no previous node exists, become root.
+	*Complexity O(1)				*/
+sll_node_t *SLLInsert(sll_node_t *target, sll_node_t *new_node);
 
-/* 		Inserts <new node> to <target>'s next
- * 		If <target> has a next, it becomes <new node>'s next instead.		*/
+/* 	*Insert new node to <target> next node.
+	*Return pointer to target node.
+	*Complexity O(1)				*/
 sll_node_t *SLLInsertAfter(sll_node_t *target, sll_node_t *new_node);
 
-/* 		Counts on the items in the linked list 												*/
+/* 	*Returns number of elements in linked list	*/
 size_t SLLCount(const sll_node_t *root);
 
-/*		receives root, function pointer and parameter as arguments and 
- *		performs the desired action over the entire list 								*/
-int SLLForEach(sll_node_t *root, sll_foreach_action func, const void *func_param);
+/* 	*User performs action (function) on everry 
+		element of the linked list
+	*Complexity O(n)				*/
+int SLLForEach(sll_node_t *root, sll_foreach_func_t func, void *func_param);
 
-sll_node_t *SLLFind(const sll_node_t *root, sll_find func, const void *func_param);
+/* 	*Search for spesific element in linked list.
+	*Returns pointer to that element.		*/
+sll_node_t *SLLFind(const sll_node_t *root, sll_find_func_t func, void *func_param);
 
+/* 	*Flips linked list
+	*Returns pointer to new linked list		*/
 sll_node_t *SLLFlip(sll_node_t *root);
 
-int SLLHasLoop(const sll_node_t *root);
+/* 	*Check if one of the elements points to one 
+		of the previous element in linked list
+		(making a closed loop). 
+	*Solution by Floyd's Cycle detection.	
+	*Return 1 if there is loop
+		0 if not.				*/
+int SLLHasLoop(const sll_node_t *node);
 
-sll_node_t *SLLFindIntersection(const sll_node_t *root1, const sll_node_t *root2);
+/* 	*Check if there is element which both linked 
+		lists points to (intersection between
+				lists).	
+	*Solution by using 2 loops.
+	*Complexity O(n * m )
+	Other possible solution is to mark visited nodes
+	   Complexity O (n + m) 			*/
+sll_node_t *SLLFindIntersection(const sll_node_t *first_list, const sll_node_t *second_list);
 
+#endif /* __SINGLE_LL_H__ */
 
-
-#endif /*__SLL_H__*/

@@ -1,72 +1,76 @@
-#ifndef __BIT_ARRAY_H__
-#define __BIT_ARRAY_H__
-
+#ifndef __bit_array_h__
+#define __bit_array_h__
 #include <stddef.h> /* size_t */
 
-typedef size_t bit_arr_t; /* an array of 64 bits*/
+/*	 bit array of size size_t	*/
+typedef size_t bit_arr_t;
 
-/******************************************
-*												*
-*		BitArr functions phase I		*
-*												*
-******************************************/
+/* count bits that are set to '1'	*/ 
+/*		 return count			*/
+size_t BitArrCountOn(bit_arr_t bit_arr);
+/* count bits that are set to '0'	*/
+/*		 return count			*/
+size_t BitArrCountOff(bit_arr_t bit_arr);
 
-/* 1 if a particular bit is set on else 0 */
-int BitArrIsOn(bit_arr_t arr, int bit_location);
+/* check if bit num "index" is on	*/
+/*		return true/false		*/
+/*  in case index is bigger than 
+	our arr - undefined behavior	*/
+int BitArrIsOn(bit_arr_t bit_arr, int index);
+/* check if bit num "index" is off	*/
+/* 		return true/false		*/
+/*  in case index is bigger than 
+	our arr - undefined behavior	*/
+int BitArrIsOff(bit_arr_t bit_arr, int index);
 
-/* 1 if a particular bit is set off else 0 */
-int BitArrIsOff(bit_arr_t arr, int bit_location);
+/* perform "bit reversal" on our value	*/
+/*	   return reversed bit array		*/
+bit_arr_t BitArrMirror(bit_arr_t bit_arr);
 
-/* set on ot off a single bit within the array according to the user's request */
-bit_arr_t BitArrSet(bit_arr_t arr, size_t bit_location, int is_set);
+/* set all elements in bit_arr to '1' */
+/* 		return new bit array	   */
+bit_arr_t BitArrSetAll(bit_arr_t bit_arr);
+/* set all elements in bit_arr to '0' */
+/* 		return new bit array	   */
+bit_arr_t BitArrResetAll(bit_arr_t bit_arr);
 
-/* set on all bits in array */
-bit_arr_t BitArrSetAll(bit_arr_t arr);
+/* put elements of bit_arr into string	*/
+/* 		return string				*/
+char *BitArrToString(bit_arr_t bit_arr, char *str);
 
-/* set off all bits in array*/
-bit_arr_t BitArrResetAll(bit_arr_t arr);
+/*	flip the value of bit num "index"	*/
+/*  		 return new bit array	     */
+bit_arr_t BitArrFlip(bit_arr_t bit_arr, int index);
 
-/* 		set a particular bit on. 
- * 		If the user provides an n higher than arr_size - 1 
- * 		or lower than zero the behavior is undefined 			*/
-bit_arr_t BitArrSetOn(bit_arr_t arr, int n);
+/* set the value of bit num "index in bit arr to '1' */
+/*			  return new bit array			   */
+/*  		in case index is bigger than 
+		our arr - undefined behavior			   */
+bit_arr_t BitArrSetOn(bit_arr_t bit_arr, int index);
+/* set the value of bit num "index in bit arr to '1' */
+/*			  return new bit array			   */
+/*  in case index is bigger than 
+	our arr - undefined behavior				   */
+bit_arr_t BitArrSetOff(bit_arr_t bit_arr, int index);
+/* set the value of bit num "index in bit arr to val */
+/*			  return new bit array			   */
+/*  		in case index is bigger than 
+		our arr - undefined behavior			   */
+bit_arr_t BitArrSet(bit_arr_t bit_arr, int index, int val);
 
-/* set a particular bit off. If the user provided wrong input there's an undefined behavior */
-bit_arr_t BitArrSetOff(bit_arr_t arr, int n);
+/* 		 rotate right by num_rotations 		   */
+/*			  return new bit array			   */
+bit_arr_t BitArrRotR(bit_arr_t bit_arr, size_t num_rotations);
+/* 		 rotate left by num_rotations 		   */
+/*			  return new bit array			   */
+bit_arr_t BitArrRotL(bit_arr_t bit_arr, size_t num_rotations);
 
-/* rotate arr left n times */
-bit_arr_t BitArrRotL(bit_arr_t arr, size_t n);
+/*	 count bits that are set to '1' by using LUT	   */
+/* 			    return count 			 	   */
+size_t BitArrCountOnLUT(bit_arr_t bit_arr);
+/*	    perform "bit reversal" on our value		   */
+/* 			return reversed bit array	 	   */
+bit_arr_t BitArrMirrorLUT(bit_arr_t bit_arr);
 
-/* rotate arr right n times */
-bit_arr_t BitArrRotR(bit_arr_t arr, size_t n);
+#endif /* end of __bit_array_h__ */
 
-/* flip a single bit */
-bit_arr_t BitArrFlip(bit_arr_t arr, int bit_location);
-
-/* count number of set bits */
-size_t BitArrCountOn(bit_arr_t arr);
-
-/* count number of off bits */
-size_t BitArrCountOff(bit_arr_t arr);
-
-/* mirror bit array */
-bit_arr_t BitArrMirror(bit_arr_t arr);
-
-/******************************************
-*															*
-*		 BitArr functions II: LUT				*
-*															*
-******************************************/
-
-/* 		initializes LUT on first call form which 
- * 		an imidiate value can be withdrawn 		 				*/
-size_t BitArrCountOnLUT(bit_arr_t arr);
-
-/* 		mirror bit array
-* 		using a LUT table init table if not initialized before 	*/
-bit_arr_t BitArrMirrorLUT(bit_arr_t arr);
-
-/* convert array to a string */
-char *BitArrToString(char *dest, bit_arr_t src);
-
-#endif /* __BIT_ARRAY_H__ */

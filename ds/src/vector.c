@@ -54,6 +54,7 @@ int VectorPushBack(vector_t *vector_ptr, const void *new_data)
 		if (!vector_ptr->data)
 		{	
 			perror("Push failed.");
+			return FAILURE;
 		}
 	}
 

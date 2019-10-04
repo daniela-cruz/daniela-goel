@@ -1,120 +1,114 @@
-#include <stdlib.h> /* malloc, calloc, free */
-#include <stddef.h> /* size_t */
- #include <stdio.h> /* perror */
- 
-#include "single_ll.h" /* sll_node_t */
+#include <stdlib.h> /*	malloc	*/ 
+#include <stdio.h>  /*  perror	*/
+
+#include "single_ll.h"
 
 sll_node_t *SLLCreateNode(void *data, sll_node_t *next)
 {
-	sll_node_t *new_node = NULL;
-	
-	new_node = malloc(sizeof(sll_node_t));
-	
-	if (NULL == new_node)
+	sll_node_t *node = NULL;
+	node = (sll_node_t *)malloc(sizeof(node));
+	if (NULL == node)
 	{
-		perror("Could not allocate memory for new node.");
+		perror("Malloc failed in root creation");
+		
+		return NULL;
 	}
 
-	new_node->item = data;
-	new_node->next_node = next;
+	node->data = data;
+	node-> next = next;
 
-	return new_node;
+	return node; 
 }
 
 void SLLFreeAll(sll_node_t *root)
 {
-	sll_node_t *temp_node = NULL;
+	sll_node_t *temp_node = root;
 	
-	for (temp_node = root; NULL != root; temp_node = root)
+	for (; NULL != root; temp_node = root, root = root->next)
 	{
-		root = temp_node->next_node;
-		free(temp_node); temp_node = NULL;
+		free(temp_node);
+		temp_node = NULL;
 	}
-	
-	free(temp_node); temp_node = NULL;
 }
 
 sll_node_t *SLLRemove(sll_node_t *target)
 {
-	sll_node_t *next_node = NULL;
+	sll_node_t *temp_node = target->next;
 	
-	next_node = target->next_node;
-	free(target);
-	
-	return next_node;
-}
+	target->data = target->next->data;
+	target->next = target->next->next;
 
+	free(temp_node);
+	temp_node = NULL;
+
+	return target;	
+}
 
 sll_node_t *SLLRemoveAfter(sll_node_t *target)
 {
-	sll_node_t *temp_node = NULL;
+	sll_node_t *temp_node = target->next;
 	
-	temp_node = target->next_node;
-	target->next_node = target->next_node->next_node;
-	
-	free(temp_node); temp_node = NULL;
-	
+	target->next = target->next->next;
+
+	free(temp_node);
+	temp_node = NULL;
+
 	return target;
 }
 
-sll_node_t *SLLInsert(sll_node_t *root, sll_node_t *new_node)
+sll_node_t *SLLInsert(sll_node_t *target, sll_node_t *new_node)
 {
-	root->next_node = new_node->next_node;
-	new_node->next_node = root;
+	void *new_node_data = new_node->data;
 	
-	return new_node;
+	new_node->next = target->next;
+	new_node->data = target->data;
+	target->next = new_node;
+	target->data = new_node_data;
+
+	return target;
 }
 
 sll_node_t *SLLInsertAfter(sll_node_t *target, sll_node_t *new_node)
 {
-	sll_node_t *temp_node = NULL;
+	target->next = new_node;
+	new_node->next = target->next;
 	
-	temp_node = target->next_node;
-	target->next_node = new_node;
-	new_node->next_node = temp_node;
-
-	return target;
+	return target;	
 }
 
 size_t SLLCount(const sll_node_t *root)
 {
-	size_t counter = 1;
-	sll_node_t *current = NULL;
-	
-	for (current = (sll_node_t *)root; 
-			(NULL != current) && (NULL != current->next_node); 
-			current = current->next_node, counter++)
+	size_t node_counter = 0;
+
+	for (node_counter = 0; NULL != root; node_counter++)
 	{
+		root = root->next;
 	}
 	
-	return counter;
+	return node_counter;
 }
 
-int SLLForEach(sll_node_t *root, sll_foreach_action func, const void *func_param)
+int SLLForEach(sll_node_t *root, sll_foreach_func_t func, void *func_param)
 {
-	sll_node_t *current = NULL;
-	int status = 1;
-	
-	for (current = root; NULL != current; current = current->next_node)
+	for (; NULL != root; root = root->next)
 	{
-		if (0 == func(current->item, (void *)func_param))
+		if (0 != func(root->data, func_param))
 		{
-			status = 0;
-			break;
-		}
+			return 1;	
+		}		
 	}
 	
-	return status;
+	return 0;
 }
 
-sll_node_t *SLLFind(const sll_node_t *root, sll_find func, const void *func_param)
+sll_node_t *SLLFind(const sll_node_t *root, sll_find_func_t func, void *func_param)
 {
-	for(;NULL != root; root = root->next_node)
+	for (; NULL != root; root = root->next)
 	{
-		if (func(root->item, (void *)func_param))
+		if (0 == func(root->data, func_param))
 		{
 			return (sll_node_t *)root;
-		}
+		}	
 	}
 	
 	return NULL;
@@ -122,53 +116,67 @@ sll_node_t *SLLFind(const sll_node_t *root, sll_find func, const void *func_para
 
 sll_node_t *SLLFlip(sll_node_t *root)
 {
-	sll_node_t *flipped_list = NULL;
+	int i = 0;
+	int list_size = SLLCount(root);
+	int counter = 0;  
+	sll_node_t *curr_node = root;
+	sll_node_t *last_node = root;
+	void *temp_data = NULL;
 
-	if (NULL == root || NULL == root->next_node) 
+	for (counter = list_size / 2; 0 != counter; curr_node = curr_node->next, counter--)
 	{
-		return root; 
+		for (last_node = root, i = 0;
+			i != list_size - 1;
+			i++, last_node = last_node->next);
+
+		temp_data = curr_node->data;
+		curr_node->data = last_node->data; 
+		last_node->data = temp_data;
+
+		list_size--; 
 	}
 
-	flipped_list = SLLFlip(root->next_node); 
-	root->next_node->next_node = root; 
-	root->next_node = NULL; 
-
-	return flipped_list; 
+	return curr_node;
 }
 
-int SLLHasLoop(const sll_node_t *root)
+/* returns 1 if there is a loop, 0 if not */
+int SLLHasLoop(const sll_node_t *node)
 {
-	sll_node_t *slow_p = NULL, *fast_p = NULL; 
-	
-	slow_p = (sll_node_t *)root;
-	fast_p = (sll_node_t *)root; 
-	
-	for (; slow_p && fast_p && fast_p->next_node; 
-			slow_p = slow_p->next_node, fast_p = fast_p->next_node->next_node) 
-	{ 
-		if (slow_p == fast_p) 
-		{ 
-		    return 1; 
-		} 
-	} 
-	
+	sll_node_t *slow_p = (sll_node_t *)node;
+	sll_node_t *fast_p = (sll_node_t *)node;
+
+	/* Floyd's Cycle detection algorithm */ 
+	for (; NULL != slow_p && NULL != fast_p && NULL != fast_p->next;
+		slow_p = slow_p->next, fast_p = fast_p->next->next)
+	{
+		/* if slow_p and fast_p meet at some pooint
+		   then there is a loop			    */
+		if (slow_p == fast_p)
+		{
+			return 1;
+		}	
+	}
+		
 	return 0;
 }
 
-sll_node_t *SLLFindIntersection(const sll_node_t *root1, const sll_node_t *root2)
+sll_node_t *SLLFindIntersection(const sll_node_t *first_list, const sll_node_t *second_list)
 {
-	sll_node_t *root2_start = NULL;	
-
-	for (; NULL != root1 ; root1 = root1->next_node)
+	sll_node_t *second_list_iterator = (sll_node_t *)second_list;
+	
+	for (; NULL != first_list; first_list = first_list->next)
 	{
-		for (root2_start = (sll_node_t *)root2; NULL != root2_start ; root2_start = root2_start->next_node)
+		for (second_list_iterator = (sll_node_t *)second_list;
+			NULL != second_list_iterator;
+			second_list_iterator = second_list_iterator->next)
 		{
-			if (root1 == root2_start)
+			if (first_list == second_list_iterator)
 			{
-				return (sll_node_t *)root1;
+				return (sll_node_t *)first_list;
 			}
 		}
 	}
-	
+
 	return NULL;
 }
+

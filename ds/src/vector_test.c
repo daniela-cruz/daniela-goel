@@ -52,11 +52,11 @@ int main()
 	
 	printf("vector size: %ld\n", VectorSize(vector));
 	printf("vector capacity: %ld\n\n", VectorCapacity(vector));
-	
+	/*
 	p = VectorGetItemAddress(vector, 16);
 	
 	printf("last item inserted by push value: %d\n\n", *p);
-	
+*/
 	printf("vector size: %ld\n", VectorSize(vector));
 	printf("vector capacity: %ld\n\n", VectorCapacity(vector));
 	
