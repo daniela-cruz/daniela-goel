@@ -39,19 +39,18 @@ queue_t *QueueCreate()
 	}
 	
 	new_queue->size = 0;
-	(new_queue->front)->next = new_queue->back;
-	(new_queue->back)->next = new_queue->front;
+	new_queue->front->next = new_queue->back;
+	new_queue->back->next = new_queue->front;
 	
 	return new_queue;
 }
 
 void QueueDestroy(queue_t *q_element)
 {
-	for (; q_element->front->next != q_element->back; 
-			q_element->front->next = q_element->front->next->next)
+	for (; 	0 < q_element->size; 
+				q_element->front->next = q_element->front->next->next)
 	{
 		QueueDequeue(q_element);
-		
 	}
 	
 	free(q_element->front);
@@ -88,10 +87,24 @@ queue_t *QueueDequeue(queue_t *q_element)
 {
 	q_node_t *temp = NULL;
 	
-	temp = q_element->front->next;
-	q_element->front->next = temp->next;
-	free(temp); temp = NULL;
-	q_element->size--;
+	if (1 == q_element->size)
+	{
+		q_element->front->next = q_element->back; 
+		q_element->back->next = q_element->front;
+		q_element->size = 0;
+	}
+	
+	else if (0 == q_element->size)
+	{
+	}
+	
+	else
+	{
+		temp = q_element->front->next;
+		q_element->front->next = temp->next;
+		free(temp); temp = NULL;
+		q_element->size--;
+	}
 	
 	return q_element;
 }

@@ -60,13 +60,43 @@ int main()
 	(4 == QueueCount(q1)) ? printf("SUCCESS!\n") : printf("FAILURE!\n");
 	size = QueueCount(q1);
 	
-	/****************Destroy TEST********************/
-	printf("\nDestroy test. . . check with vlg\n");
+	/****************REFILL TEST********************/
+	printf("\nRefill test. . .\n");
+	printf("Count test before dequeue I: %d\n", QueueCount(q1));
+	
+	for (i = 0; i < size; i++)
+	{
+		q1 = QueueDequeue(q1);
+	}
+
+	printf("Count test after dequeue I: %d\n", QueueCount(q1));
+	
+	for (i = 0; i < size; i++)
+	{
+		QueueEnqueue(q1, &arr[i]);
+	}
+	
+	printf("Count test after refill: %d\n", QueueCount(q1));
+	
+		/****************REFILL 2 TEST********************/
+	printf("\nRefill II test. . .\n");
+	
 	for (i = 0; i < size; i++)
 	{
 		q1 = QueueDequeue(q1);
 	}
 	
+	printf("Count test after dequeue II: %d\n", QueueCount(q1));
+	
+	for (i = 0; i < size; i++)
+	{
+		QueueEnqueue(q1, &arr[i]);
+	}
+	
+	printf("Count test after refill: %d\n", QueueCount(q1));
+	
+	/****************Destroy TEST********************/
+	printf("\nDestroy test. . . check with vlg\n");
 	QueueDestroy(q1);
 	QueueDestroy(q2);
 	
