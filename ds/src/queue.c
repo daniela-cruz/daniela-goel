@@ -1,6 +1,7 @@
 #include <stdio.h>  /* perror */
 #include <stdlib.h> /* malloc, free */
 #include <stddef.h> /* size_t */
+#include <assert.h> /* assert */
 
 #include "queue.h"
 
@@ -23,19 +24,27 @@ queue_t *QueueCreate()
 {
 	queue_t *new_queue = NULL;
 	
-	if (NULL == (new_queue  = malloc(sizeof(*new_queue))))
+	new_queue  = malloc(sizeof(*new_queue));
+	if (NULL == new_queue)
 	{
 		perror("QueueCreate, new queue ");
+		return NULL;
 	}
 	
-	if (NULL == (new_queue->front  = malloc(sizeof(*new_queue->front))))
+	new_queue->front  = malloc(sizeof(*new_queue->front));
+	if (NULL == new_queue->front)
 	{
 		perror("QueueCreate, front node ");
+		free(new_queue);
+		return NULL;
 	}
 	
-	if (NULL == (new_queue->back = malloc(sizeof(*new_queue->back))))
+	new_queue->back = malloc(sizeof(*new_queue->back));
+	if (NULL == new_queue->back)
 	{
 		perror("QueueCreate, back node ");
+		free(new_queue); free(new_queue->front);
+		return NULL;
 	}
 	
 	new_queue->size = 0;
@@ -45,23 +54,28 @@ queue_t *QueueCreate()
 	return new_queue;
 }
 
-void QueueDestroy(queue_t *q_element)
+void QueueDestroy(queue_t *queue)
 {
-	for (; 	0 < q_element->size; )
+	assert(NULL != queue);
+	
+	for (; 	0 < queue->size; )
 	{
-		QueueDequeue(q_element);
+		QueueDequeue(queue);
 	}
 	
-	free(q_element->front);
-	free(q_element->back);
+	free(queue->front);
+	free(queue->back);
 	
-	free(q_element); q_element = NULL;
+	free(queue);
 }
 
-int QueueEnqueue(queue_t *q_element, void *data)
+int QueueEnqueue(queue_t *queue, void *data)
 {
 	q_node_t *new_node = NULL;
 	q_node_t *temp = NULL;
+	
+	assert(NULL != queue); 
+	assert(NULL != data);
 	
 	new_node = malloc(sizeof(* temp));
 	
@@ -72,65 +86,63 @@ int QueueEnqueue(queue_t *q_element, void *data)
 		return FAILURE;
 	}
 	
-	q_element->back->next->next = new_node;
+	queue->back->next->next = new_node;
 	new_node->data = data;
-	new_node->next = q_element->back;
-	q_element->back->next = new_node;
-	q_element->size++;
+	new_node->next = queue->back;
+	queue->back->next = new_node;
+	queue->size++;
 	
 	return SUCCESS;
 }
 
-queue_t *QueueDequeue(queue_t *q_element)
+void *QueueDequeue(queue_t *queue)
 {
 	q_node_t *temp = NULL;
+	void *temp2 = NULL;
 	
-	if (1 == q_element->size)
+	assert(NULL != queue);
+	
+	temp2 = queue->front->next->data;
+	temp = queue->front->next;
+	queue->front->next = temp->next;
+	free(temp); 
+	queue->size--;
+	
+	if (queue->front->next == queue->back)
 	{
-		free(q_element->front->next); q_element->front->next = NULL;
-		q_element->front->next = q_element->back; 
-		q_element->back->next = q_element->front;
-		q_element->size = 0;
+		queue->back->next = queue->front;
 	}
 	
-	else if (0 == q_element->size)
-	{
-	}
+	return temp2;
+}
+
+int QueueIsEmpty(const queue_t *queue)
+{
+	assert(NULL != queue);
 	
-	else
-	{
-		temp = q_element->front->next;
-		q_element->front->next = temp->next;
-		free(temp); temp = NULL;
-		q_element->size--;
-	}
+	return 0 == queue->size;
+}
+
+void *QueuePeek(const queue_t *queue)
+{
+	assert(NULL != queue);
 	
-	return q_element;
+	return queue->front->next->data;
 }
 
-int QueueIsEmpty(const queue_t *q_element)
+size_t QueueCount(const queue_t *queue)
 {
-	return 0 == q_element->size;
-}
-
-void *QueuePeek(const queue_t *q_element)
-{
-	return q_element->front->next->data;
-}
-
-size_t QueueCount(const queue_t *q_element)
-{
-	return q_element->size;
+	assert(NULL != queue);
+	
+	return queue->size;
 }
 
 queue_t *QueueAppend(queue_t *dest, queue_t *src)
 {
-	q_node_t *temp = NULL;
-	
+	assert(NULL != dest);
+	assert(NULL != src);
 	/* append src queue to back of dest */
-	temp = dest->back->next;
-	temp->next = src->front->next;
-	src->back->next->next = dest->back;
+	dest->back->next->next = src->front->next;
 	dest->size += src->size; 
 	
 	/* nullify appended src queue container */

@@ -1,213 +1,159 @@
 #include <stdio.h> /* printf */
-#include <stdlib.h> /* malloc, free */
-#include <stddef.h> /* size_t */
-#include <limits.h> /* UCHAR_MAX */
 
-#include "bitarray.h" /* all bit array functions below */
+#include "queue.h" /* all below */
 
-static void IsOnTest();
-static void IsOffTest();
+static queue_t *q1 = NULL, *q2 = NULL;
+static const int arr_size = 3;
+static int arr[] = {0, 0, 0}, arr2[] = {0, 0, 0};
+static int i = 0;
+	
+static void CreateTest() 
+{
+	printf("\nCreate test. . . \t");
+	((q1 = QueueCreate()) && (q2 = QueueCreate())) ? printf("SUCCESS!\n") : printf("FAILURE!\n");
 
-static void SetAllTest();
-static void ResetAllTest();
-static void SetOnTest();
-static void SetOffTest();
-static void SetTest();
+	/* change values in q1 */
+	for (i = 0; i < arr_size; i++)
+	{
+		arr[i] = i + 1;
+		arr2[i] = i + 4;
+	}
+}
 
-static void CountOnTest();
-static void CountOffTest();
+static void EnqueueTest() 
+{
+	printf("\nEnqueue test. . .\n");
+	
+	for (i = 0; i < arr_size; i++)
+	{
+		QueueEnqueue(q1, &arr[i]);
+	}
+}
 
-static void RotLTest();
-static void RotRTest();
-static void FlipTest();
-static void MirrorTest();
-static void ToStringTest();
+static void IsEmptyTest() 
+{
+	printf("\nIsEmpty test. . .\t");
+	(!QueueIsEmpty(q1)) ? printf("SUCCESS!\n") : printf("FAILURE!\n");	
+}
+static void CountTest() 
+{
+	printf("\nCount test. . .\t\t");	
+	(3 == QueueCount(q1)) ? printf("SUCCESS!\n") : printf("FAILURE!\n");
+}
 
-static void CountSetLUTTest();
-static void MirrorLUTTest();
+static void DequeueTest() 
+{
+	printf("\nDequeue test. . .\t");	
+	q1 = QueueDequeue(q1);
+	(2 == QueueCount(q1)) ? printf("SUCCESS!\n") : printf("FAILURE!\n");
+	q1 = QueueDequeue(q1);
+}
+
+static void PeekTest() 
+{
+	printf("\nPeek test. . .\t\t");	
+	(2 == *(int *)QueuePeek(q1)) ? printf("SUCCESS!\n") : printf("FAILURE!\n");
+	printf("items in q1: %lu\n", QueueCount(q1));
+}
+
+static void AppendTest() 
+{
+	size_t q_length = 0;
+	printf("\nAppend test. . .\t");	
+	
+	/* changing values in q2 */
+	for (i = 0; i < arr_size; i++)
+	{
+		QueueEnqueue(q2, &arr2[i]);
+	}
+	
+	q_length = QueueCount(q1) + QueueCount(q2);
+	q1 = QueueAppend(q1, q2);
+	(q_length == QueueCount(q1)) ? printf("SUCCESS!\n") : printf("FAILURE!\n");
+}
+
+static void RefillTest1() 
+{
+	size_t q_length = 0;
+	
+	printf("\nRefill test. . .\n");
+	printf("Count test before dequeue I: %d\n", QueueCount(q1));
+	q_length = QueueCount(q1);
+	
+	for (i = 0; i < q_length; i++)
+	{
+		q1 = QueueDequeue(q1);
+	}
+
+	printf("Count test after dequeue I: %d\n", QueueCount(q1));
+	
+	for (i = 0; i < arr_size; i++)
+	{
+		QueueEnqueue(q1, &arr[i]);
+	}
+	
+	printf("Count test after refill: %d\n", QueueCount(q1));
+}
+
+static void RefillTest2() 
+{
+	size_t q_length = 0;
+	
+	printf("\nRefill II test. . .\n");
+	
+	q_length = QueueCount(q1);
+	
+	for (i = 0; i < q_length; i++)
+	{
+		q1 = QueueDequeue(q1);
+	}
+	
+	printf("Count test after dequeue II: %d\n", QueueCount(q1));
+	
+	for (i = 0; i < arr_size; i++)
+	{
+		QueueEnqueue(q1, &arr[i]);
+	}
+	printf("Count test after refill II: %d\n", QueueCount(q1));
+	q_length = QueueCount(q1);
+	
+	printf("\nContent test. . .\n");
+	for (i = 0; i < q_length; i++)
+	{
+		printf("%d\n", *(int*)QueuePeek(q1));
+		q1 = QueueDequeue(q1);
+	}
+	
+	printf("Count test after last dequeue: %d\n", QueueCount(q1));
+	
+}
 
 int main()
-{
-	/*IsOnTest();
-	IsOffTest();
-	SetAllTest();
-	ResetAllTest();
-	SetOnTest();
-	SetOffTest();
-	SetTest();
-	CountOnTest();
-	CountOffTest();
-	RotLTest();
-	RotRTest();
-	FlipTest();
-	MirrorTest();
-	ToStringTest();*/
-	CountSetLUTTest();
-	MirrorLUTTest();
+{	
+	CreateTest();
+	
+	EnqueueTest();
+	
+	PeekTest();
+	
+	IsEmptyTest();
+	
+	CountTest();
+	
+	DequeueTest();
+	
+	AppendTest();
+
+	RefillTest1();
+/*
+	RefillTest2();
+*/
+	/****************Destroy TEST********************/
+	printf("\nDestroy test. . . check with vlg\n");
+	QueueDestroy(q1);
+	QueueDestroy(q2);
 	
 	return 0;
 }
 
-static void IsOnTest()
-{
-	bit_arr_t arr[] = {11, 15};
-	int expected_resul[] = {0, 1};
-	size_t i = 0, arr_size = 0;
-	
-	arr_size = sizeof(arr) / sizeof(bit_arr_t);
-	
-	printf("\nIsOn test is on...\n");
-	
-	for (; i < arr_size; i++)
-	{
-		if ((BitArrIsOn(arr[i], 2)) == expected_resul[i])
-		{
-			printf("SUCCESS!\n");
-		}
-		else
-		{
-			printf("Failure!\n");
-			printf("Received result is: %d\n", BitArrIsOn(arr[i], 2));	
-		}
-	}
-	
-}
-
-static void IsOffTest()
-{
-	bit_arr_t arr = 11;
-	
-	printf("\nIsOn test is off...\n");
-	printf("%d\n", BitArrIsOff(arr, 2));
-}
-
-static void SetAllTest()
-{
-	bit_arr_t arr = 2;
-	
-	printf("%ld\n", BitArrSetAll(arr));
-}
-
-
-static void ResetAllTest()
-{
-	bit_arr_t arr = 15;
-	
-	printf("%ld\n", BitArrResetAll(arr));
-	
-}
-
-static void SetOnTest()
-{
-	bit_arr_t arr = 0;
-	
-	printf("%ld\n", BitArrSetOn(arr, 7));
-	
-}
-
-static void SetOffTest()
-{
-	bit_arr_t arr = 7;
-	
-	printf("%ld\n", BitArrSetOff(arr, 3));
-	
-}
-
-static void SetTest()
-{
-	bit_arr_t arr = 15;
-	
-	printf("%ld\n", BitArrSet(arr, 2, 0));
-}
-
-static void CountOnTest()
-{
-	printf("\nCount on bits test is on...\n");
-	printf("%ld\n", BitArrCountOn(11));
-}
-
-static void CountOffTest()
-{
-	printf("\nCount off bits test:\n");
-	printf("%ld\n", BitArrCountOff(11));
-}
-
-static void RotLTest()
-{
-	bit_arr_t arr = 1024;
-	size_t n = 63;
-	
-	printf("\nRotate left test:\n");
-	printf("%ld\n", BitArrRotL(arr, n));
-}
-
-static void RotRTest()
-{
-	bit_arr_t arr = 1024;
-	size_t n = 63;
-	
-	printf("\nRotate right test:\n");
-	printf("%ld\n", BitArrRotR(arr, n));
-}
-
-static void FlipTest()
-{
-	bit_arr_t arr = 31;
-	
-	printf("\nFlip bit test:\n");
-	printf("%ld\n", BitArrFlip(arr, 3));
-
-}
-
-static void MirrorTest()
-{
-	bit_arr_t arr = 57552;
-	
-	printf("\nMirror bit test:\n");
-	printf("%ld\n", BitArrMirror(arr));
-}
-
-static void ToStringTest()
-{
-	bit_arr_t src = 57552;
-	char *dest = NULL;
-	
-	dest = malloc(65);
-	
-	printf("\nToString bit test:\n");
-	printf("%s\n", BitArrToString(dest, src));
-	
-	free(dest); dest = NULL;
-}
-
-/* LUT tests: */
-static void CountSetLUTTest()
-{
-	size_t i = 0;
-	bit_arr_t arr[] = {0, 1, 2, 3, 4, 5, 6, 15, 31, 255};
-
-	printf("\nInit LUT test:\n");
-	
-	for (; i < 256; i++)
-	{
-		printf("Set bits in %ld is: %ld\n", i, BitArrCountOnLUT(i));
-	}
-}
-
-static void MirrorLUTTest()
-{
-	size_t i = 0;
-	bit_arr_t arr[] = {1, 0, 3, 255}, arr_test = 0;
-	char *dest = NULL;
-	
-	dest = malloc(65);
-	
-	printf("\nMirror LUT test:\n");
-	
-	arr_test = BitArrMirrorLUT(7);
-	dest = BitArrToString(dest, arr_test);
-	printf("Mirror of %ld is: %s or %u\n", 7, dest, arr_test);
-	
-	free(dest);
-}
 

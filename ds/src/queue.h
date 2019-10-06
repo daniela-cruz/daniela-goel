@@ -20,7 +20,7 @@ void QueueDestroy(queue_t *q_element);
 int QueueEnqueue(queue_t *q_element, void *data);
 
 /*		remove task from queue. COmplexity: O(1) 		*/
-queue_t *QueueDequeue(queue_t *q_element);
+void *QueueDequeue(queue_t *q_element);
 
 /*		*/
 int QueueIsEmpty(const queue_t *q_element);

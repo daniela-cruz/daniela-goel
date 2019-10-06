@@ -1,158 +1,130 @@
-<<<<<<< HEAD
-#include <stdlib.h> /*	malloc	*/ 
-#include <stdio.h>  /*  perror	*/
-
-#include "single_ll.h"
-=======
+#include <stdio.h> /* pfrintf */
 #include <stdlib.h> /* malloc, calloc, free */
 #include <stddef.h> /* size_t */
-#include <stdio.h> /* perror */
 #include <assert.h> /* assert */
- 
+#include <string.h> /* memcpy */
+
 #include "single_ll.h" /* sll_node_t */
->>>>>>> de2cc824853fa2d6539a60525d791a7b25d80bee
 
 sll_node_t *SLLCreateNode(void *data, sll_node_t *next)
 {
-	sll_node_t *node = NULL;
-	node = (sll_node_t *)malloc(sizeof(node));
-	if (NULL == node)
+	sll_node_t *new_node = NULL;
+	
+	new_node = malloc(sizeof(next));
+	
+	if (NULL == new_node)
 	{
-		perror("Malloc failed in root creation");
-		
-		return NULL;
+		perror("Could not allocate memory for Create.");
 	}
 
-	node->data = data;
-	node-> next = next;
+	new_node->item = data;
+	next = new_node;
+	next->next_node = NULL;
 
-	return node; 
+	return new_node;
 }
 
 void SLLFreeAll(sll_node_t *root)
 {
-	sll_node_t *temp_node = root;
-	
-	for (; NULL != root; temp_node = root, root = root->next)
+	if (NULL != root->next_node)
 	{
-		free(temp_node);
-		temp_node = NULL;
+		SLLFreeAll(root->next_node);
 	}
+	
+	root->next_node = NULL;
+	free(root); root = NULL;
 }
 
 sll_node_t *SLLRemove(sll_node_t *target)
 {
-	sll_node_t *temp_node = target->next;
-	
-	target->data = target->next->data;
-	target->next = target->next->next;
-
-	free(temp_node);
-	temp_node = NULL;
-
-	return target;	
-}
-
-sll_node_t *SLLRemoveAfter(sll_node_t *target)
-{
-	sll_node_t *temp_node = target->next;
-	
-	target->next = target->next->next;
-
-	free(temp_node);
-	temp_node = NULL;
-
-	return target;
-}
-
-sll_node_t *SLLInsert(sll_node_t *target, sll_node_t *new_node)
-{
-<<<<<<< HEAD
-	void *new_node_data = new_node->data;
-=======
 	sll_node_t *temp_node = NULL;
 	
-	temp_node = SLLCreateNode(new_node->item, target->next_node);
+	temp_node = target->next_node;
+	target->next_node = NULL;
 	
-	if (!temp_node)
-	{
-		perror("SLLInsert ");
-	}
-	
-	new_node->item = target->item;
-	target->item = temp_node->item;
-	target->next_node = new_node;
-	new_node->next_node = temp_node->next_node;
-	
-	free(temp_node); temp_node = NULL;
->>>>>>> de2cc824853fa2d6539a60525d791a7b25d80bee
-	
-	new_node->next = target->next;
-	new_node->data = target->data;
-	target->next = new_node;
-	target->data = new_node_data;
+	return temp_node;
+}
 
-	return target;
+void SLLRemoveAfter(sll_node_t *target)
+{
+	sll_node_t *temp_node = NULL;
+	
+	temp_node = target->next_node->next_node;
+	target->next_node->next_node = NULL;
+	target->next_node= temp_node;
+}
+
+sll_node_t *SLLInsert(sll_node_t *root, sll_node_t *new_node)
+{
+		new_node->next_node = root;
+	
+	return new_node;
 }
 
 sll_node_t *SLLInsertAfter(sll_node_t *target, sll_node_t *new_node)
 {
-	target->next = new_node;
-	new_node->next = target->next;
+	sll_node_t *temp_node = NULL;
 	
-<<<<<<< HEAD
-	return target;	
-=======
 	temp_node = target->next_node;
 	target->next_node = new_node;
 	new_node->next_node = temp_node;
-	
+
 	return new_node;
->>>>>>> de2cc824853fa2d6539a60525d791a7b25d80bee
 }
 
 size_t SLLCount(const sll_node_t *root)
 {
-	size_t node_counter = 0;
-
-	for (node_counter = 0; NULL != root; node_counter++)
+	size_t counter = 0;
+	sll_node_t *current_node = NULL;
+	
+	for (current_node = (sll_node_t *)root; 
+			NULL != current_node; 
+			current_node = current_node->next_node, counter++)
 	{
-		root = root->next;
 	}
 	
-	return node_counter;
+	return counter;
 }
 
-int SLLForEach(sll_node_t *root, sll_foreach_func_t func, void *func_param)
+int SLLForeach(sll_node_t *root, sll_foreach_action func, const void *func_param)
 {
-<<<<<<< HEAD
-	for (; NULL != root; root = root->next)
-=======
-	sll_node_t *current = NULL;
-	int status = 1;
+	void *param_cpy = NULL;
+	sll_node_t *current_node = NULL;
+	int status = 0;
 	
-	assert(root);
+	param_cpy = ( void *)func_param;
 	
-	for (current = root; NULL != current; current = current->next_node)
->>>>>>> de2cc824853fa2d6539a60525d791a7b25d80bee
+	for (current_node = root; 
+			NULL != current_node; 
+			current_node = current_node->next_node)
 	{
-		if (0 != func(root->data, func_param))
+		if (1 == func(current_node->item, param_cpy))
 		{
-			return 1;	
-		}		
+			perror("ForEach function failed.\n");
+			status = 1;
+			break;
+		}
 	}
 	
-	return 0;
+	return status;
 }
 
-sll_node_t *SLLFind(const sll_node_t *root, sll_find_func_t func, void *func_param)
+sll_node_t *SLLFind(const sll_node_t *root, sll_find func, const void *func_param)
 {
-	for (; NULL != root; root = root->next)
+	sll_node_t * temp_node = NULL;
+	void *item_cpy = NULL;
+	void *param_cpy = NULL;
+	
+	temp_node = (sll_node_t *)root;
+	item_cpy = temp_node->item;
+	param_cpy = (void *)func_param;
+	
+	for (; NULL != temp_node; temp_node = temp_node->next_node)
 	{
-		if (0 == func(root->data, func_param))
+		if (func(item_cpy, param_cpy))
 		{
-			return (sll_node_t *)root;
-		}	
+			return (sll_node_t *)temp_node;
+		}
 	}
 	
 	return NULL;
@@ -160,67 +132,73 @@ sll_node_t *SLLFind(const sll_node_t *root, sll_find_func_t func, void *func_par
 
 sll_node_t *SLLFlip(sll_node_t *root)
 {
-	int i = 0;
-	int list_size = SLLCount(root);
-	int counter = 0;  
-	sll_node_t *curr_node = root;
-	sll_node_t *last_node = root;
-	void *temp_data = NULL;
-
-	for (counter = list_size / 2; 0 != counter; curr_node = curr_node->next, counter--)
-	{
-		for (last_node = root, i = 0;
-			i != list_size - 1;
-			i++, last_node = last_node->next);
-
-		temp_data = curr_node->data;
-		curr_node->data = last_node->data; 
-		last_node->data = temp_data;
-
-		list_size--; 
-	}
-
-	return curr_node;
-}
-
-/* returns 1 if there is a loop, 0 if not */
-int SLLHasLoop(const sll_node_t *node)
-{
-	sll_node_t *slow_p = (sll_node_t *)node;
-	sll_node_t *fast_p = (sll_node_t *)node;
-
-	/* Floyd's Cycle detection algorithm */ 
-	for (; NULL != slow_p && NULL != fast_p && NULL != fast_p->next;
-		slow_p = slow_p->next, fast_p = fast_p->next->next)
-	{
-		/* if slow_p and fast_p meet at some pooint
-		   then there is a loop			    */
-		if (slow_p == fast_p)
-		{
-			return 1;
-		}	
-	}
-		
-	return 0;
-}
-
-sll_node_t *SLLFindIntersection(const sll_node_t *first_list, const sll_node_t *second_list)
-{
-	sll_node_t *second_list_iterator = (sll_node_t *)second_list;
+	sll_node_t *temp_node = NULL, *current_node = NULL, *new_root = NULL;
 	
-	for (; NULL != first_list; first_list = first_list->next)
+	/* promote new_root to last node and temp to one before last */
+	for (new_root = root; 
+			NULL != new_root->next_node; 
+			temp_node = new_root, new_root = new_root->next_node)
 	{
-		for (second_list_iterator = (sll_node_t *)second_list;
-			NULL != second_list_iterator;
-			second_list_iterator = second_list_iterator->next)
+	}
+	
+	/* start from last node and change new_root->next_node to previus node */
+	for (current_node = new_root; 
+			current_node != root; 
+			current_node = temp_node, temp_node = temp_node->next_node)
+	{
+		for (temp_node = root; 
+				temp_node->next_node != current_node; 
+				temp_node = temp_node->next_node)
 		{
-			if (first_list == second_list_iterator)
-			{
-				return (sll_node_t *)first_list;
-			}
 		}
 	}
 
+	root->next_node = NULL;
+	
+	return new_root;
+}
+
+int SLLHasLoop(const sll_node_t *root)
+{
+	sll_node_t *slow_p = NULL, *fast_p = NULL; 
+	
+	slow_p = (sll_node_t *)root;
+	fast_p = (sll_node_t *)root; 
+	
+	for (; slow_p && fast_p && fast_p->next_node; 
+			slow_p = slow_p->next_node, fast_p = fast_p->next_node->next_node) 
+	{ 
+		if (slow_p == fast_p) 
+		{ 
+		    return 1; 
+		} 
+	} 
+	
+	return 0;
+}
+
+sll_node_t *SLLFindIntersection(const sll_node_t *root1, const sll_node_t *root2)
+{
+	sll_node_t *root1_cpy = NULL, *root2_cpy = NULL;
+	
+	root1_cpy = (sll_node_t *)root1;
+	root2_cpy = (sll_node_t *)root2;
+	
+	for (; NULL != root1_cpy->next_node;)
+	{
+		root1_cpy = root1_cpy->next_node;
+		
+		for (; NULL != root2_cpy->next_node;)
+		{
+			root2_cpy = root2_cpy->next_node;
+			
+			if (root1_cpy == root2_cpy)
+			{
+				return root1_cpy;
+			}
+		}
+	}
+	
 	return NULL;
 }
 
