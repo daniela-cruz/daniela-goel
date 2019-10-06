@@ -10,7 +10,7 @@ struct cir_buffer_t
 	char buffer[1];
 }
 
-cir_buffer_t *CBCreate(void *data, size_t capcity)
+cir_buffer_t *CBCreate(size_t capcity)
 {
 	cir_buffer_t *new_buffer = NULL;
 	
@@ -35,22 +35,21 @@ cir_buffer_t *CBCreate(void *data, size_t capcity)
 	return new_buffer;
 }
 
-void CBDestroy(cir_buffer_t *c_buff, size_t bash_size);
+void CBDestroy(cir_buffer_t *c_buff);
 
+size_t CBWrite(cir_buffer_t *c_buff, const void *data, size_t bytes_count);
 
-size_t CBRead(cir_buffer_t *c_buff, size_t bytes_count)
+size_t CBRead(cir_buffer_t *c_buff, size_t bytes_count, size_t bytes_count)
 {
-
-}
-
-size_t CBWrite(cir_buffer_t *c_buff, const void *data, size_t bytes_count)
-{
+	if ()
+	{
 	
+	}
 }
 
-size_t CBCapacity(cir_buffer_t *c_buff);
+size_t CBCapacity(const cir_buffer_t *c_buff);
 
-int CBIsEmpty(cir_buffer_t *c_buff);
+int CBIsEmpty(const cir_buffer_t *c_buff);
 
-size_t CBGetFreeSpace(cir_buffer_t *c_buff);
+size_t CBGetFreeSpace(const cir_buffer_t *c_buff);
 
