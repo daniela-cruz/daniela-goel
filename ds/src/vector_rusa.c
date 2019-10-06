@@ -1,10 +1,8 @@
-#include <string.h> /* 		memcpy 		*/
-#include <stdio.h>  /* 		perror		*/
-#include <stdlib.h> /*	malloc, calloc, free	*/
+#include <stdlib.h> /* malloc, calloc, free */
+#include <string.h> /* memcpy */
+#include <stdio.h> /* perror */
 
 #include "vector.h"
-
-enum g_status{SUCCESS, FAILURE};
 
 struct vector
 {
@@ -17,14 +15,14 @@ struct vector
 vector_t *VectorCreate(size_t element_size, size_t num_of_elements)
 {
 	vector_t *vector = (vector_t *)malloc(sizeof(vector_t));
-	if (NULL == vector)
+	if(NULL == vector)
 	{
 		perror("Malloc in VectorCreate failed");
 		return NULL;
 	}
 	
-	vector->base = calloc(num_of_elements, element_size);
-	if (NULL == vector->base)
+	vector->base = calloc(element_size, num_of_elements);
+	if(NULL == vector->base)
 	{
 		perror("Calloc in VectorCreate failed");
 		return NULL;
@@ -45,15 +43,17 @@ void *VectorGetItemAddress(vector_t *vector, size_t index)
 int VectorPushBack(vector_t *vector, const void *data)
 {
 	float exponential_growth = 1.5;
+	int status = 0;
 	
-	if (vector->size == vector->capacity)
+	if(vector->size == vector->capacity)
 	{
 		void *new_vector = realloc(vector->base, 
 			vector->capacity * vector->element_size * exponential_growth);
-		if (NULL == new_vector)
+		if(NULL == new_vector)
 		{
 			perror("Realloc in VectorPushBack failed");
-			return FAILURE;
+			status = 1;
+			return status;
 		}
 		
 		vector->base = new_vector;
@@ -64,32 +64,33 @@ int VectorPushBack(vector_t *vector, const void *data)
 			data, vector->element_size);	
 	vector->size += 1;
 	
-	return SUCCESS;
+	return status;
 }
 
 int VectorPopBack(vector_t *vector)
 {
 	float exponential_decay = 0.75;
-	float new_size = 1.125;
+	int status = 0;
 	
 	if(vector->size <= (vector->capacity * exponential_decay))
 	{
 		void *new_vector = realloc(vector->base, 
-					vector->element_size * vector->size * new_size);
-		if (NULL == new_vector)
+					vector->element_size * vector->size * 1.125);
+		if(NULL == new_vector)
 		{
 			perror("Realloc in VectorPopBack failed");
+			status = 1;
 			
-			return FAILURE;
+			return status;
 		}
 		
 			vector->base = new_vector;
-			vector->capacity = (vector->element_size * new_size);
+			vector->capacity = (vector->element_size * 1.125);
 	}
 	
 	vector->size -= 1; 	
 
-	return SUCCESS;
+	return status;
 }
 
 
@@ -105,22 +106,25 @@ size_t VectorCapacity(const vector_t *vector)
 
 int VectorReserve(vector_t *vector, size_t new_capacity)
 {
-	if (new_capacity > (vector->capacity - vector->size))
+	int status = 0;
+	
+	if(new_capacity > (vector->capacity - vector->size))
 	{
 		void *new_vector = realloc(vector->base, 
-					new_capacity * vector->element_size);
-		if (NULL == new_vector)
+								new_capacity * vector->element_size);
+		if(NULL == new_vector)
 		{
 			perror("Realloc in VectorReserve failed");
+			status = 1;
 			
-			return FAILURE;
+			return status;
 		}
 		
 		vector->base = new_vector;
 		vector->capacity = new_capacity;
 	}
 	
-	return SUCCESS;
+	return status;
 }
 
 void VectorDestroy(vector_t *vector)

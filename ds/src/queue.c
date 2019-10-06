@@ -1,114 +1,143 @@
-#include <stdio.h> /* perror */
-#include <stdlib.h> /* malloc, realloc */
+#include <stdio.h>  /* perror */
+#include <stdlib.h> /* malloc, free */
 #include <stddef.h> /* size_t */
 
-#include "queue.h" /* queue_t */
+#include "queue.h"
 
 typedef struct node q_node_t;
 
 struct node
 {
-	void *data ;
+	void *data;
 	q_node_t *next;
 };
 
 struct queue
 {
-	size_t size;
 	q_node_t *front;
 	q_node_t *back;
-} q;
+	size_t size;
+};
 
 queue_t *QueueCreate()
 {
 	queue_t *new_queue = NULL;
-	q_node_t *n_front = NULL, *n_back = NULL;
 	
-	new_queue = malloc(sizeof(q_node_t *));
-	
-	if (!new_queue)
+	if (NULL == (new_queue  = malloc(sizeof(*new_queue))))
 	{
-		perror("QueueCreate ");
-		return NULL;
+		perror("QueueCreate, new queue ");
 	}
 	
-	n_front = malloc(sizeof(q_node_t *));
-	
-	if (!n_front)
+	if (NULL == (new_queue->front  = malloc(sizeof(*new_queue->front))))
 	{
-		perror("QueueCreate ");
-		return NULL;
+		perror("QueueCreate, front node ");
 	}
 	
-	n_front->next = NULL;
-	n_front->data = NULL;
-    new_queue->front = n_front;
-    
-	n_back = malloc(sizeof(q_node_t *));
-	
-	if (!n_back)
+	if (NULL == (new_queue->back = malloc(sizeof(*new_queue->back))))
 	{
-		perror("QueueCreate ");
-		return NULL;
+		perror("QueueCreate, back node ");
 	}
 	
-	n_back->data = NULL;
-    new_queue->back = n_back; 
-    new_queue->size = 0;
+	new_queue->size = 0;
+	new_queue->front->next = new_queue->back;
+	new_queue->back->next = new_queue->front;
 	
 	return new_queue;
 }
 
-void QueueDestroy(queue_t *element)
+void QueueDestroy(queue_t *q_element)
 {
-	free(element);
+	for (; 	0 < q_element->size; )
+	{
+		QueueDequeue(q_element);
+	}
+	
+	free(q_element->front);
+	free(q_element->back);
+	
+	free(q_element); q_element = NULL;
 }
 
-int QueueEnqueue(queue_t *queue_1, void *new_data)
+int QueueEnqueue(queue_t *q_element, void *data)
 {
-	q_node_t *temp = malloc(sizeof(q_node_t));
-	q_node_t *back_cpy = queue_1->back->next;
+	q_node_t *new_node = NULL;
+	q_node_t *temp = NULL;
 	
-    if (!temp)
+	new_node = malloc(sizeof(* temp));
+	
+	if (NULL == new_node)
 	{
+		perror("QueueEnqueue, new node ");
+		
 		return FAILURE;
 	}
 	
-	if (NULL == queue_1->front)
-	{
-		queue_1->front->next = temp;
-	}
+	q_element->back->next->next = new_node;
+	new_node->data = data;
+	new_node->next = q_element->back;
+	q_element->back->next = new_node;
+	q_element->size++;
 	
-    temp->data = new_data; 
-    temp->next = back_cpy;
-	queue_1->back = temp;
-    queue_1->size++;
-    
-    return SUCCESS;
+	return SUCCESS;
 }
 
-queue_t *QueueDequeue(queue_t *element)
+queue_t *QueueDequeue(queue_t *q_element)
 {
 	q_node_t *temp = NULL;
 	
-	temp = element->front->next->next;
-	free(element->front->next); element->front->next = NULL;
-	element->size--;
-	element->front = temp;
+	if (1 == q_element->size)
+	{
+		free(q_element->front->next); q_element->front->next = NULL;
+		q_element->front->next = q_element->back; 
+		q_element->back->next = q_element->front;
+		q_element->size = 0;
+	}
 	
-	return element;
+	else if (0 == q_element->size)
+	{
+	}
+	
+	else
+	{
+		temp = q_element->front->next;
+		q_element->front->next = temp->next;
+		free(temp); temp = NULL;
+		q_element->size--;
+	}
+	
+	return q_element;
 }
 
-int QueueIsEmpty(const queue_t *element)
+int QueueIsEmpty(const queue_t *q_element)
 {
-	return element->size == 0;
+	return 0 == q_element->size;
 }
 
-queue_t *QueuePeek(const queue_t *element)
+void *QueuePeek(const queue_t *q_element)
 {
-	return (queue_t *)element->front->next;
+	return q_element->front->next->data;
 }
 
-size_t QueueCount(const queue_t *first);
+size_t QueueCount(const queue_t *q_element)
+{
+	return q_element->size;
+}
 
-queue_t *QueueAppend(queue_t *queue1, queue_t *queue2);
+queue_t *QueueAppend(queue_t *dest, queue_t *src)
+{
+	q_node_t *temp = NULL;
+	
+	/* append src queue to back of dest */
+	temp = dest->back->next;
+	temp->next = src->front->next;
+	src->back->next->next = dest->back;
+	dest->size += src->size; 
+	
+	/* nullify appended src queue container */
+	src->back->next = src->front;
+	src->front->next = src->back;
+	src->size = 0;
+	
+	return dest;
+}
+

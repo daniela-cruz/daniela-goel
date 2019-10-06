@@ -3,7 +3,6 @@
 #include <string.h> /* strlen */
 #include <limits.h> /* UCHAR_MAX */
 
-
 #include "bitarray.h" /* all bit arr functions below */
 
 size_t BitArrCountOnLUT(bit_arr_t arr);
@@ -14,8 +13,8 @@ static void BitArrMirrorInitLUT();
 static unsigned char CharMirror(unsigned char byte);
 static char BitArrSetLUT(char arr, size_t bit_location, int is_set);
 
-static bit_arr_t bit_count_LUT[UCHAR_MAX + 2] = {0};
-static bit_arr_t bit_mirror_LUT[UCHAR_MAX + 2] = {0};
+static size_t bit_count_LUT[UCHAR_MAX + 1] = {-1};
+static size_t bit_mirror_LUT[UCHAR_MAX + 1] = {-1};
 static const size_t arr_size = sizeof(bit_arr_t) * CHAR_BIT;
 static const size_t word_size = sizeof(bit_arr_t) * CHAR_BIT;
 
@@ -249,7 +248,7 @@ static void Reverse (char *buffer)
 *															*
 ******************************************/
 
-/* initialize LUT on r_value call */
+/* initialize LUT on first call */
 size_t BitArrCountOnLUT(bit_arr_t arr)
 {
 	bit_arr_t mask = 0xFF;
@@ -257,7 +256,7 @@ size_t BitArrCountOnLUT(bit_arr_t arr)
 	bit_arr_t counter = 0;
 	int i = arr_size / CHAR_BIT;
 	
-	if (1 != bit_count_LUT[UCHAR_MAX + 1])
+	if (0 == bit_count_LUT[UCHAR_MAX])
 	{
 		BitArrInitLUT();
 	}
@@ -281,7 +280,7 @@ bit_arr_t BitArrMirrorLUT(bit_arr_t arr)
 	
 	i = (arr_size * CHAR_BIT) - CHAR_BIT;
 	
-	if (0 == bit_mirror_LUT[UCHAR_MAX + 1])
+	if (0 == bit_mirror_LUT[UCHAR_MAX])
 	{
 		BitArrMirrorInitLUT();
 	}
@@ -297,9 +296,9 @@ bit_arr_t BitArrMirrorLUT(bit_arr_t arr)
 	return mirrored_arr;
 }
 
-/***********************************************
-* Internal functions for BitArr II: LUT	 *
-***********************************************/
+/************************************************
+* Internal functions for BitArr II: LUT	 		*
+************************************************/
 /* create a LUT that contains number of set bits of each number from 0 to 255 */
 static void BitArrInitLUT()
 {
@@ -324,8 +323,6 @@ static void BitArrInitLUT()
 		bit_count_LUT[i] = count;
 		count = 0;
 	}
-	
-	bit_count_LUT[UCHAR_MAX + 1] = 1;
 }
 
 static void BitArrMirrorInitLUT()
@@ -357,4 +354,5 @@ static unsigned char CharMirror(unsigned char byte)
 	
 	return byte_mirror;
 }
+
 

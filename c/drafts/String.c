@@ -180,7 +180,8 @@ char *MyStrstr(const char *haystack, const char *needle)
 {
 	size_t size = strlen(needle);
 	
-	assert((needle != NULL) && (haystack != NULL));
+	assert(needle != NULL);
+	assert(haystack != NULL);
 	
 	while (*haystack != '\0') 
 	{	
