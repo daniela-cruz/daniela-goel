@@ -16,7 +16,7 @@ void CBDestroy(cir_buffer_t *c_buff);
 
 size_t CBWrite(cir_buffer_t *c_buff, const void *data, size_t bytes_count);
 
-size_t CBRead(cir_buffer_t *c_buff, size_t bytes_count, size_t bytes_count);
+size_t CBRead(cir_buffer_t *c_buff, size_t bytes_count);
 
 /* The usable capacity of the ring buffer, in bytes. Note that this
  * value may be less than the ring buffer's internal buffer size, as
