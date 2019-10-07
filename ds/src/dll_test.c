@@ -4,10 +4,20 @@
 
 #include "dll.h"
 
+static void UserDLL();
+
+dll_t *new_dll = NULL;
+dll_iter_t *iterator = NULL;
+
 int main()
 {
-	dll_t *new_dll = NULL;
-	dll_node_t *new_node = NULL;
+	UserDLL();
 	
 	return 0;
+}
+
+static void UserDLL()
+{
+	new_dll = DLLCreate();
+	
 }

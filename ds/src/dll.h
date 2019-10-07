@@ -19,9 +19,9 @@ dll_t *DLLCreate();
 
 void DLLDestroy(dll_t *dll);
 
-dll_iter_t DLLInsert(dll_iter_t iterator, void *data);
+dll_iter_t DLLInsert(dll_t *dll, dll_iter_t iterator, void *data);
 
-dll_iter_t DLLRemove(dll_iter_t iterator);
+dll_iter_t DLLRemove(dll_t *dll, dll_iter_t iterator);
 
 int DLLIsEmpty(const dll_t *dll);
 
