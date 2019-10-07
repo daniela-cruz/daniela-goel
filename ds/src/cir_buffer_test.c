@@ -20,16 +20,17 @@ int main()
 	WriteTest();
 	IsEmptyTest();
 	GetFreeTest();
-	ReadTest();
+	/*ReadTest();*/
 	GetFreeTest();
 	CapacityTest();
 	IsEmptyTest();
 	WriteTest();
+	GetFreeTest();
 	WriteTest();
 	GetFreeTest();
+	/*ReadTest();
 	ReadTest();
-	ReadTest();
-	ReadTest();
+	ReadTest();*/
 	GetFreeTest();
 	CapacityTest();
 	IsEmptyTest();
@@ -61,10 +62,10 @@ static void ReadTest()
 {
 	char *read_data = malloc(10);
 	printf("Read test I. . .\t");
-	printf("Read: %ld more bytes\n", CBRead(new_circle, read_data, 8));
+	printf("Read: %ld more bytes\n", CBRead(new_circle, read_data, 6));
 	printf("data is: %s\n", read_data);
 	printf("Read test II. . .\t");
-	printf("Read: %ld more bytes\n", CBRead(new_circle, read_data, 8));
+	printf("Read: %ld more bytes\n", CBRead(new_circle, read_data, 4));
 	printf("data is: %s\n", read_data);
 	free(read_data);
 }

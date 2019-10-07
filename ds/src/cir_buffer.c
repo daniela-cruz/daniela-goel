@@ -9,7 +9,7 @@ struct circular_buff
 	size_t writer; 
 	size_t reader;
 	size_t capacity;
-	size_t free;
+	int free;
 	char buffer[1];
 };
 
@@ -42,6 +42,7 @@ cir_buffer_t *CBCreate(size_t capacity)
 
 void CBDestroy(cir_buffer_t *c_buff)
 {
+	/*free(c_buff->buffer);*/
 	free(c_buff);
 }
 
@@ -73,7 +74,7 @@ size_t CBRead(cir_buffer_t *c_buff, void *data, size_t bytes_count)
 	size_t i = 0;
 	
 	for (i = 0; 
-		  i < bytes_count && (c_buff->capacity - c_buff->free - 1 < c_buff->capacity); 
+		  i < bytes_count && (0 < c_buff->free); 
 		  i++, c_buff->reader++, c_buff->free++)
 	{
 		CBAlignToBuffer(c_buff);
