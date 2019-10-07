@@ -6,15 +6,15 @@
 
 struct circular_buff
 {
-	size_t head; 
-	size_t tail;
+	size_t writer; 
+	size_t reader;
 	size_t capacity;
 	size_t free;
 	char buffer[1];
 };
 
-/* This internal functions aligns head and tail indexes so that:
- * 1. tail won't pass head annd thus read won't pass write
+/* This internal functions aligns writer and reader indexes so that:
+ * 1. reader won't pass writer annd thus read won't pass write
   * 2. none will escape the limits of the capacity size		 		 */
 static void CBAlignToBuffer(cir_buffer_t *c_buff);
 
@@ -32,8 +32,8 @@ cir_buffer_t *CBCreate(size_t capacity)
 		return NULL;
 	}
 	
-	new_buffer->head = 0;
-	new_buffer->tail = 0;
+	new_buffer->writer = 0;
+	new_buffer->reader = 0;
 	new_buffer->free = capacity;
 	new_buffer->capacity = capacity;
 	
@@ -47,31 +47,40 @@ void CBDestroy(cir_buffer_t *c_buff)
 
 size_t CBWrite(cir_buffer_t *c_buff, const void *data, size_t bytes_count)
 {
-	int i = 0;
+	size_t i = 0;
 	
-	for (i = 0; 
-		  i < bytes_count; 
-		  i++, c_buff->head++, c_buff->free--)
+	for (i = 0; i < bytes_count; i++, c_buff->free--)
 	{
 		CBAlignToBuffer(c_buff);
-		c_buff->buffer[c_buff->head] = *(char *)data;
+		c_buff->buffer[c_buff->writer] = ((char *)data)[i];
+		
+		if (c_buff->writer == c_buff->reader - 1)
+		{
+			c_buff->writer++;
+			c_buff->reader++;
+		}
+		else
+		{
+			c_buff->writer++;
+		}
 	}
 	
-	return (size_t)i;
+	return i;
 }
 
-size_t CBRead(cir_buffer_t *c_buff, size_t bytes_count)
+size_t CBRead(cir_buffer_t *c_buff, void *data, size_t bytes_count)
 {
-	int i = 0;
+	size_t i = 0;
 	
 	for (i = 0; 
-		  i < bytes_count; 
-		  i++, c_buff->tail++, c_buff->free++)
+		  i < bytes_count && (c_buff->capacity - c_buff->free - 1 < c_buff->capacity); 
+		  i++, c_buff->reader++, c_buff->free++)
 	{
 		CBAlignToBuffer(c_buff);
+		((char *)data)[i] = c_buff->buffer[c_buff->reader];
 	}
 	
-	return (size_t)i;
+	return i;
 }
 
 size_t CBCapacity(const cir_buffer_t *c_buff)
@@ -93,7 +102,7 @@ size_t CBGetFreeSpace(const cir_buffer_t *c_buff)
 		buff_cpy->free = buff_cpy->capacity;
 	}
 	
-	if (0 > c_buff->free)
+	if (0 > (int)c_buff->free)
 	{
 		buff_cpy->free = 0;
 	}
@@ -107,19 +116,19 @@ size_t CBGetFreeSpace(const cir_buffer_t *c_buff)
 
 static void CBAlignToBuffer(cir_buffer_t *c_buff)
 {
-	if (c_buff->head >= c_buff->capacity)
+	if (c_buff->writer == c_buff->capacity)
 	{
-		c_buff->head = c_buff->head %c_buff->capacity;
+		c_buff->writer = 0;
 	}
 	
-	if (c_buff->tail  >= c_buff->capacity)
+	if (c_buff->reader   == c_buff->capacity)
 	{
-		c_buff->tail = c_buff->tail % c_buff->capacity;
-		
-		if (c_buff->tail > c_buff->head)
-		{
-			c_buff->tail = c_buff->head;
-		}
+		c_buff->reader = 0;
+	}
+	
+	if ((c_buff->reader > c_buff->writer) && (c_buff->reader  >= c_buff->free))
+	{
+		c_buff->reader = c_buff->writer;
 	}
 }
 

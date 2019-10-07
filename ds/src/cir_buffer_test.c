@@ -1,4 +1,5 @@
 #include <stdio.h> /* printf */
+#include <stdlib.h> /* malloc, free*/
 
 #include "cir_buffer.h"
 
@@ -17,7 +18,17 @@ int main()
 	CreateTest();
 	IsEmptyTest();
 	WriteTest();
+	IsEmptyTest();
 	GetFreeTest();
+	ReadTest();
+	GetFreeTest();
+	CapacityTest();
+	IsEmptyTest();
+	WriteTest();
+	WriteTest();
+	GetFreeTest();
+	ReadTest();
+	ReadTest();
 	ReadTest();
 	GetFreeTest();
 	CapacityTest();
@@ -36,7 +47,8 @@ static void CreateTest()
 static void WriteTest()
 {
 	printf("Write test. . .\t\t");
-	(12 == CBWrite(new_circle, word, 12)) ? printf("SUCCESS!\n") : printf("Failure\n");
+	(5 == CBWrite(new_circle, word, 5)) ? printf("SUCCESS! ") : printf("Failure");
+	printf("Wrote %ld more bytes.\n", CBCapacity(new_circle) - CBGetFreeSpace(new_circle));
 }
 
 static void GetFreeTest()
@@ -47,10 +59,14 @@ static void GetFreeTest()
 
 static void ReadTest()
 {
-	printf("Read test I. . .\t\t");
-	(6 ==CBRead(new_circle, 6)) ? printf("SUCCESS!\n") : printf("Failure\n");
-	printf("Read test II. . .\t\t");
-	printf("Read: %ld more bytes\n", CBRead(new_circle, 6));
+	char *read_data = malloc(10);
+	printf("Read test I. . .\t");
+	printf("Read: %ld more bytes\n", CBRead(new_circle, read_data, 8));
+	printf("data is: %s\n", read_data);
+	printf("Read test II. . .\t");
+	printf("Read: %ld more bytes\n", CBRead(new_circle, read_data, 8));
+	printf("data is: %s\n", read_data);
+	free(read_data);
 }
 
 static void CapacityTest()
