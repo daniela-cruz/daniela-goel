@@ -7,10 +7,16 @@
 struct dll_node
 {
 	void *data;
-	void *xored; /* ? */
 	void *n_prev;
 	void *n_next;
+	dll_node* npx;
 }
+
+
+struct dll_node* XOR (dll_node *a, dll_node *b) 
+{ 
+    return (dll_node* ) ((uintptr_t) (a) ^ (uintptr_t) (b)); 
+} 
 
 struct dll
 {
@@ -19,6 +25,9 @@ struct dll
 	size_t size;
 };
 
+/******************************************
+ * dll functions: 
+******************************************/
 dll_t *DLLCreate()
 {
 	dll_t *new_dll = malloc(sizeof(*new_dll));
@@ -28,7 +37,7 @@ dll_t *DLLCreate()
 	{
 		return NULL;
 	}
-	
+
 	temp = malloc(sizeof(*temp));
 	if (NULL != temp)
 	{
@@ -36,7 +45,9 @@ dll_t *DLLCreate()
 		return NULL;
 	}
 	
-	new_dll->first = temp; free(temp);
+	new_dll->first = temp; 
+	new_dll->first->data = NULL;
+	free(temp);
 	
 	temp = malloc(sizeof(*temp));
 	if (NULL != temp)
@@ -46,6 +57,10 @@ dll_t *DLLCreate()
 	}
 	
 	new_dll->last = temp;
+	new_dll->last->next = NULL;
+	new_dll->last->prev = new_dll->first;
+	new_dll->last->data = NULL;
+	new_dll->first->next = new_dll->last;
 	new_dll->size = 0;
 	
 	return new_dll;
@@ -67,11 +82,18 @@ dll_iter_t DLLInsert(dll_iter_t iterator, void *data)
 	}
 	
 	temp->data = data;
+	return iterator = temp;
 }
 
-dll_iter_t DLLRemove(dll_iter_t iterator);
+dll_iter_t DLLRemove(dll_iter_t iterator)
+{
+	
+}
 
-int DLLIsEmpty(const dll_t *dll);
+int DLLIsEmpty(const dll_t *dll)
+{
+	return dll->size == 0;
+}
 
 dll_t *DLLPushBack(dll_t *dll, void *data); 
 
@@ -81,5 +103,8 @@ dll_t *DLLPushFront(dll_t *dll, void *data);
 
 dll_t *DLLPopFront(dll_t *dll);
 
-size_t DLLSize(const dll_t *dll);
+size_t DLLSize(const dll_t *dll)
+{
+	return dll->size;
+}
 
