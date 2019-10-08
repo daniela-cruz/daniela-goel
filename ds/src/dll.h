@@ -8,7 +8,7 @@ typedef struct dll_node dll_node_t;
 
 typedef struct dll_iterator
 {
-	dll_node_t *cur;
+	dll_node_t *curr_node_addr; 
 } dll_iter_t;
 
 typedef int (*dll_cmp_func_t)(const void *data, void *param);
@@ -18,9 +18,9 @@ dll_t *DLLCreate();
 
 void DLLDestroy(dll_t *dll);
 
-dll_iter_t DLLInsert(dll_t *dll, dll_iter_t iterator, void *data);
+dll_iter_t DLLInsert(dll_iter_t iterator, void *data);
 
-dll_iter_t DLLRemove(dll_t *dll, dll_iter_t iterator);
+void DLLRemove(dll_t *dll, dll_iter_t iterator);
 
 int DLLIsEmpty(const dll_t *dll);
 
@@ -35,11 +35,15 @@ dll_t *DLLPopFront(dll_t *dll);
 size_t DLLSize(const dll_t *dll);
 
 /********************************************/
+
+/* the user should send an actual address of a particular node casted as an iterator */
+dll_iter_t DLLIterNext(dll_iter_t iterator);
+
+dll_iter_t DLLIterPrev(dll_iter_t iterator);
+
 dll_iter_t DLLBegin(const dll_t *dll);
 
 dll_iter_t DLLEnd(const dll_t *dll);
-
-dll_iter_t DLLIterNext(dll_iter_t it);
 
 int DLLIterIsEqual(dll_iter_t it1, dll_iter_t it2);
 
