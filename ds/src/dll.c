@@ -3,18 +3,11 @@
 #include <stddef.h> /* size_t */
 
 #include "dll.h"
-/*
-struct dll_node* XOR (dll_node *a, dll_node *b) 
-{ 
-    return (dll_node* ) ((uintptr_t) (a) ^ (uintptr_t) (b)); 
-};
-*/
+
 struct dll_node
 {
 	void *data;
-	struct dll_node *n_prev;
-	struct dll_node *n_next;
-	/*dll_node* npx;*/
+	dll_node *npx;
 };
 
 struct dll
@@ -24,45 +17,49 @@ struct dll
 	size_t size;
 };
 
+static dll_iter_t GetNextAddressIterator(dll_t *prev_address, dll_t *cur_address);
+static dll_node_t *AddressXOR (dll_node_t *prev_addr, dll_node_t *next_addr);
+static dll_node_t *CreateNewNode(void *data); /*?*/
+
 /******************************************
  * dll functions: 
 ******************************************/
 dll_t *DLLCreate()
 {
-	dll_t *new_dll = malloc(sizeof(*new_dll));
-	dll_node_t *temp = NULL;
+	dll_t *dll = NULL;
+	dll_node_t *new_node = NULL, *new_node_2 = NULL;
 	
-	if (NULL == new_dll)
+	dll = malloc(sizeof(*dll));
+	if (NULL == dll)
 	{
 		return NULL;
 	}
-
-	temp = malloc(sizeof(*temp));
-	if (NULL == temp)
+	
+	/* create node for first and last */
+	new_node = malloc(sizeof(*new_node));
+	if (NULL == new_node)
 	{
-		free(new_dll);
+		free(dll);
 		return NULL;
 	}
+	dll->last = new_node;
+	dll->last->npx = NULL ^ new_node; 
+	dll->last->data = NULL;
 	
-	new_dll->first = temp; 
-	new_dll->first->data = NULL;
-	free(temp);
-	
-	temp = malloc(sizeof(*temp));
-	if (NULL == temp)
+	new_node_2 = malloc(sizeof(*new_node_2));
+	if (NULL == new_node_2)
 	{
-		free(new_dll);
+		free(new_node);
+		free(dll);
 		return NULL;
 	}
+	dll->first = new_node_2;
+	dll->first->npx = NULL ^ dll->last;
+	dll->first->data = NULL;
 	
-	new_dll->last = temp;
-	new_dll->last->n_next = NULL;
-	new_dll->last->n_prev = new_dll->first;
-	new_dll->last->data = NULL;
-	new_dll->first->n_next = new_dll->last;
-	new_dll->size = 0;
+	dll->size = 0;
 	
-	return new_dll;
+	return dll;
 }
 
 void DLLDestroy(dll_t *dll)
@@ -73,7 +70,6 @@ void DLLDestroy(dll_t *dll)
 dll_iter_t DLLInsert(dll_t *dll, dll_iter_t iterator, void *data)
 {
 	dll_node_t *new_node = NULL;
-	dll_node_t *temp = NULL;
 	
 	new_node = malloc(sizeof(*new_node));
 	if (NULL == new_node)
@@ -81,8 +77,8 @@ dll_iter_t DLLInsert(dll_t *dll, dll_iter_t iterator, void *data)
 		return NULL;
 	}
 	
-/**/	
-	return iterator = dll->back->prev;
+	new_node->data = NULL;
+	new_node->npx = AddressXOR(&dll->first, NULL);	
 }
 
 dll_iter_t DLLRemove(dll_t *dll, dll_iter_t iterator);
@@ -105,3 +101,17 @@ size_t DLLSize(const dll_t *dll)
 	return dll->size;
 }
 
+/***************************************
+ * Internal functions: 						*
+***************************************/
+static dll_iter_t GetNextAddressIterator(dll_t *prev_address, dll_t *cur_address)
+{
+	dll_iter_t it = 0;
+	
+	return it;
+}
+
+static dll_node_t *AddressXOR (dll_node_t *prev_addr, dll_node_t *next_addr) 
+{ 
+    return (dll_node_t *) ((uintptr_t) (prev_addr) ^ (uintptr_t) (next_addr)); 
+} 
