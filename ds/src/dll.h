@@ -50,8 +50,8 @@ int DLLIterIsEqual(dll_iter_t it1, dll_iter_t it2);
 void *DLLGetData(dll_iter_t it);
 
 /*******************************************/
-dll_iter_t DLLFind(dll_iter_t it_start, dll_iter_t it_end, dll_act_func_t for_each_func, const void *param);
+dll_iter_t DLLFind(dll_iter_t it_start, dll_iter_t it_end, dll_cmp_func_t find_func, const void *param);
 
-int DLLForEach(dll_iter_t it_start, dll_iter_t it_end, dll_cmp_func_t for_each_func, void *param);
+int DLLForEach(dll_iter_t it_start, dll_iter_t it_end, dll_act_func_t for_each_func, void *param);
 
 #endif /*__DLL_H__*/

@@ -290,3 +290,29 @@ void *DLLGetData(dll_iter_t it)
 	*/
 	return it.curr_node_addr->data;
 }
+
+/***************************************
+ * EXTRA functions:		 				*
+***************************************/
+dll_iter_t DLLFind(dll_iter_t it_start, dll_iter_t it_end, dll_cmp_func_t find_func, const void *param)
+{
+	dll_node_t *start = it_start.curr_node_addr;
+	dll_node_t *end = it_end.curr_node_addr;
+	void *param_cpy = (void *)param;
+	
+	for (; start != end; start = DLLIterNext(it_start).curr_node_addr)
+	{
+		if (1 == find_func(param_cpy, start->data))
+		{
+			it_start.curr_node_addr = start;
+			break;
+		}
+	}
+	
+	if ((start != end) && (1 != find_func(param_cpy, start->data)))
+	{
+		printf("Parameter was not found.\n");
+	}
+
+	return it_start;
+}
