@@ -175,7 +175,19 @@ dll_t *DLLPushBack(dll_t *dll, void *data)
 	return dll;
 }
 
-dll_t *DLLPopBack(dll_t *dll);
+dll_t *DLLPopBack(dll_t *dll)
+{
+	dll_node_t *current = dll->last->prev;
+	
+	dll->last->prev->prev->npx = NodeAddressXOR(dll->last->prev->prev->prev, dll->last);
+	dll->last->prev = dll->last->prev->prev;
+	dll->last->npx = NodeAddressXOR(dll->last->prev, NULL);
+	free(current);
+	
+	dll->size--;
+	
+	return dll;
+}
 
 dll_t *DLLPushFront(dll_t *dll, void *data)
 {
@@ -202,7 +214,24 @@ dll_t *DLLPushFront(dll_t *dll, void *data)
 	return dll;
 }
 
-dll_t *DLLPopFront(dll_t *dll);
+dll_t *DLLPopFront(dll_t *dll)
+{
+	dll_node_t *current = NULL;
+	dll_node_t *next = NULL;
+	
+	current = (dll_node_t *)NodeAddressXOR(dll->first, NULL);
+	next = (dll_node_t *)NodeAddressXOR(current, current->prev);
+	
+	dll->first->npx = NodeAddressXOR(NULL, next);
+	next->prev = dll->first;
+	next->npx = NodeAddressXOR(next->prev, (dll_node_t *)NodeAddressXOR(current, current->prev));
+	
+	free(current);
+	
+	dll->size--;
+	
+	return dll;
+}
 
 size_t DLLSize(const dll_t *dll)
 {
