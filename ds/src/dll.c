@@ -19,6 +19,11 @@ struct dll
 	size_t size;
 };
 
+static uintptr_t NodeAddressXOR(dll_node_t *a, dll_node_t *b)
+{
+	return (uintptr_t)a ^ (uintptr_t)b;
+}
+
 /******************************************
  * dll functions: 
 ******************************************/
@@ -47,10 +52,10 @@ dll_t *DLLCreate()
 	}
 	
 	dll->last->prev = NULL;
-	dll->first->npx = (uintptr_t)NULL ^ (uintptr_t)dll->last;
+	dll->first->npx = NodeAddressXOR(NULL, dll->last);
 	
 	dll->last->prev = dll->first;
-	dll->last->npx = dll->last->prev ^ NULL;
+	dll->last->npx = NodeAddressXOR(dll->last->prev, NULL);
 	
 	dll->size = 0;
 	
@@ -59,53 +64,67 @@ dll_t *DLLCreate()
 
 void DLLDestroy(dll_t *dll)
 {
-
+	/*
+	for (; 0 < dll->size; DLLRemove(dll, ))
+	{
+	
+	}
+	*/
+	free(dll);
 }
 
 dll_iter_t DLLInsert(dll_iter_t iterator, void *data)
 {
 	dll_node_t *new_node = NULL;
-	dll_node_t *prev_addr = (dll_node_t *)iterator;
-	dll_node_t *next_addr = (dll_node_t *)DLLIterNext(prev_addr);
+	dll_node_t *prev_addr = NULL;
+	dll_node_t *next_addr = NULL;
 	
-	new_node = malloc(*new_node);
+	prev_addr = iterator.curr_node_addr->prev;
+	next_addr = DLLIterNext(iterator).curr_node_addr;
+	
+	new_node = malloc(sizeof(*new_node));
 	if (NULL == new_node)
 	{
 		perror("Could not insert new node. ");
-		return (dll_iter_t)NULL;
+		return iterator;
 	}
 	
+	new_node->data = data;
 	new_node->prev = prev_addr;
-	new_node->npx = prev_addr ^ next_addr;
+	new_node->npx = NodeAddressXOR(prev_addr, next_addr);
 	
-	next_addr->npx = new_node ^ DLLIterNext(next_addr);
+	iterator.curr_node_addr = next_addr;
+	next_addr->npx = NodeAddressXOR(new_node, DLLIterNext(iterator).curr_node_addr);
 	next_addr->prev = new_node;
 	
-	prev_addr->npx = prev_addr->prev ^ new_node;
+	prev_addr->npx = NodeAddressXOR(prev_addr->prev, new_node);
 	
-	dll->size++;
-	
-	return (dll_iter_t)new_node;
+	return iterator;
 }
 
 void DLLRemove(dll_t *dll, dll_iter_t iterator)
 {
-	if ((0 != DLLIterIsEqual(dll->first->npx, iterator)) && (0 != DLLIterIsEqual(dll->last->npx, iterator)))
+	dll_iter_t first_iter, last_iter;
+	
+	first_iter.curr_node_addr = dll->first;
+	last_iter.curr_node_addr = dll->last;
+	
+	if ((0 != DLLIterIsEqual(first_iter, iterator)) && (0 != DLLIterIsEqual(last_iter, iterator)))
 	{
-		dll_node_t *current_node = (dll_node_t *)iterator;
+		dll_node_t *current_node = iterator.curr_node_addr;
 		dll_node_t *prev_address = current_node->prev;
-		dll_node_t *next_addr = (dll_node_t *)DLLIterNext(iterator);
+		dll_node_t *next_addr = DLLIterNext(iterator).curr_node_addr;
 		
 		if (1 == dll->size)
 		{
-			dll->first->npx = NULL ^ dll->last;
+			dll->first->npx = NodeAddressXOR(NULL, dll->last);
 			dll->last->prev = dll->first;
-			dll->last->npx = dll->first ^ NULL;
+			dll->last->npx = NodeAddressXOR(dll->first, NULL);
 		}
 		else
 		{
-			prev_address->npx = prev_address->prev ^ next_addr;
-			next_addr->npx = prev_address ^ (next_addr->npx ^ next_addr->prev);
+			prev_address->npx = NodeAddressXOR(prev_address->prev, next_addr);
+			next_addr->npx = NodeAddressXOR(prev_address, (dll_node_t *)NodeAddressXOR(next_addr, next_addr->prev));
 		}
 		
 		free(current_node); 
@@ -120,22 +139,34 @@ int DLLIsEmpty(const dll_t *dll)
 
 dll_t *DLLPushBack(dll_t *dll, void *data)
 {
-	dll_node_t *new_node = DLLInsert(dll->last, data);
+	dll_iter_t *iterator = NULL;
+	dll_node_t *new_node = NULL;
 	
+	iterator = malloc(sizeof(*iterator));
+	if (NULL == iterator)
+	{
+		return NULL;
+	}
+	
+	iterator->curr_node_addr = dll->last;
+	
+	new_node = DLLInsert(*iterator, data).curr_node_addr;
 	if (NULL != new_node)
 	{
-		dll_node_t *prev_node = dll->back->prev;
+		dll_node_t *prev_node = dll->last->prev;
 		
 		new_node->data = data;
 		new_node->prev = prev_node;
-		new_node->npx = prev_node ^ dll->last;
+		new_node->npx = NodeAddressXOR(prev_node, dll->last);
 		
 		dll->last->prev = new_node;
-		dll->last->npx = prev_node ^ NULL;
+		dll->last->npx = NodeAddressXOR(prev_node, NULL);
 		
-		prev_node->npx = prev_node->prev ^ new_node;
+		prev_node->npx = NodeAddressXOR(prev_node->prev, new_node);
 		dll->size++;
 	}
+	
+	free(iterator);
 	
 	return dll;
 }
@@ -144,8 +175,26 @@ dll_t *DLLPopBack(dll_t *dll);
 
 dll_t *DLLPushFront(dll_t *dll, void *data)
 {
-	dll_node_t *new_node = DLLInsert(DLLIterNext(dll->first), data);
-
+	dll_iter_t *iterator = NULL;
+	dll_node_t *new_node = NULL;
+	
+	iterator = malloc(sizeof(*iterator));
+	if (NULL == iterator)
+	{
+		perror("Iterator was not allocated ");
+		return dll;
+	}
+	
+	iterator->curr_node_addr = dll->first;
+	new_node = DLLInsert(DLLIterNext(*iterator), data).curr_node_addr;
+	if (NULL == new_node)
+	{
+		perror("new node was not pushed ");
+		return dll;
+	}
+	
+	dll->size++;
+	
 	return dll;
 }
 
@@ -163,38 +212,52 @@ size_t DLLSize(const dll_t *dll)
 /* the user should send an actual address of a particular node casted as an iterator */
 dll_iter_t DLLIterNext(dll_iter_t iterator)
 {
-	dll_iter_t *it_cpy = iterator;
-	
-	return (dll_iter_t)(it_cpy->npx ^ it_cpy->prev);
+	iterator.curr_node_addr = 
+		(dll_node_t *)NodeAddressXOR((dll_node_t *)iterator.curr_node_addr->npx, iterator.curr_node_addr->prev);
+		
+	return iterator;
 }
 
 dll_iter_t DLLIterPrev(dll_iter_t iterator)
 {
+	iterator.curr_node_addr = iterator.curr_node_addr->prev;
 	
-	return (dll_iter_t)((dll_node_t *))iterator->prev);
+	return iterator;
 }
 
 int DLLIterIsEqual(dll_iter_t it1, dll_iter_t it2)
 {
-	return (it1 == it2);
+	return (it1.curr_node_addr == it2.curr_node_addr);
 }
 
 dll_iter_t DLLBegin(const dll_t *dll)
 {
-	return dll->first;
+	dll_iter_t *iterator = malloc(sizeof(*iterator));
+	uintptr_t it = 0;
+	
+	iterator->curr_node_addr = dll->first;
+	it = (uintptr_t)iterator; free(iterator);
+	
+	return *(dll_iter_t *)&it;
 }
 
 dll_iter_t DLLEnd(const dll_t *dll)
 {
-	return dll->last;
+	dll_iter_t *iterator = malloc(sizeof(*iterator));
+	uintptr_t it = 0;
+	
+	iterator->curr_node_addr = dll->last;
+	it = (uintptr_t)iterator; free(iterator);
+	
+	return *(dll_iter_t *)&it;
 }
 
 void *DLLGetData(dll_iter_t it)
 {
-	dll_t *dll_node_cpy = NULL;
+	dll_node_t *dll_node_cpy = NULL;
 	
-	dll_node_cpy = DLLIterPrev(it);
-	dll_node_cpy = DLLIterNext(dll_node_cpy);
+	dll_node_cpy = DLLIterPrev(it).curr_node_addr;
+	dll_node_cpy = DLLIterNext(it).curr_node_addr;
 	
 	return dll_node_cpy->data;
 }
