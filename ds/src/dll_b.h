@@ -15,17 +15,17 @@ typedef struct dll_iterator
 typedef int (*dll_cmp_func_t)(const void *data, void *param);
 typedef int (*dll_act_func_t)(void *data, void *param);
 
-dll_t *DLLCreate();
+dll_t *DLLCreate();/* done */
 
 void DLLDestroy(dll_t *dll);
 
-dll_iter_t DLLInsert(dll_iter_t iterator, const void *data);
+dll_iter_t DLLInsert(dll_iter_t iterator, const void *data);/* done */
 
-dll_iter_t DLLRemove(dll_iter_t iterator);
+dll_iter_t DLLRemove(dll_iter_t iterator);/* done */
 
 dll_iter_t DLLSplice(dll_iter_t where, dll_iter_t from, dll_iter_t to);
 
-int DLLIsEmpty(const dll_t *dll);
+int DLLIsEmpty(const dll_t *dll);/* done */
 
 dll_iter_t DLLPushBack(dll_t *dll, const void *data); 
 
@@ -35,22 +35,22 @@ dll_iter_t DLLPushFront(dll_t *dll, const void *data);
 
 void *DLLPopFront(dll_t *dll);
 
-size_t DLLSize(const dll_t *dll);
+size_t DLLSize(const dll_t *dll);/* done */
 
 /********************************************/
 
 /* the user should send an actual address of a particular node casted as an iterator */
-dll_iter_t DLLIterNext(dll_iter_t iterator);
+dll_iter_t DLLIterNext(dll_iter_t iterator);/* done */
 
-dll_iter_t DLLIterPrev(dll_iter_t iterator);
+dll_iter_t DLLIterPrev(dll_iter_t iterator);/* done */
 
-dll_iter_t DLLBegin(const dll_t *dll);
+dll_iter_t DLLBegin(const dll_t *dll);/* done */
 
-dll_iter_t DLLEnd(const dll_t *dll);
+dll_iter_t DLLEnd(const dll_t *dll);/* done */
 
-int DLLIterIsEqual(dll_iter_t it1, dll_iter_t it2);
+int DLLIterIsEqual(dll_iter_t it1, dll_iter_t it2);/* done */
 
-void *DLLGetData(dll_iter_t it);
+void *DLLGetData(dll_iter_t it);/* done */
 
 /*******************************************/
 dll_iter_t DLLFind(dll_iter_t it_start, dll_iter_t it_end, dll_cmp_func_t find_func, void *param);
