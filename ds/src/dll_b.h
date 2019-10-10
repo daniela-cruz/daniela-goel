@@ -27,11 +27,11 @@ dll_iter_t DLLSplice(dll_iter_t where, dll_iter_t from, dll_iter_t to);
 
 int DLLIsEmpty(const dll_t *dll);/* done */
 
-dll_iter_t DLLPushBack(dll_t *dll, const void *data); 
+dll_iter_t DLLPushBack(dll_t *dll, const void *data); /* done */
 
 void *DLLPopBack(dll_t *dll);
 
-dll_iter_t DLLPushFront(dll_t *dll, const void *data); 
+dll_iter_t DLLPushFront(dll_t *dll, const void *data);  /* done */
 
 void *DLLPopFront(dll_t *dll);
 

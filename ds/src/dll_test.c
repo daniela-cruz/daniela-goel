@@ -2,7 +2,7 @@
 #include <stdlib.h> /* malloc, free */
 #include <stddef.h> /* size_t */
 
-#include "dll.h" /* all below*/
+#include "dll_b.h" /* all below*/
 
 static void FindTest();
 static int FindFunc(const void *data, void *param);
@@ -26,7 +26,7 @@ int main()
 	iterator = malloc(sizeof(*iterator));
 	
 	UserDLL();
-	PushTests();
+	/*PushTests();*/
 	/*PopTests();*/
 	FindTest();
 		
@@ -108,7 +108,7 @@ static void UserDLL()
 static void PushBackTest(int num)
 {
 	printf("\nPush back test. . .\n");
-	new_dll = DLLPushBack(new_dll, (void *)&num);
+	*iterator = DLLPushBack(new_dll, (void *)&num);
 	
 	IsEmptyTest(0);
 }
@@ -116,7 +116,7 @@ static void PushBackTest(int num)
 static void PushFrontTest(int num)
 {
 	printf("\nPush front test. . .\n");
-	new_dll = DLLPushFront(new_dll, (void *)&num);
+	*iterator = DLLPushFront(new_dll, (void *)&num);
 	IsEmptyTest(0);
 	*iterator = DLLBegin(new_dll);
 	*iterator = DLLIterNext(*iterator);
