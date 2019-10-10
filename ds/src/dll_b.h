@@ -21,17 +21,19 @@ void DLLDestroy(dll_t *dll);
 
 dll_iter_t DLLInsert(dll_iter_t iterator, const void *data);
 
-dll_iter_t DLLRemove(dll_t *dll, dll_iter_t iterator);
+dll_iter_t DLLRemove(dll_iter_t iterator);
+
+dll_iter_t DLLSplice(dll_iter_t where, dll_iter_t from, dll_iter_t to);
 
 int DLLIsEmpty(const dll_t *dll);
 
-dll_t *DLLPushBack(dll_t *dll, const void *data); /* int ?*/
+dll_iter_t DLLPushBack(dll_t *dll, const void *data); 
 
-dll_t *DLLPopBack(dll_t *dll);
+void *DLLPopBack(dll_t *dll);
 
-dll_t *DLLPushFront(dll_t *dll, const void *data); /* int ?*/
+dll_iter_t DLLPushFront(dll_t *dll, const void *data); 
 
-dll_t *DLLPopFront(dll_t *dll);
+void *DLLPopFront(dll_t *dll);
 
 size_t DLLSize(const dll_t *dll);
 

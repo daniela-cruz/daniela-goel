@@ -3,12 +3,11 @@
 #include <stdlib.h> /* malloc, free */
 #include <stddef.h> /* size_t */
 
-#include "dll.h"
+#include "dll_b.h"
 
 struct dll_node
 {
 	void *data;
-	dll_node_t *prev;
 	uintptr_t npx;
 };
 
@@ -16,10 +15,7 @@ struct dll
 {
 	dll_node_t *first;
 	dll_node_t *last;
-	size_t size;
 };
-
-static dll_iter_t *local_it = (dll_iter_t *)NULL;
 
 static uintptr_t NodeAddressXOR(dll_node_t *a, dll_node_t *b)
 {
@@ -53,13 +49,8 @@ dll_t *DLLCreate()
 		return NULL;
 	}
 	
-	dll->last->prev = NULL;
 	dll->first->npx = NodeAddressXOR(NULL, dll->last);
-	
-	dll->last->prev = dll->first;
-	dll->last->npx = NodeAddressXOR(dll->last->prev, NULL);
-	
-	dll->size = 0;
+	dll->last->npx = NodeAddressXOR(dll->first, NULL);
 	
 	return dll;
 }
@@ -75,13 +66,13 @@ void DLLDestroy(dll_t *dll)
 	free(dll);
 }
 
-dll_iter_t DLLInsert(dll_iter_t iterator, void *data)
+dll_iter_t DLLInsert(dll_iter_t iterator, const void *data)
 {
 	dll_node_t *new_node = NULL;
 	dll_node_t *prev_addr = NULL;
 	dll_node_t *next_addr = NULL;
 	
-	prev_addr = DLLIterPrev(iterator).curr_node_addr;
+	prev_addr = iterator.prev;
 	next_addr = iterator.curr_node_addr;
 	
 	new_node = malloc(sizeof(*new_node));
@@ -92,38 +83,50 @@ dll_iter_t DLLInsert(dll_iter_t iterator, void *data)
 	}
 	
 	new_node->data = data;
-	new_node->prev = prev_addr;
 	new_node->npx = NodeAddressXOR(prev_addr, next_addr);
 	
 	iterator.curr_node_addr = next_addr;
 	next_addr->npx = NodeAddressXOR(new_node, DLLIterNext(iterator).curr_node_addr);
-	next_addr->prev = new_node;
 	
 	prev_addr->npx = NodeAddressXOR(prev_addr->prev, new_node);
 	
 	iterator.curr_node_addr = new_node;
-	
+
 	return iterator;
 }
 
-void DLLRemove(dll_t *dll, dll_iter_t iterator)
+dll_iter_t DLLRemove(dll_iter_t iterator)
 {
-	dll_iter_t first_iter, last_iter;
+	dll_node_t *curr_addr = iterator.curr_node_addr;
+	dll_node_t *prev_addr = iterator.prev;
+	dll_node_t *next_addr = DLLIterNext(iterator).curr_node_addr;
 	
-	first_iter.curr_node_addr = dll->first;
-	last_iter.curr_node_addr = dll->last;
+	/* if we are at the first or last nodes do nothing */
+	if (((NodeAddressXOR(NULL, next_addr).curr_node_addr) == curr_addr.npx)) ||
+		((NodeAddressXOR(NULL, prev_addr).curr_node_addr) == curr_addr.npx)))
+	{
+		iterator.curr_node_addr = NULL;
+		
+		return iterator;
+	}
 	
+	/*  */
+	if (NULL != next_addr)
+	{
+		
+	}
+	/*
 	if ((0 != DLLIterIsEqual(first_iter, iterator)) && (0 != DLLIterIsEqual(last_iter, iterator)))
 	{
 		dll_node_t *current_node = iterator.curr_node_addr;
-		dll_node_t *prev_address = current_node->prev;
+		dll_node_t *prev_address = iterator.prev;
 		dll_node_t *next_addr = DLLIterNext(iterator).curr_node_addr;
 		
 		if (1 == dll->size)
 		{
 			dll->first->npx = NodeAddressXOR(NULL, dll->last);
-			dll->last->prev = dll->first;
 			dll->last->npx = NodeAddressXOR(dll->first, NULL);
+			iterator.curr_node_addr = 
 		}
 		else
 		{
@@ -132,8 +135,9 @@ void DLLRemove(dll_t *dll, dll_iter_t iterator)
 		}
 		
 		free(current_node); 
-		dll->size--;
 	} 
+	*/
+	return iterator;
 }
 
 int DLLIsEmpty(const dll_t *dll)
