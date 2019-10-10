@@ -18,38 +18,35 @@ static void PushTests();
 static void PopTests();
 
 static dll_t *new_dll = NULL;
-static dll_iter_t *iterator = NULL;
+static dll_iter_t iterator = {NULL, NULL};
 static int num = 123, num2 = 456, num3 = 789;
 
 int main()
 {
-	iterator = malloc(sizeof(*iterator));
-	
 	UserDLL();
-	/*PushTests();*/
+	PushTests();
 	/*PopTests();*/
-	FindTest();
+	/*FindTest();*/
 		
 	return 0;
 }
 
 static void FindTest()
 {
-	dll_iter_t *start = malloc(sizeof(*start));
-	dll_iter_t *end = malloc(sizeof(*end));
+	dll_iter_t start = {NULL, NULL};
+	dll_iter_t end = {NULL, NULL};
 	
 	printf("\nFind test. . .\t");
 
-	*start = DLLBegin(new_dll);
-	*start = DLLIterNext(*start);
-	*end = DLLBegin(new_dll);
+	start = DLLBegin(new_dll);
+	start = DLLIterNext(start);
+	end = DLLBegin(new_dll);
 	
-	*iterator = DLLIterNext(*start);
-	*start = DLLFind(*start, *end, FindFunc, (void *)&num2);
-	(iterator->curr_node_addr == start->curr_node_addr) ?
-		printf("SUCCESS!\n"): printf("FAILURE! Found iterator shows: %d\n", *(int*)DLLGetData(*start));
+	iterator = DLLIterNext(start);
+	start = DLLFind(start, end, FindFunc, (void *)&num2);
+	(iterator.curr_node_addr == start.curr_node_addr) ?
+		printf("SUCCESS!\n"): printf("FAILURE! Found iterator shows: %d\n", *(int*)DLLGetData(start));
 	
-	free(start); free(end);
 }
 
 static int FindFunc(const void *data, void *param)
@@ -61,12 +58,12 @@ static void PushTests()
 {
 	printf("\n\n\nPush tests: \n\n");
 	
-	*iterator = DLLEnd(new_dll);
+	iterator = DLLEnd(new_dll);
 	PushBackTest(num);
 	SizeTest(1);
-	*iterator = DLLIterPrev(*iterator);
+	iterator = DLLIterPrev(iterator);
 	GetDataTest(num);
-	*iterator = DLLBegin(new_dll);
+	iterator = DLLBegin(new_dll);
 	PushFrontTest(num2);
 	SizeTest(2);
 	GetDataTest(num2);
@@ -108,7 +105,7 @@ static void UserDLL()
 static void PushBackTest(int num)
 {
 	printf("\nPush back test. . .\n");
-	*iterator = DLLPushBack(new_dll, (void *)&num);
+	iterator = DLLPushBack(new_dll, (void *)&num);
 	
 	IsEmptyTest(0);
 }
@@ -116,16 +113,16 @@ static void PushBackTest(int num)
 static void PushFrontTest(int num)
 {
 	printf("\nPush front test. . .\n");
-	*iterator = DLLPushFront(new_dll, (void *)&num);
+	iterator = DLLPushFront(new_dll, (void *)&num);
 	IsEmptyTest(0);
-	*iterator = DLLBegin(new_dll);
-	*iterator = DLLIterNext(*iterator);
+	iterator = DLLBegin(new_dll);
+	iterator = DLLIterNext(iterator);
 }
 
 static void GetDataTest(int num)
 {
 	printf("\nGet data test. . .\t");
-	(num == *(int *)DLLGetData(*iterator)) ? printf("SUCCESS!\n"): printf("FAILURE!\n");
+	(num == *(int *)DLLGetData(iterator)) ? printf("SUCCESS!\n"): printf("FAILURE!\n");
 }
 
 static void IsEmptyTest(int expected)

@@ -141,7 +141,7 @@ int DLLIsEmpty(const dll_t *dll)
 
 dll_iter_t DLLPushBack(dll_t *dll, const void *data)
 {
-	dll_iter_t iterator = *(dll_iter_t *)0;
+	dll_iter_t iterator = {NULL, NULL};
 	dll_node_t *new_node = NULL;
 	
 	iterator.curr_node_addr = dll->last;
@@ -162,7 +162,7 @@ dll_iter_t DLLPushBack(dll_t *dll, const void *data)
 
 void *DLLPopBack(dll_t *dll)
 {
-	dll_iter_t iterator = *(dll_iter_t *)0;
+	dll_iter_t iterator = {NULL, NULL};
 	dll_node_t *current = NULL;
 	void *popped_data = NULL;
 	
@@ -182,7 +182,7 @@ void *DLLPopBack(dll_t *dll)
 
 dll_iter_t DLLPushFront(dll_t *dll, const void *data)
 {
-	dll_iter_t iterator = *(dll_iter_t *)0;
+	dll_iter_t iterator = {NULL, NULL};
 	dll_node_t *new_node = NULL;
 	
 	iterator.curr_node_addr = dll->first;
@@ -217,11 +217,16 @@ void *DLLPopFront(dll_t *dll)
 
 size_t DLLSize(const dll_t *dll)
 {
+	dll_iter_t iterator = {NULL, NULL};
 	size_t size = 0;
-	dll_node_t *from = (dll_node_t *)dll->first;
+	dll_node_t *from = NULL;
 	dll_node_t *to = (dll_node_t *)dll->last;
 	
-	for (; from != to; to = (dll_node_t *)NodeAddressXOR(to, (dll_node_t *)to->npx), size++)
+	iterator.curr_node_addr = (dll_node_t *)dll->first;
+	iterator.prev = NULL;
+	from = DLLIterNext(iterator).curr_node_addr;
+	
+	for (; from != to; iterator.curr_node_addr = from, from = DLLIterNext(iterator).curr_node_addr, size++)
 	{
 	}
 	
@@ -243,7 +248,12 @@ dll_iter_t DLLIterNext(dll_iter_t iterator)
 
 dll_iter_t DLLIterPrev(dll_iter_t iterator)
 {
-	iterator.prev = (dll_node_t *)NodeAddressXOR((dll_node_t *)iterator.curr_node_addr->npx, iterator.curr_node_addr);
+	dll_node_t *current = NULL;
+	
+	current = iterator.curr_node_addr;
+	iterator.curr_node_addr = 
+		(dll_node_t *)NodeAddressXOR((dll_node_t *)iterator.curr_node_addr->npx, iterator.prev);
+	iterator.prev = (dll_node_t *)NodeAddressXOR(current, (dll_node_t *)iterator.curr_node_addr->npx);
 	
 	return iterator;
 }
@@ -278,7 +288,7 @@ void *DLLGetData(dll_iter_t it)
 }
 
 /***************************************
- * EXTRA functions:		 				*
+ * EXTRA functions:		 			*
 ***************************************/
 dll_iter_t DLLFind(dll_iter_t it_start, dll_iter_t it_end, dll_cmp_func_t find_func, void *param)
 {
