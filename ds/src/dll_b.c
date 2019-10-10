@@ -130,47 +130,47 @@ dll_iter_t DLLRemove(dll_iter_t iterator)
 	return iterator;
 }
 
+dll_iter_t DLLSplice(dll_iter_t where, dll_iter_t from, dll_iter_t to)
+{
+	return where;
+}
+
 int DLLIsEmpty(const dll_t *dll)
 {
 	return DLLSize(dll) == 0;
 }
 
-dll_t *DLLPushBack(dll_t *dll, void *data)
+dll_iter_t DLLPushBack(dll_t *dll, const void *data)
 {
-	dll_iter_t *iterator = NULL;
+	dll_iter_t iterator = (dll_iter_t)0;
 	dll_node_t *new_node = NULL;
 	
-	iterator = malloc(sizeof(*iterator));
-	if (NULL == iterator)
-	{
-		return NULL;
-	}
+	iterator.curr_node_addr = dll->last;
+	iterator.prev = DLLIterPrev(iterator);
 	
-	iterator->curr_node_addr = dll->last;
-	
-	new_node = DLLInsert(*iterator, data).curr_node_addr;
+	new_node = DLLInsert(iterator, data).curr_node_addr;
 	if (NULL != new_node)
 	{
-		dll_node_t *prev_node = dll->last->prev;
-		
 		new_node->data = data;
-		new_node->prev = prev_node;
-		new_node->npx = NodeAddressXOR(prev_node, dll->last);
+		new_node->prev = iterator.prev;
+		new_node->npx = NodeAddressXOR(iterator.prev, dll->last);
 		
-		dll->last->prev = new_node;
-		dll->last->npx = NodeAddressXOR(prev_node, NULL);
-		
-		prev_node->npx = NodeAddressXOR(prev_node->prev, new_node);
+		iterator.prev = new_node;
+		dll->last->npx = NodeAddressXOR(iterator.prev, NULL);
+		iterator = DLLIterPrev(iterator);
+		iterator->npx = NodeAddressXOR((dll_node_t *)iterator.prev->npx, dll->last);
 	}
 	
-	free(iterator);
-	
-	return dll;
+	return (void *)dll->last->data;
 }
 
 dll_t *DLLPopBack(dll_t *dll)
 {
-	dll_node_t *current = dll->last->prev;
+	dll_iter_t iterator = (dll_iter_t)0;
+	dll_node_t *current = NULL;
+	
+	iterator.curr_node_addr = dll->last;
+	iterator.prev = DLLIterPrev(iterator);
 	
 	dll->last->prev->prev->npx = NodeAddressXOR(dll->last->prev->prev->prev, dll->last);
 	dll->last->prev = dll->last->prev->prev;
@@ -248,8 +248,7 @@ dll_iter_t DLLIterNext(dll_iter_t iterator)
 
 dll_iter_t DLLIterPrev(dll_iter_t iterator)
 {
-	iterator.curr_node_addr = iterator.prev;
-	iterator.prev = (dll_node_t *)NodeAddressXOR((dll_node_t *)iterator.prev->npx, iterator.curr_node_addr);
+	iterator.prev = (dll_node_t *)NodeAddressXOR((dll_node_t *)iterator.curr_node_addr->npx, iterator.curr_node_addr);
 	
 	return iterator;
 }
