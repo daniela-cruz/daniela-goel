@@ -2,7 +2,7 @@
 #include <stdlib.h> /* malloc, free */
 #include <stddef.h> /* size_t */
 
-#include "dll_b.h" /* all below*/
+#include "dll.h" /* all below*/
 
 static void FindTest();
 static int FindFunc(const void *data, void *param);
