@@ -28,7 +28,7 @@ void SLLFreeAll(sll_node_t *root)
 {
 	if (NULL != root->next)
 	{
-		SLLFreeAll(root->next);
+		SLLRemove(root->next);
 	}
 	
 	root->next = NULL;
@@ -40,7 +40,7 @@ sll_node_t *SLLRemove(sll_node_t *target)
 	sll_node_t *temp_node = NULL;
 	
 	temp_node = target->next;
-	target->next = NULL;
+	free(target->next);
 	
 	return temp_node;
 }
@@ -50,7 +50,7 @@ sll_node_t *SLLRemoveAfter(sll_node_t *target)
 	sll_node_t *temp_node = NULL;
 	
 	temp_node = target->next->next;
-	target->next->next = NULL;
+	free(target->next->next);
 	target->next= temp_node;
 	
 	return target;
