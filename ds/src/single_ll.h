@@ -1,6 +1,8 @@
 #ifndef __SINGLE_LL_H__
 #define __SINGLE_LL_H__
 
+#include <stddef.h> /* size_t */
+
 /*	User functions on linked array members
 	typedef for foreach				*/ 
 typedef int(*sll_foreach_func_t)(void *data, void *param);
@@ -55,11 +57,11 @@ size_t SLLCount(const sll_node_t *root);
 /* 	*User performs action (function) on everry 
 		element of the linked list
 	*Complexity O(n)				*/
-int SLLForEach(sll_node_t *root, sll_foreach_func_t func, void *func_param);
+int SLLForEach(sll_node_t *root, sll_foreach_func_t func, const void *func_param);
 
 /* 	*Search for spesific element in linked list.
 	*Returns pointer to that element.		*/
-sll_node_t *SLLFind(const sll_node_t *root, sll_find_func_t func, void *func_param);
+sll_node_t *SLLFind(const sll_node_t *root, sll_find_func_t func, const void *func_param);
 
 /* 	*Flips linked list
 	*Returns pointer to new linked list		*/

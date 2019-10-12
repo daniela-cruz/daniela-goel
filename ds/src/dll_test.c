@@ -18,12 +18,13 @@ static void PushTests();
 static void PopTests();
 
 static dll_t *new_dll = NULL;
-static dll_iter_t iterator = {NULL, NULL};
+static dll_iter_t iterator = {NULL, NULL, NULL};
 static int num = 123, num2 = 456, num3 = 789;
 
 int main()
 {
 	UserDLL();
+	printf("\nSize is: %d\n", DLLSize(new_dll));
 	PushTests();
 	/*PopTests();*/
 	/*FindTest();*/
@@ -33,8 +34,8 @@ int main()
 
 static void FindTest()
 {
-	dll_iter_t start = {NULL, NULL};
-	dll_iter_t end = {NULL, NULL};
+	dll_iter_t start = {NULL, NULL, NULL};
+	dll_iter_t end = {NULL, NULL, NULL};
 	
 	printf("\nFind test. . .\t");
 
@@ -61,15 +62,10 @@ static void PushTests()
 	iterator = DLLEnd(new_dll);
 	PushBackTest(num);
 	SizeTest(1);
-	iterator = DLLIterPrev(iterator);
-	GetDataTest(num);
-	iterator = DLLBegin(new_dll);
 	PushFrontTest(num2);
 	SizeTest(2);
-	GetDataTest(num2);
 	PushFrontTest(num3);
 	SizeTest(3);
-	GetDataTest(num3);
 }
 
 static void PopTests()
@@ -106,7 +102,7 @@ static void PushBackTest(int num)
 {
 	printf("\nPush back test. . .\n");
 	iterator = DLLPushBack(new_dll, (void *)&num);
-	
+	GetDataTest(num);
 	IsEmptyTest(0);
 }
 
@@ -114,9 +110,8 @@ static void PushFrontTest(int num)
 {
 	printf("\nPush front test. . .\n");
 	iterator = DLLPushFront(new_dll, (void *)&num);
+	GetDataTest(num);
 	IsEmptyTest(0);
-	iterator = DLLBegin(new_dll);
-	iterator = DLLIterNext(iterator);
 }
 
 static void GetDataTest(int num)

@@ -10,6 +10,7 @@ typedef struct dll_iterator
 {
 	dll_node_t *curr_node_addr; 
 	dll_node_t *prev;
+	dll_t *list;
 } dll_iter_t;
 
 typedef int (*dll_cmp_func_t)(const void *data, void *param);

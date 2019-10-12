@@ -1,156 +1,157 @@
-#include <stdio.h>  /* printf */ 
-#include <stdlib.h> /* malloc */
+#include <stdio.h> /* printf */
+#include <stddef.h> /* size_t */
+#include <assert.h> /* assert */
+#include <string.h> /* memcpy */
 
-#include "single_ll.h"
+#include "single_ll.h" /* sll_node_t */
 
-int AddNum(void *data, void *num);
-int FindNum(const void *data, void *num);
+static void SLLTest();
+static sll_node_t *SLLCreateNodeTest(int data, sll_node_t *next);
+static sll_node_t *SLLInsertTest(sll_node_t *root);
+static void SLLInsertAfterTest(sll_node_t *target);
+static void SLLHasLoopTest(sll_node_t *root);
+static sll_node_t *SLLFlipTest(sll_node_t *root);
+
+static void SLLFindTest(sll_node_t *root);
+static int FindIntInList(void *param, void *root);
+
+static void ForEachTest(sll_node_t *root);
+static int ForEachAdd10(void *data, void *param);
+
+static void IntersectionTest(sll_node_t *root);
+
+static sll_node_t *RemoveTest(sll_node_t *target);
+static void CounterTest(sll_node_t *root);
 
 int main()
 {
-	int a[10] = {0};
-	int a2[5] = {0};
-	int b = 20;
-	int c = 30;
-	int find_param = 34;
-	int foreach_param = 4;
-	int i = 0;
-	sll_node_t *root = NULL;
-	sll_node_t *root2 = NULL;
-	sll_node_t *node = NULL;
-	sll_node_t *temp = NULL;
+	SLLTest();
 	
-<<<<<<< HEAD
-	for(i = 0; i < 10; i++)
-=======
 	return 0;
 }
 
 static void SLLTest()
 {
-	sll_node_t *list = NULL, *list2 = NULL,*new_node = NULL, *new_node_2 = NULL, *list_cpy = NULL;
-	int num = 123, num_2 = 456, num_3 = 789;
+	sll_node_t *list = NULL, *list_cpy = NULL;
+	int num = 123;
 	
-	CounterTest(list);
 	list = (sll_node_t *)SLLCreateNodeTest(num, list);
-	new_node = SLLCreateNode((void *)&num_2, new_node);
-	new_node_2 = SLLCreateNode((void *)&num_3, new_node);
+	
 	/***********************/
-	SLLInsertTest(list, new_node);
-	CounterTest(list);
-	SLLInsertAfterTest(new_node, new_node_2);
+	list = SLLInsertTest(list);
+	SLLInsertAfterTest(list);
 	CounterTest(list);
 	SLLHasLoopTest(list);
+	SLLFlipTest(list);
 	SLLFindTest(list);
-	/*IntersectionTest(list);*/
-	
-	CounterTest(list);
-	
-	printf("\nFlip test. . . \t\t");
-	list2 = SLLFlip(list);
-	list2 = SLLFlip(list);
-	
-	if (list2 == list)
-	{
-		printf("SUCCESS\n");
-	}
-	else
->>>>>>> de2cc824853fa2d6539a60525d791a7b25d80bee
-	{
-		a[i] = i;
-	}
-<<<<<<< HEAD
-=======
-	
 	ForEachTest(list);
+	IntersectionTest(list);
 	CounterTest(list);
-	CounterTest(list);
+	list_cpy = RemoveTest(list);
+	CounterTest(list_cpy);
 	/***********************/
 	printf("\nFree all test. . . \n");
-	SLLFreeAll(list); 
+	SLLFreeAll(list);
 }
 
 static sll_node_t *SLLCreateNodeTest(int data, sll_node_t *next)
 {
-	sll_node_t *new_node = NULL;
-	
 	printf("\nCreate SLL test. . . \n");
 	
-	new_node = SLLCreateNode((void *)&data, next);
->>>>>>> de2cc824853fa2d6539a60525d791a7b25d80bee
+	next = SLLCreateNode((void *)&data, next);
 	
-	for(i = 0; i < 5; i++)
+	if (next)
 	{
-		a2[i] = i;
+		printf("SUCCESS! A pointer was allocated to first node.\n");
+		printf("\nTesting next allocation. . .\n");
+		
+		if (!next->next)
+		{
+			printf("SUCCESS!\n");
+			printf("\nTesting data data allocation. . .\n");
+			
+			if (data == *(int *)(next->data))
+			{
+				printf("SUCCESS!\n");
+				printf("\nTesting data items are matched. . .\n");
+				
+				if (data == *(int *)(next->data))
+				{
+					printf("SUCCESS!\n");
+				}
+				else
+				{
+					printf("Failure! Item content is: %d\n and not: %d!", *(int *)(next->data), data);
+				}
+			}
+			else
+			{
+				printf("Failure! Item content is: %d\n", *(int *)(next->data));
+			}
+			
+		}
+		else
+		{
+			printf("Failure! Pointer was not allocaed to NULL\n");
+		}
+		
 	}
-
-	printf("printing values\n");	
-	for(i = 0; i < 10; i++)
+	else
 	{
-		root = SLLCreateNode(&a[i], root);
+		printf("Failure! Pointer was not allocaed at all\n");
 	}
 	
-<<<<<<< HEAD
-	node = root;
-	
-	while(NULL != node)
-=======
-	return new_node;
+	return next;
 }
 
-static void CounterTest(sll_node_t *root)
+sll_node_t *SLLInsertTest(sll_node_t *root)
 {
-	printf("\nCount test shows: %lu nodes.\n", SLLCount(root));
-}
-
-static sll_node_t *SLLInsertTest(sll_node_t *root, sll_node_t *new_node)
-{
-	sll_node_t *temp = NULL;
+	sll_node_t *new_node = NULL, *new_node_2 = NULL;
+	int num_2 = 456, num_3 = 789;
 	
-	temp = root->next_node;
+	assert(root);
 	
-	printf("\nInsert test. . .\t");
+	new_node = SLLCreateNode((void *)&num_2, root);
+	new_node->data = (void *)&num_2;
+	new_node_2 = SLLCreateNode((void *)&num_3, new_node);
+	new_node_2->data = (void *)&num_3;
+	
+	printf("\nInsert test. . .\n");
 	new_node = SLLInsert(root, new_node);
 	
-	if (temp == new_node->next_node)
->>>>>>> de2cc824853fa2d6539a60525d791a7b25d80bee
+	if (new_node->next == root)
 	{
-		printf("%d, ", *(int *)node->data);
-		node = node->next;
-	}	
-	
-	printf("\n");
-	
-	node = root->next;
-	
-	printf("\nremoving second node\n");
-	SLLRemove(node);
-	
-	node = root;
-	
-	while(NULL != node)
-	{
-		printf("%d, ", *(int *)node->data);
-		node = node->next;
-	}
-	printf("\nnodes in linked list: %ld\n", SLLCount(root));
+		printf("SUCCESS!\n");
+		new_node_2 = SLLInsert(new_node, new_node_2);
 
-<<<<<<< HEAD
-	printf("\n\nremoving second's next node\n");
-	node = root->next;
-	SLLRemoveAfter(node);
-	node = root;
+		if (*(int *)new_node->data == num_2)
+		{
+			printf("SUCCESS!\n");
+		}
+		else
+		{
+			printf("Failure! new data was not inserted\n");
+		}
+	}
+	else
+	{
+		printf("Failure! new data was not inserted\n");
+	}
 	
-	while(NULL != node)
-=======
-static sll_node_t *SLLInsertAfterTest(sll_node_t *target, sll_node_t *new_node)
+	return new_node_2;
+}
+
+static void SLLInsertAfterTest(sll_node_t *target)
 {
-	size_t counter = 0; 
-	printf("\nInsert AFTER test. . .\t");
-	target = SLLInsertAfter(target, new_node);
-	counter = SLLCount(target);
+	sll_node_t *new_node = NULL;
+	int num_4 = 321;
 	
-	if (SLLCount(target) == counter)
+	new_node = SLLCreateNode((void *)&num_4, new_node);
+	
+	printf("\nInsert AFTER test. . .\n");
+	new_node = SLLInsertAfter(target, new_node);
+	
+	if (new_node == target->next)
 		{
 			printf("SUCCESS!\n");
 		}
@@ -159,156 +160,167 @@ static sll_node_t *SLLInsertAfterTest(sll_node_t *target, sll_node_t *new_node)
 			printf("Failure! Insertion AFTER was not completed.\n");
 		}
 		
-		return target;
 }
 
 static void SLLHasLoopTest(sll_node_t *root)
 {
-	printf("\nFind loop test: \t");
+	printf("\nFind loop test: \n");
 
 	if (SLLHasLoop(root))
->>>>>>> de2cc824853fa2d6539a60525d791a7b25d80bee
 	{
-		printf("%d, ", *(int *)node->data);
-		node = node->next;
+		printf("SUCCESS!Loop was NOT found\n");
 	}
-	printf("\nnodes in linked list: %ld\n\n", SLLCount(root));
-	
-	printf("inserting node to third node\n");
-	node = SLLCreateNode(&b, NULL);
-	temp = (root->next)->next;
-	SLLInsert(temp, node);
-	node = root;
-	
-	while(NULL != node)
+	else
 	{
-		printf("%d, ", *(int *)node->data);
-		node = node->next;
+		printf("Failure! Loop was found.\n");
 	}
-	printf("\nnodes in linked list: %ld\n", SLLCount(root));
-	
-	printf("\ninserting node to third' next node\n");
-	node = SLLCreateNode(&c, NULL);
-	temp = (root->next)->next;
-	SLLInsertAfter(temp, node);
-	node = root;
-	
-	while(NULL != node)
-	{
-		printf("%d, ", *(int *)node->data);
-		node = node->next;
-	}
-	printf("\nnodes in linked list: %ld\n", SLLCount(root));
-	
-	printf("\nis there a loop: %d\n", SLLHasLoop(root));
-	printf("forcing loop\n");
-	temp = root->next;
-	node = root;
-	
-	while(NULL != node->next)
-	{
-		node = node->next;
-	}
-	node->next = temp;
-	printf("is there a loop: %d\n", SLLHasLoop(root));
-	node->next = NULL;
-	
-	printf("\nadding 4 to every member in linked list\n");
-	SLLForEach(root, &AddNum, &foreach_param);	
-	node = root;
-	
-	while(NULL != node)
-	{
-		printf("%d, ", *(int *)node->data);
-		node = node->next;
-	}
-	printf("\n");
-	
-	printf("\nlooking for node that contains 34\n");
-	printf("%d\n", *(int *)(SLLFind(root, &FindNum, &find_param)->data));
-	
-	printf("\nflipping list\n");
-	SLLFlip(root);
-	node = root;
-	while(NULL != node)
-	{
-		printf("%d, ", *(int *)node->data);
-		node = node->next;
-	}
-	
-	printf("\n\ncreating new linked list\n");	
-	for(i = 0; i < 5; i++)
-	{
-		root2 = SLLCreateNode(&a2[i], root2);
-	}
-	
-	node = root2;
-	while(NULL != node)
-	{
-		printf("%d, ", *(int *)node->data);
-		node = node->next;
-	}
-	
-	node = root2;
-	while(NULL != node->next)
-	{
-		node = node->next;
-	}
-	printf("\n\nforcing intersection at last node\n");
-	node->next = root->next;
-	
-	node = root2;
-	while(NULL != node)
-	{
-		printf("%d, ", *(int *)node->data);
-		node = node->next;
-	}
-	
-	printf("\n\nlooking for intersection\n");
-	printf("%d\n", *(int *)SLLFindIntersection(root, root2)->data);
-	
-<<<<<<< HEAD
-	printf("\nremoving intersection\n");
-	node = root2;
-	for(i = 0; i < 4; i++)
-=======
-	printf("\nFor each test. . . \t");
-	
-	if (!SLLForEach(root, (sll_foreach_action)ForEachAdd10, (void *)&incrementor))
->>>>>>> de2cc824853fa2d6539a60525d791a7b25d80bee
-	{
-		node = node->next;
-	}
-	node->next = NULL;
-	
-	node = root2;
-	while(NULL != node)
-	{
-		printf("%d, ", *(int *)node->data);
-		node = node->next;
-	}
-	
-	printf("\n\nfreeing memory\n");
-	
-	SLLFreeAll(root2);
-	SLLFreeAll(root);
-
-	return 0;
 }
 
-int AddNum(void *data, void *num)
+static sll_node_t *SLLFlipTest(sll_node_t *root)
 {
-	*(int *)data += *(int *)num;
-	return 0;
-}
-
-int FindNum(const void *data, void *num)
-{
-	if(*(int *)data == *(int *)num)
+	sll_node_t *new_root = NULL, *root_cpy = NULL;
+	
+	root_cpy = root;
+	
+	printf("\nFlip list test - flip I: \n");
+	new_root = SLLFlip(root);
+	
+	if (NULL == root->next)
 	{
-		return 1;
+		printf("SUCCESS!\n");
 	}
+	else
+	{
+		printf("Failure! new_root was not flipped.\n");
+	}
+	
+	printf("\nFlip list test - flip II: \n");
+	new_root = SLLFlip(new_root);
+
+	if (root_cpy == root)
+	{
+		printf("SUCCESS!\n");
+	}
+	else
+	{
+		printf("Failure! new_root was not flipped back to original root address.\n");
+	}
+	
+	return root;
+}
+
+static void SLLFindTest(sll_node_t *root)
+{
+	sll_node_t *found_node = NULL;
+	int num = 789/*, data = 123, data_2 = 456*/;
+	void *num_ptr = NULL;
+	
+	printf("\nFind in list test. . . \n");
+	num_ptr = (void *)&num;
+	
+	found_node = SLLFind((const sll_node_t *)root, (sll_find_func_t)FindIntInList, num_ptr);
+	
+	if (*(int *)found_node->data == num)
+	{
+		printf("SUCCESS!\n");
+	}
+	else
+	{
+		printf("Failure! Could not find data in list.\n");
+	}
+}
+
+static int FindIntInList(void *list_item, void *param)
+{
+	int is_found = 0;
+	
+	printf("\nContent of param is: %d and root data is: %d. \n", *(int *)param, *(int *)list_item);
+	if (*(int *)param == *(int *)list_item)
+	{
+		is_found = 1;
+	}
+	
+	return is_found;
+}
+
+static void ForEachTest(sll_node_t *root)
+{
+	int incrementor = 10;
+	int item_cpy = 0;
+	
+	item_cpy = *(int *)root->data;
+	
+	printf("\nFor each test. . . \n");
+	if (!SLLForEach(root, (sll_foreach_func_t)ForEachAdd10, (void *)&incrementor))
+	{
+		printf("SUCCESS!\n");
+		printf("Incremented input test:\n");
+		
+		if (*(int *)root->data == (item_cpy + incrementor))
+		{
+			printf("SUCCESS!\n");
+		}
+		else
+		{
+			printf("Failure! Item was not incremented correctly. Value is: %d and old value is: %d\n", 
+					*(int *)root->data, item_cpy);
+		}
+	}
+	
+	else
+	{
+		printf("Failure! Function returned failure status.\n");
+	}
+}
+
+static int ForEachAdd10(void *data, void *param)
+{
+	*(int *)data += *(int *)param;
+	
 	return 0;
 }
 
+static void IntersectionTest(sll_node_t *root)
+{
+	sll_node_t *root2 = NULL, *is_found = NULL;
+	int num_5 = 654;
+	
+	printf("\nIntersection test. . . \n");
+	root2 = SLLCreateNode((void *)&num_5, root2);
+	root2->next = root->next;
+	is_found = SLLFindIntersection(root, root2);
+	
+	if (is_found == root->next)
+	{
+		printf("SUCCESS!\n");
+	}
+	else
+	{
+		printf("Failure! Could not find intersection although there is supposed to be one.\n");
+	}
+}
 
+static sll_node_t *RemoveTest(sll_node_t *target)
+{
+	sll_node_t *target_cpy = NULL;
+	
+	printf("\nRemove test. . . \n");
+	target_cpy = target->next;
+	target= SLLRemove(target);
+
+	if (target_cpy == target)
+	{
+		printf("SUCCESS!\n");
+	}
+	else
+	{
+		printf("Failure! Target was not removed.\n");
+	}
+	
+	return target;
+}
+
+static void CounterTest(sll_node_t *root)
+{
+	printf("\nCount test shows: %lu nodes.\n", SLLCount(root));
+}
