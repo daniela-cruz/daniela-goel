@@ -55,12 +55,8 @@ dll_t *DLLCreate()
 
 void DLLDestroy(dll_t *dll)
 {
-	/*
-	for (; 0 < dll->size; DLLRemove(dll, ))
-	{
+	for (; dll->front->npx != dll->back; DLLPopFront(dll));
 	
-	}
-	*/
 	free(dll);
 }
 
@@ -381,6 +377,19 @@ dll_iter_t DLLFind(dll_iter_t it_start, dll_iter_t it_end, dll_cmp_func_t find_f
 	}
 
 	return it_start;
+}
+
+int DLLForEach(dll_iter_t from, dll_iter_t to, dll_act_func_t func, void *param) 
+{ 	
+	for (; !DLLIterIsEqual(from, to); from = DLLIterNext(from)) 	
+	{ 		
+		if (func((from.curr)->data, param)) 		
+		{ 			
+			return 1; 		
+		} 	
+	} 		
+	
+	return 0; 
 }
 
 /***************************************
