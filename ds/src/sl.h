@@ -24,6 +24,10 @@ typedef struct sl_iterator
 	dll_iter_t iterator;
 } sl_iter_t;
 
+
+/*************************************************
+ *		 		General functions				*
+ ************************************************/
 /*	Get link to a new sorted list.
  * 	The user must provide link to a sorting 
  * 	function to determine sorting criteria.
@@ -40,8 +44,9 @@ sl_iter_t SLInsert(sl_t *sorted_list, sl_iter_t iterator, void *data);
 
 sl_iter_t SLRemove(sl_t *sorted_list, sl_iter_t iterator);
 
-/*****************************************/
-
+/*************************************************
+ *		 		Iterator functions					*
+ ************************************************/
 sl_iter_t SLBegin(sl_t *sorted_list);
 
 sl_iter_t SLEnd(sl_t *sorted_list);
@@ -50,6 +55,9 @@ sl_iter_t SLPrev(sl_iter_t iterator);
 
 sl_iter_t SLNext(sl_iter_t iterator);
 
+/*************************************************
+ *		 		Extra functions					*
+ ************************************************/
 int SLForEach(sl_iter_t from, sl_iter_t to, sl_act_func_t func, void *param);
 
 sl_iter_t  SLFind(sl_iter_t from, sl_iter_t to, sl_cmp_func_t func, void *param);

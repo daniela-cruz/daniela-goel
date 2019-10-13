@@ -9,6 +9,9 @@ struct sorted_list
 	sl_is_before_t is_before;
 };
 
+/*************************************************
+ *		 		General functions				*
+ ************************************************/
 sl_t *SLCreate(sl_is_before_t is_before_func)
 {
 	sl_t *sl = NULL;
@@ -40,3 +43,42 @@ void SLDestroy(sl_t *sorted_list)
 sl_iter_t SLInsert(sl_t *sorted_list, sl_iter_t iterator, void *data);
 
 sl_iter_t SLRemove(sl_t *sorted_list, sl_iter_t iterator);
+
+/*************************************************
+ *		 		Iterator functions					*
+ ************************************************/
+sl_iter_t SLBegin(sl_t *sorted_list)
+{
+	sl_iter_t iterator = {NULL};
+	
+	iterator.iterator = DLLBegin(sorted_list->list);
+	
+	return iterator;
+}
+ 
+sl_iter_t SLEnd(sl_t *sorted_list)
+{
+	sl_iter_t iterator = {NULL};
+
+	iterator.iterator = DLLEnd(sorted_list->list);
+
+	return iterator;
+}
+
+sl_iter_t SLPrev(sl_iter_t iterator)
+{
+	iterator.iterator = DLLIterPrev(iterator.iterator);
+	
+	return iterator;
+}
+
+sl_iter_t SLNext(sl_iter_t iterator)
+{
+	iterator.iterator = DLLIterNext(iterator.iterator);
+	
+	return iterator;
+}
+
+/*************************************************
+ *		 		Internal functions					*
+ ************************************************/

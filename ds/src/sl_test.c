@@ -7,6 +7,8 @@ static void CreateTest();
 int IsBefore(void *node1, void *node2, void *param);
 
 static sl_t *new_sl = NULL;
+sl_iter_t iterator = {NULL};
+int num = 123;
 
 int main()
 {
@@ -21,7 +23,18 @@ static void CreateTest()
 	(NULL != new_sl) ? printf("SUCCESS!\n"): printf("FAILURE!\n");
 }
 
+/*
+static void InsertTest(int num)
+{
+	SLInsert(new_sl, iterator, (void *)&num);
+}
+*/
+/**************************************************
+ * internal functions
+ *************************************************/
+
 int IsBefore(void *node1, void *node2, void *param)
 {
 	return node1 > node2;
 }
+
