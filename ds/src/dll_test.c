@@ -76,8 +76,8 @@ static void PopTests()
 	SizeTest(2);
 	DLLPopFront(new_dll);
 	SizeTest(1);
-	/*DLLPopBack(new_dll);*/
-	/*SizeTest(0);*/
+	DLLPopBack(new_dll);
+	SizeTest(0);
 	IsEmptyTest(1);
 	PushBackTest(num);
 	SizeTest(1);
