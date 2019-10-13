@@ -26,7 +26,6 @@ static dll_node_t *NodeXOR(dll_node_t *a, dll_node_t *b);
 dll_t *DLLCreate()
 {
 	dll_t *dll = NULL;
-	dll_node_t *new_node = NULL;
 	
 	dll = malloc(sizeof(*dll));
 	if (NULL == dll)
@@ -228,7 +227,6 @@ dll_iter_t DLLPushFront(dll_t *dll, const void *data)
 void *DLLPopFront(dll_t *dll)
 {
 	dll_node_t *to_pop = NULL;
-	dll_node_t *next = NULL;
 	void *popped_data = NULL;
 	dll_iter_t iterator = {NULL, NULL, NULL};
 	
@@ -285,7 +283,7 @@ dll_iter_t DLLIterNext(dll_iter_t iterator)
 		
 		return iterator;
 	}
-	/*TODO*/
+	
 	iterator.curr_node_addr = NodeXOR(iterator.prev, iterator.curr_node_addr->npx);
 	iterator.prev = prev_n;
 	
@@ -342,48 +340,21 @@ void *DLLGetData(dll_iter_t it)
 }
 
 /***************************************
- * EXTRA functions:		 			*
+ * 		EXTRA functions:		 			*
 ***************************************/
 dll_iter_t DLLFind(dll_iter_t it_start, dll_iter_t it_end, dll_cmp_func_t find_func, void *param)
 {
-	dll_node_t *start = it_start.curr_node_addr;
-	dll_node_t *end = it_end.curr_node_addr;
 	void *param_cpy = (void *)param;
 	
-	if (start > end)
+	for (; !DLLIterIsEqual(it_start, it_end); it_start = DLLIterNext(it_start))
 	{
-		end = it_start.curr_node_addr;
-		start = it_end.curr_node_addr;
-	}
-	
-	for (; start != end; start = DLLIterNext(it_start).curr_node_addr)
-	{
-		if (1 == find_func(param_cpy, start->data))
+		if (1 == find_func(param_cpy, it_start.curr_node_addr->data))
 		{
-			it_start.curr_node_addr = start;
-			break;
+			return it_start;
 		}
 	}
-	
-	if ((start != end) && (1 != find_func(param_cpy, start->data)))
-	{
-		printf("Parameter was not found.\n");
-	}
 
-	return it_start;
-}
-
-int DLLForEach(dll_iter_t from, dll_iter_t to, dll_act_func_t func, void *param) 
-{ 	
-	for (; !DLLIterIsEqual(from, to); from = DLLIterNext(from)) 	
-	{ 		
-		if (func((from.curr_node_addr)->data, param)) 		
-		{ 			
-			return 1; 		
-		} 	
-	} 		
-	
-	return 0; 
+	return DLLEnd(it_start.list); 
 }
 
 /***************************************

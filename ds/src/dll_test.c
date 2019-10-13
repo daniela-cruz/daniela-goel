@@ -27,7 +27,7 @@ int main()
 	printf("\nSize is: %d\n", DLLSize(new_dll));
 	PushTests();
 	PopTests();
-	/*FindTest();*/
+	FindTest();
 		
 	return 0;
 }
@@ -39,13 +39,11 @@ static void FindTest()
 	
 	printf("\nFind test. . .\t");
 
-	start = DLLBegin(new_dll);
-	start = DLLIterNext(start);
-	end = DLLBegin(new_dll);
+	start = DLLIterNext(DLLBegin(new_dll));
+	end = DLLIterPrev(DLLEnd(new_dll));
 	
-	iterator = DLLIterNext(start);
 	start = DLLFind(start, end, FindFunc, (void *)&num2);
-	(iterator.curr_node_addr == start.curr_node_addr) ?
+	(num2 == *(int*)DLLGetData(start)) ?
 		printf("SUCCESS!\n"): printf("FAILURE! Found iterator shows: %d\n", *(int*)DLLGetData(start));
 	
 }
