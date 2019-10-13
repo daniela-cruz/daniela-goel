@@ -338,7 +338,6 @@ dll_iter_t DLLFind(dll_iter_t it_start, dll_iter_t it_end, dll_cmp_func_t find_f
 
 dll_iter_t DLLSplice(dll_iter_t where, dll_iter_t from, dll_iter_t to)
 {
-	/*	if  only one node is asked to be added to where */
 		where.curr_node->npx = 
 				NodeXOR(NodeXOR(where.prev, where.curr_node->npx ), to.curr_node);
 		where.prev->npx = 
@@ -352,24 +351,7 @@ dll_iter_t DLLSplice(dll_iter_t where, dll_iter_t from, dll_iter_t to)
 		to.curr_node->npx = 
 				NodeXOR(NodeXOR(to.curr_node->npx, DLLIterNext(to).curr_node) , where.curr_node);
 	}
-	
-	/* else (?) */
-	
-	/*dll_node_t *from_next = NodeXOR(from.prev, from.curr_node->npx);
-	dll_node_t *to_next = NodeXOR(to.prev, to.curr_node->npx);
-	dll_node_t *where_next = NodeXOR(where.prev, where.curr_node->npx);
 
-	from.prev->npx = NodeXOR(NodeXOR(from.prev->npx, from.curr_node), to_next);
-	to_next->npx = NodeXOR(from.prev, NodeXOR(to.curr_node, to_next->npx));
-	
-	from.curr_node->npx = NodeXOR(where.prev, from_next);
-	where.prev->npx = (NodeXOR(where.prev->npx, where.curr_node), from.curr_node);
-	to.curr_node->npx = NodeXOR(to.prev, where.curr_node);
-	where.curr_node->npx = NodeXOR(to.curr_node, where_next);
-	
-	where.curr_node = where.prev;
-	where.prev = NodeXOR(where.prev->npx, from.curr_node);
-	*/
 	return from;
 }
 /***************************************
