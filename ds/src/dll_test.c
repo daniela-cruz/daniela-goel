@@ -4,6 +4,8 @@
 
 #include "dll.h" /* all below*/
 
+static void SpliceTest();
+
 static void FindTest();
 static int FindFunc(const void *data, void *param);
 
@@ -17,19 +19,45 @@ static void GetDataTest(int num);
 static void PushTests();
 static void PopTests();
 
+static dll_t *dll2 = NULL;
 static dll_t *new_dll = NULL;
 static dll_iter_t iterator = {NULL, NULL, NULL};
 static int num = 123, num2 = 456, num3 = 789;
+static int num4 = 1, num5 = 2, num6 = 3;
 
 int main()
 {
 	UserDLL();
 	printf("\nSize is: %d\n", DLLSize(new_dll));
 	PushTests();
-	PopTests();
-	FindTest();
+	/*PopTests();*/
+	/*FindTest();*/
+	SpliceTest();
 		
 	return 0;
+}
+
+static void SpliceTest()
+{
+	dll_iter_t start = {NULL, NULL, NULL};
+	dll_iter_t end = {NULL, NULL, NULL};
+	
+	printf("\nSPLICE test. . .\n");
+	dll2 = DLLCreate();
+	DLLPushFront(dll2, &num6);
+	DLLPushFront(dll2, &num5);
+	DLLPushFront(dll2, &num4);
+	
+	iterator = DLLIterNext(DLLIterNext(DLLBegin(new_dll)));
+	start = DLLIterNext(DLLBegin(dll2));
+	
+	iterator = DLLSplice(iterator, start, DLLIterNext(start));
+	
+	printf("Output check: \t\t");
+	(!DLLIterIsEqual(DLLEnd(new_dll), iterator)) ?
+		printf("SUCCESS!\n"): printf("FAILURE!\n"); 
+	
+	GetDataTest(num4);
 }
 
 static void FindTest()
@@ -41,10 +69,11 @@ static void FindTest()
 
 	start = DLLIterNext(DLLBegin(new_dll));
 	end = DLLIterPrev(DLLEnd(new_dll));
+	iterator = DLLIterNext(start);
 	
-	start = DLLFind(start, end, FindFunc, (void *)&num2);
-	(num2 == *(int*)DLLGetData(start)) ?
-		printf("SUCCESS!\n"): printf("FAILURE! Found iterator shows: %d\n", *(int*)DLLGetData(start));
+	start = DLLFind(start, end, FindFunc, (void *)&num3);
+	(DLLIterIsEqual(start, iterator)) ?
+		printf("SUCCESS!\n"): printf("FAILURE!\n");
 	
 }
 

@@ -8,7 +8,7 @@ typedef struct dll_node dll_node_t;
 
 typedef struct dll_iterator
 {
-	dll_node_t *curr_node_addr; 
+	dll_node_t *curr_node; 
 	dll_node_t *prev;
 	dll_t *list;
 } dll_iter_t;
@@ -16,15 +16,13 @@ typedef struct dll_iterator
 typedef int (*dll_cmp_func_t)(const void *data, void *param);
 typedef int (*dll_act_func_t)(void *data, void *param);
 
-dll_t *DLLCreate();/* done */
+dll_t *DLLCreate();
 
 void DLLDestroy(dll_t *dll);
 
 dll_iter_t DLLInsert(dll_iter_t iterator, const void *data);/* done */
 
 dll_iter_t DLLRemove(dll_iter_t iterator);/* done */
-
-dll_iter_t DLLSplice(dll_iter_t where, dll_iter_t from, dll_iter_t to);
 
 int DLLIsEmpty(const dll_t *dll);/* done */
 
@@ -57,5 +55,7 @@ void *DLLGetData(dll_iter_t it);/* done */
 dll_iter_t DLLFind(dll_iter_t it_start, dll_iter_t it_end, dll_cmp_func_t find_func, void *param);
 
 int DLLForEach(dll_iter_t it_start, dll_iter_t it_end, dll_act_func_t for_each_func, void *param);
+
+dll_iter_t DLLSplice(dll_iter_t where, dll_iter_t from, dll_iter_t to);
 
 #endif /*__DLL_H__*/
