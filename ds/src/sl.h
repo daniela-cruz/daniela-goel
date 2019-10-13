@@ -29,7 +29,7 @@ typedef struct sl_iterator
  * 	function to determine sorting criteria.
  * 	The sorting function must return an int
  * 	and receive 2 void* parameters 				*/
-sl_t *SLCreate(sl_is_before_t *is_before_func);
+sl_t *SLCreate(sl_is_before_t is_before_func);
 
 /*	The user must call this function to free
  * 	allocated memory after using the list 			*/

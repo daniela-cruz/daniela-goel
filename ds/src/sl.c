@@ -6,10 +6,10 @@
 struct sorted_list
 {
 	dll_t *list;
-	sl_is_before_t *is_before;
+	sl_is_before_t is_before;
 };
 
-sl_t *SLCreate(sl_is_before_t *is_before_func)
+sl_t *SLCreate(sl_is_before_t is_before_func)
 {
 	sl_t *sl = NULL;
 	
