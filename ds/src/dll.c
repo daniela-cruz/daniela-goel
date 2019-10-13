@@ -55,7 +55,7 @@ dll_t *DLLCreate()
 
 void DLLDestroy(dll_t *dll)
 {
-	for (; dll->front->npx != dll->back; DLLPopFront(dll));
+	for (; dll->first->npx != dll->last; DLLPopFront(dll));
 	
 	free(dll);
 }
@@ -271,7 +271,7 @@ size_t DLLSize(const dll_t *dll)
 	}
 	
 	for (start = DLLIterNext(DLLBegin(dll)), end = DLLIterPrev(DLLEnd(dll)); 
-			!DLLIterIsEqual(start, end); size++, start = DLLIterNext(start))
+			(!DLLIterIsEqual(start, end)) && (!DLLIterIsEqual(start, DLLEnd(dll))); size++, start = DLLIterNext(start))
 	{
 	}
 
@@ -383,7 +383,7 @@ int DLLForEach(dll_iter_t from, dll_iter_t to, dll_act_func_t func, void *param)
 { 	
 	for (; !DLLIterIsEqual(from, to); from = DLLIterNext(from)) 	
 	{ 		
-		if (func((from.curr)->data, param)) 		
+		if (func((from.curr_node_addr)->data, param)) 		
 		{ 			
 			return 1; 		
 		} 	
