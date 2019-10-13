@@ -188,7 +188,6 @@ void *DLLPopBack(dll_t *dll)
 		to_pop = dll->last->npx;
 		popped_data = to_pop->data;
 		
-		
 		iterator = DLLIterPrev(iterator);
 		iterator.prev->npx = NodeXOR(NodeXOR(iterator.prev->npx, to_pop), dll->last);
 		dll->last->npx = iterator.prev;
