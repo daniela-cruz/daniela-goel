@@ -27,7 +27,7 @@ int main()
 	printf("\nSize is: %d\n", DLLSize(new_dll));
 	PushTests();
 	PopTests();
-	/*FindTest();*/
+	FindTest();
 		
 	return 0;
 }

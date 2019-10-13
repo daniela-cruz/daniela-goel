@@ -232,28 +232,23 @@ void *DLLPopFront(dll_t *dll)
 	void *popped_data = NULL;
 	dll_iter_t iterator = {NULL, NULL, NULL};
 	
-	to_pop = dll->first->npx;
-	popped_data = dll->first->npx->data;
+	if (dll->first->npx != dll->last)
+	{
+		to_pop = dll->first->npx;
+		popped_data = dll->first->npx->data;
+		
+		iterator.list = dll;
+		iterator.curr_node_addr = dll->first->npx;
+		iterator.prev = dll->first;
+		
+		iterator = DLLIterNext(iterator);
+		iterator.curr_node_addr->npx = NodeXOR(NodeXOR(iterator.curr_node_addr->npx, to_pop), dll->first);
+		
+		dll->first->npx = iterator.curr_node_addr;
+		
+		free(to_pop);
+	}
 	
-	iterator.list = dll;
-	iterator.curr_node_addr = dll->first->npx;
-	iterator.prev = dll->first;
-	
-	iterator = DLLIterNext(iterator);
-	dll->first->npx = iterator.curr_node_addr;
-	iterator.curr_node_addr->npx = NodeXOR(NodeXOR(iterator.curr_node_addr->npx, dll->first), dll->first);
-	
-	free(to_pop);
-	/*
-	current = dll->first->npx;
-	popped_data = current->data;
-	next = NodeXOR(current->npx, dll->first);
-	
-	dll->first->npx = next;
-	next->npx = NodeXOR(dll->first, NodeXOR(dll->first, next->npx));
-
-	free(current);
-	*/
 	return popped_data;
 }
 
