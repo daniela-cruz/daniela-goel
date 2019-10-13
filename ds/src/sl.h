@@ -18,7 +18,8 @@ typedef int (*sl_cmp_func_t)(void *, void *param);
 typedef struct sorted_list sl_t;
 
 /*	The user will navigate between nodes in 
- * 	the list using the iterator							*/
+ * 	the list using the iterator. First call should 
+ * 	be initialized using the SLBegin function		*/
 typedef struct sl_iterator 
 {
 	dll_iter_t iterator;
@@ -47,8 +48,12 @@ sl_iter_t SLRemove(sl_t *sorted_list, sl_iter_t iterator);
 /*************************************************
  *		 		Iterator functions					*
  ************************************************/
+
+/*	iterated to node after last					*/
 sl_iter_t SLBegin(sl_t *sorted_list);
 
+/*	iterate to node after last.
+ * 	Used for comparison or errors			*/
 sl_iter_t SLEnd(sl_t *sorted_list);
 
 sl_iter_t SLPrev(sl_iter_t iterator);
@@ -61,5 +66,7 @@ sl_iter_t SLNext(sl_iter_t iterator);
 int SLForEach(sl_iter_t from, sl_iter_t to, sl_act_func_t func, void *param);
 
 sl_iter_t  SLFind(sl_iter_t from, sl_iter_t to, sl_cmp_func_t func, void *param);
+
+
 
 #endif /*__SL_H__*/
