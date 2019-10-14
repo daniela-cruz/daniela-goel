@@ -13,7 +13,8 @@ typedef int(*sll_find_func_t)(const void *data, void *param);
 
 typedef struct sll_node sll_node_t;
 
-struct sll_node{
+struct sll_node
+{
 	void *data;
 	sll_node_t *next;
 };
