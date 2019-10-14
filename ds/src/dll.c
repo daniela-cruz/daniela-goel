@@ -56,34 +56,32 @@ void DLLDestroy(dll_t *dll)
 {
 	for (; dll->first->npx != dll->last; DLLPopFront(dll));
 	
+	free(dll->last);
+	free(dll->first);
 	free(dll);
 }
 
 dll_iter_t DLLInsert(dll_iter_t iterator, const void *data)
 {
 	dll_node_t *new_node = NULL;
-	dll_node_t *prev_addr = NULL;
-	dll_node_t *next_addr = NULL;
 	
-	prev_addr = iterator.prev;
-	next_addr = iterator.curr_node;
-	
-	new_node = malloc(sizeof(*new_node));
+	new_node = DLLCreateNode(data);
 	if (NULL == new_node)
 	{
-		perror("Could not insert new node. ");
-		return iterator;
+		return DLLEnd(iterator.list);
 	}
 	
-	new_node->data = (void *)data;
-	new_node->npx = NodeXOR(prev_addr, next_addr);
+	if (iterator.curr_node == iterator.list->first)
+	{
+		iterator = DLLIterNext(iterator);
+	}
 	
-	iterator.curr_node = next_addr;
-	next_addr->npx = NodeXOR(new_node, DLLIterNext(iterator).curr_node);
-	prev_addr->npx = NodeXOR((dll_node_t *)NodeXOR((dll_node_t *)prev_addr->npx, new_node), new_node);
+	new_node->npx = NodeXOR(iterator.prev, iterator.curr_node);
+	iterator.prev->npx = NodeXOR(NodeXOR(iterator.prev->npx, iterator.curr_node), new_node);
+	iterator.curr_node->npx = NodeXOR(NodeXOR(iterator.curr_node->npx, iterator.prev), new_node);
 	
 	iterator.curr_node = new_node;
-
+	
 	return iterator;
 }
 

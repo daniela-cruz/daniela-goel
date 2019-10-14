@@ -33,17 +33,22 @@ typedef struct sl_iterator
  * 	The user must provide link to a sorting 
  * 	function to determine sorting criteria.
  * 	The sorting function must return an int
- * 	and receive 2 void* parameters 				*/
+ * 	and receive 2 void* parameters 					*/
 sl_t *SLCreate(sl_is_before_t is_before_func);
 
 /*	The user must call this function to free
  * 	allocated memory after using the list 			*/
 void SLDestroy(sl_t *sorted_list);
 
-/*	*/
-sl_iter_t SLInsert(sl_t *sorted_list, sl_iter_t iterator, void *data);
+/*	Insert a new node in place							*/
+sl_iter_t SLInsert(sl_iter_t iterator, void *data);
 
+/*	Remove a new node in place						*/
 sl_iter_t SLRemove(sl_t *sorted_list, sl_iter_t iterator);
+
+int SLIsEmpty(sl_t *list);
+
+size_t SLSize(sl_t *list);
 
 /*************************************************
  *		 		Iterator functions					*
@@ -59,6 +64,8 @@ sl_iter_t SLEnd(sl_t *sorted_list);
 sl_iter_t SLPrev(sl_iter_t iterator);
 
 sl_iter_t SLNext(sl_iter_t iterator);
+
+void *SLGetData(sl_iter_t iterator);
 
 /*************************************************
  *		 		Extra functions					*
