@@ -22,7 +22,7 @@ static void PopTests();
 static dll_t *dll2 = NULL;
 static dll_t *new_dll = NULL;
 static dll_iter_t iterator = {NULL, NULL, NULL};
-static int num = 123, num2 = 456, num3 = 789;
+static int num1 = 123, num2 = 456, num3 = 789;
 static int num4 = 1, num5 = 2, num6 = 3;
 
 int main()
@@ -87,7 +87,7 @@ static void PushTests()
 	printf("\n\n\nPush tests: \n\n");
 	
 	iterator = DLLEnd(new_dll);
-	PushBackTest(num);
+	PushBackTest(num1);
 	SizeTest(1);
 	PushFrontTest(num2);
 	SizeTest(2);
@@ -106,7 +106,7 @@ static void PopTests()
 	DLLPopBack(new_dll);
 	SizeTest(0);
 	IsEmptyTest(1);
-	PushBackTest(num);
+	PushBackTest(num1);
 	SizeTest(1);
 	PushFrontTest(num2);
 	SizeTest(2);
