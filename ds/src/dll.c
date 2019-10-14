@@ -111,8 +111,10 @@ dll_iter_t DLLRemove(dll_iter_t iterator)
 	/* if we are in the middle of the list */
 	else
 	{
-		prev_addr->npx = NodeXOR((dll_node_t *)NodeXOR((dll_node_t *)prev_addr->npx, curr_addr), next_addr);
-		next_addr->npx = NodeXOR(prev_addr, (dll_node_t *)NodeXOR(curr_addr, (dll_node_t *)next_addr->npx));
+		prev_addr->npx = 
+			NodeXOR((dll_node_t *)NodeXOR((dll_node_t *)prev_addr->npx, curr_addr), next_addr);
+		next_addr->npx = 
+			NodeXOR(prev_addr, (dll_node_t *)NodeXOR(curr_addr, (dll_node_t *)next_addr->npx));
 	}
 	
 	free(curr_addr);
@@ -267,7 +269,6 @@ dll_iter_t DLLIterNext(dll_iter_t iterator)
 	iterator.prev = prev_n;
 	
 	return iterator;
-
 }
 
 dll_iter_t DLLIterPrev(dll_iter_t iterator)
@@ -336,8 +337,32 @@ dll_iter_t DLLFind(dll_iter_t it_start, dll_iter_t it_end, dll_cmp_func_t find_f
 	return DLLEnd(it_start.list); 
 }
 
+int DLLForEach(dll_iter_t from, dll_iter_t to, dll_act_func_t func, void *param)
+{
+	for (; 0 != DLLIterIsEqual(from, to); from = DLLIterNext(from))
+	{
+		if (1 == func((from.curr_node)->data, param))
+		{
+			return 1;
+		}
+	}
+	
+	return 0;
+}
+
 dll_iter_t DLLSplice(dll_iter_t where, dll_iter_t from, dll_iter_t to)
 {
+		if (DLLIterIsEqual(where, DLLBegin(where.list)))
+		{
+			where = DLLIterNext(where);
+		}
+		
+		if (DLLIterIsEqual(where, DLLEnd(where.list)))
+		{
+			where.curr_node = where.list->last;
+			where.prev = where.list->last->npx;
+		}
+		
 		where.curr_node->npx = 
 				NodeXOR(NodeXOR(where.prev, where.curr_node->npx ), to.curr_node);
 		where.prev->npx = 

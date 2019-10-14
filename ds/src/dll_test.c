@@ -32,7 +32,7 @@ int main()
 	PushTests();
 	/*PopTests();*/
 	/*FindTest();*/
-	SpliceTest();
+	/*SpliceTest();*/
 		
 	return 0;
 }
