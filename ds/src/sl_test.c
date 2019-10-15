@@ -6,15 +6,14 @@
 static void CreateAndDestroy();
 static void InsertAndGetData();
 
-static void CreateTest();
+static sl_t *CreateTest(sl_t new_sl);
 static void InsertTest(sl_iter_t iter, int num);
-static void IsEmptyTest(int result);
-static void SizeTest(size_t expected_size);
+static void IsEmptyTest(sl_t *sl_ptr, int result);
+static void SizeTest(sl_t sl_ptr, size_t expected_size);
 static void GetDataTest(sl_iter_t iter, int expected_value);
 
 int IsBefore(void *node1, void *node2, void *param);
 
-static sl_t *new_sl = NULL;
 sl_iter_t iterator = {NULL};
 const int num1 = 123;
 
@@ -31,41 +30,45 @@ int main()
 **********************************/
 static void CreateAndDestroy()
 {
+	sl_t *sl = NULL;
 	printf("\n\nSystem test: CREATE AND DESTROY\n");
-	CreateTest();
-	iterator = SLBegin(new_sl);
-	IsEmptyTest(1);
-	SizeTest(0);
+	sl = CreateTest(sl);
+	iterator = SLBegin(sl);
+	IsEmptyTest(sl, 1);
+	SizeTest(sl, 0);
 	InsertTest(iterator, num1);
-	IsEmptyTest(0);
-	SizeTest(1);
-	SLDestroy(new_sl);
+	IsEmptyTest(sl, 0);
+	SizeTest(sl, 1);
+	SLDestroy(sl);
 	printf("To complete memory leak test - CHECK USING VALGRIND\n");
 }
 
 static void InsertAndGetData()
 {
 	sl_iter_t it = {NULL};
+	sl_t *sl = NULL;
 	
 	printf("\n\nSystem test: INSERT AND GET DATA\n");
-	CreateTest();
-	it = SLBegin(new_sl);
+	sl = DLLCreate((sl_is_before_t)IsBefore);
+	it = SLBegin(*sl);
 	it = SLNext(it);
 	InsertTest(it, num1);
-	it = SLBegin(new_sl);
+	it = SLBegin(*sl);
 	it = SLNext(it);
 	GetDataTest(it, num1);
-	SLDestroy(new_sl);
+	SLDestroy(*sl);
 }
 
 /*************************************
  * 			Functions Tests:				*
 *************************************/
-static void CreateTest()
+static sl_t  *CreateTest(sl_t new_sl)
 {
 	printf("\nCreate test. . .\t");
 	new_sl = SLCreate((sl_is_before_t)IsBefore);
 	(NULL != new_sl) ? printf("SUCCESS!\n"): printf("FAILURE!\n");
+	
+	return &sl;
 }
 
 static void InsertTest(sl_iter_t iter, int num)
@@ -74,16 +77,16 @@ static void InsertTest(sl_iter_t iter, int num)
 	iterator = SLInsert(iter, (void *)&num);
 }
 
-static void IsEmptyTest(int result)
+static void IsEmptyTest(sl_t *sl_ptr, int result)
 {
 	printf("Is the list empty?\t");
-	(result == SLIsEmpty(new_sl)) ? printf("SUCCESS!\n"): printf("FAILURE!\n");
+	(result == SLIsEmpty(sl_ptr)) ? printf("SUCCESS!\n"): printf("FAILURE!\n");
 }
 
-static void SizeTest(size_t expected_size)
+static void SizeTest(sl_t sl_ptr, size_t expected_size)
 {
 	printf("Size test. . .\t\t");
-	(expected_size == SLSize(new_sl)) ? printf("SUCCESS!\n"): printf("FAILURE!\n");
+	(expected_size == SLSize(sl_ptr)) ? printf("SUCCESS!\n"): printf("FAILURE!\n");
 }
 
 static void GetDataTest(sl_iter_t iter, int expected_value)
