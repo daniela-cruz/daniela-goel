@@ -39,7 +39,7 @@ size_t DLLSize(const dll_t *dll);/* done */
 /********************************************/
 
 /* the user should send an actual address of a particular node casted as an iterator */
-dll_iter_t DLLIterNext(dll_iter_t iterator);/* done */
+dll_iter_t DLLIterNext(dll_iter_t iterator);
 
 dll_iter_t DLLIterPrev(dll_iter_t iterator);/* done */
 
@@ -49,7 +49,7 @@ dll_iter_t DLLEnd(const dll_t *dll);/* done */
 
 int DLLIterIsEqual(dll_iter_t it1, dll_iter_t it2);/* done */
 
-void *DLLGetData(dll_iter_t it);/* done */
+void *DLLGetData(dll_iter_t it);
 
 /*******************************************/
 dll_iter_t DLLFind(dll_iter_t it_start, dll_iter_t it_end, dll_cmp_func_t find_func, void *param);

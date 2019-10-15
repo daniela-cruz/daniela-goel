@@ -89,10 +89,21 @@ static void PushTests()
 	iterator = DLLEnd(new_dll);
 	PushBackTest(num1);
 	SizeTest(1);
+	iterator = DLLBegin(new_dll);
+	iterator = DLLIterNext(iterator);
+	GetDataTest(num1);
+	iterator = DLLEnd(new_dll);
+	iterator = DLLIterPrev(DLLIterPrev(iterator));
+	GetDataTest(num1);
+	
 	PushFrontTest(num2);
+	iterator = DLLBegin(new_dll);
+	iterator = DLLIterNext(iterator);
+	GetDataTest(num2);
 	SizeTest(2);
 	PushFrontTest(num3);
 	SizeTest(3);
+	GetDataTest(num3);
 }
 
 static void PopTests()
@@ -128,16 +139,12 @@ static void UserDLL()
 static void PushBackTest(int num)
 {
 	printf("\nPush back test. . .\n");
-	iterator = DLLPushBack(new_dll, (void *)&num);
-	GetDataTest(num);
 	IsEmptyTest(0);
 }
 
 static void PushFrontTest(int num)
 {
 	printf("\nPush front test. . .\n");
-	iterator = DLLPushFront(new_dll, (void *)&num);
-	GetDataTest(num);
 	IsEmptyTest(0);
 }
 
@@ -145,6 +152,7 @@ static void GetDataTest(int num)
 {
 	printf("\nGet data test. . .\t");
 	(num == *(int *)DLLGetData(iterator)) ? printf("SUCCESS!\n"): printf("FAILURE!\n");
+	printf("Data is: %d\n", *(int *)DLLGetData(iterator));
 }
 
 static void IsEmptyTest(int expected)

@@ -130,6 +130,7 @@ int DLLIsEmpty(const dll_t *dll)
 dll_iter_t DLLPushBack(dll_t *dll, const void *data)
 {
 	dll_iter_t iterator = {NULL, NULL, NULL};
+	dll_iter_t it_prev = {NULL, NULL, NULL};
 	dll_node_t *new_node = NULL;
 	
 	iterator.curr_node = dll->last;
@@ -146,7 +147,12 @@ dll_iter_t DLLPushBack(dll_t *dll, const void *data)
 	
 	new_node->npx = NodeXOR(iterator.prev, dll->last);
 	dll->last->npx = new_node;
+	
+	it_prev.curr_node = iterator.prev;
+	it_prev.curr_node->npx = NodeXOR(NodeXOR(iterator.prev->npx, iterator.curr_node), new_node);
+	/*
 	iterator.prev->npx = NodeXOR(NodeXOR(iterator.prev->npx, dll->last), new_node);
+	*/
 	iterator.curr_node = new_node;
 	
 	return iterator;
