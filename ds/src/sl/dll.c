@@ -166,16 +166,16 @@ void *DLLPopBack(dll_t *dll)
 	
 	if (dll->last->npx != dll->first)
 	{
-		iterator.curr_node = dll->last;
+		/*iterator.curr_node = dll->last;
 		iterator.prev = dll->last->npx;
 		iterator.list = dll;
 		to_pop = dll->last->npx;
 		popped_data = to_pop->data;
 		
 		iterator = DLLIterPrev(iterator);
-		iterator.prev->npx = NodeXOR(NodeXOR(iterator.prev->npx, to_pop), dll->last);
-		dll->last->npx = iterator.prev;
-		
+		iterator.curr_node->npx = NodeXOR(NodeXOR(iterator.prev, to_pop), dll->last);
+		dll->last->npx = iterator.curr_node;
+		*/
 		free(to_pop);
 	}
 	
