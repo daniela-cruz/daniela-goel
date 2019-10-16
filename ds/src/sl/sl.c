@@ -134,20 +134,20 @@ int SLForEach(sl_iter_t from, sl_iter_t to, sl_act_func_t func, void *param)
 	return DLLForEach(from.iterator, to.iterator, func, param);
 }
 
-sl_iter_t  SLFind(sl_iter_t from, sl_iter_t to, sl_is_before_t func, void *param)
+sl_iter_t  SLFind(sl_iter_t from, sl_iter_t to, void *data)
 {
-	SL_iter_t iterator;
+	sl_iter_t iterator;
 	
-	iterator.iterator = DLLForEach(from.iterator, to.iterator, func, from.param);
+	iterator.iterator = DLLFind(from.iterator, to.iterator, data);
 
 	return iterator;
 }
 
-sl_iter_t  SLFindIf(sl_cmp_func_t func, void *data, void *param)
+sl_iter_t  SLFindIf(sl_iter_t from, sl_iter_t to, sl_cmp_func_t func, void *param)
 {
-	SL_iter_t iterator;
+	sl_iter_t iterator;
 	
-	iterator.iterator = DLLForEach(from.iterator, to.iterator, func, param);
+	iterator.iterator = DLLFind(from.iterator, to.iterator, (dll_cmp_func_t)func, param);
 	
 	return iterator; 	
 }
