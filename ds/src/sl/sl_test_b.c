@@ -45,7 +45,7 @@ static void InsertTests()
 	
 	printf("\n\nPUSH test. . .\n");	
 	sl = SLCreate(IsBefore, (void *)&num1);
-	iterator = SLNext(SLBegin(sl));
+	iterator = SLIterNext(SLBegin(sl));
 	printf("Number of elements in list: %ld\n", SLSize(sl));
 	
 	printf("Insert test. . . \n");
@@ -54,15 +54,15 @@ static void InsertTests()
 	(0 == SLIsEmpty(sl)) ? printf("SUCCESS!\n") : printf("FAILURE\n");
 	printf("Number of elements in list: %ld\n", SLSize(sl));
 	
-	iterator = SLNext(iterator);
+	iterator = SLIterNext(iterator);
 	iterator = SLInsert(iterator, (void *)&num2);
 	printf("Number of elements in list: %ld\n", SLSize(sl));
 	printf("Data element is: %d\n",*(int*)SLGetData(iterator));
 	printf("Popped data element is: %d\n",*(int*)SLPopBack(sl));
 	
 	iterator = SLBegin(sl);
-	iterator = SLNext(iterator);
-	iterator = SLNext(iterator);
+	iterator = SLIterNext(iterator);
+	iterator = SLIterNext(iterator);
 	iterator = SLInsert(iterator, (void *)&num3);
 	printf("IsEmpty test: \t\t\t");
 	(0 == SLIsEmpty(sl)) ? printf("SUCCESS!\n") : printf("FAILURE\n");
@@ -70,7 +70,7 @@ static void InsertTests()
 	printf("Data element is: %d\n",*(int*)SLGetData(iterator));
 	
 	iterator = SLBegin(sl);
-	iterator = SLNext(iterator);
+	iterator = SLIterNext(iterator);
 	printf("Data element is: %d\n",*(int*)SLGetData(iterator));
 	
 	SLDestroy(sl);

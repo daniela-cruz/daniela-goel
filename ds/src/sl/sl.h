@@ -61,9 +61,9 @@ sl_iter_t SLBegin(sl_t *sorted_list);
  * 	Used for comparison or errors			*/
 sl_iter_t SLEnd(sl_t *sorted_list);
 
-sl_iter_t SLPrev(sl_iter_t iterator);
+sl_iter_t SLIterPrev(sl_iter_t iterator);
 
-sl_iter_t SLNext(sl_iter_t iterator);
+sl_iter_t SLIterNext(sl_iter_t iterator);
 
 int SLIsEqual(sl_iter_t it1, sl_iter_t it2);
 

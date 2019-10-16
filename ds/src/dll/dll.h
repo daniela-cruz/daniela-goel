@@ -47,7 +47,7 @@ dll_iter_t DLLBegin(const dll_t *dll);/* done */
 
 dll_iter_t DLLEnd(const dll_t *dll);/* done */
 
-int DLLIterIsEqual(dll_iter_t it1, dll_iter_t it2);/* done */
+int DLLIterIsEqual(dll_iter_t it1, dll_iter_t it2);
 
 void *DLLGetData(dll_iter_t it);
 

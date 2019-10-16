@@ -102,14 +102,14 @@ sl_iter_t SLEnd(sl_t *sorted_list)
 	return iterator;
 }
 
-sl_iter_t SLPrev(sl_iter_t iterator)
+sl_iter_t SLIterPrev(sl_iter_t iterator)
 {
 	iterator.iterator = DLLIterPrev(iterator.iterator);
 	
 	return iterator;
 }
 
-sl_iter_t SLNext(sl_iter_t iterator)
+sl_iter_t SLIterNext(sl_iter_t iterator)
 {
 	iterator.iterator = DLLIterNext(iterator.iterator);
 	
