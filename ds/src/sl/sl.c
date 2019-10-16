@@ -138,7 +138,7 @@ sl_iter_t  SLFind(sl_iter_t from, sl_iter_t to, sl_is_before_t func, void *param
 {
 	SL_iter_t iterator;
 	
-	iterator.iterator = DLLForEach(from.iterator, to.iterator, func, param);
+	iterator.iterator = DLLForEach(from.iterator, to.iterator, func, from.param);
 
 	return iterator;
 }
