@@ -129,7 +129,11 @@ void *SLGetData(sl_iter_t iterator)
 /*************************************************
  *		 		Extra functions					*
  ************************************************/
-int SLForEach(sl_iter_t from, sl_iter_t to, sl_act_func_t func, void *param);
+int SLForEach(sl_iter_t from, sl_iter_t to, sl_act_func_t func, void *param)
+{
+	
+	return 0;
+}
 
 sl_iter_t  SLFind(sl_iter_t from, sl_iter_t to, sl_is_before_t func, void *param);
 

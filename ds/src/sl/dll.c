@@ -2,6 +2,7 @@
 #include <stdint.h> /* uintptr_t for portability*/
 #include <stdlib.h> /* malloc, free */
 #include <stddef.h> /* size_t */
+#include <assert.h> /* asert */
 
 #include "dll.h"
 
@@ -160,22 +161,22 @@ dll_iter_t DLLPushBack(dll_t *dll, const void *data)
 
 void *DLLPopBack(dll_t *dll)
 {
-	dll_iter_t iterator = {NULL, NULL, NULL};
 	dll_node_t *to_pop = NULL;
 	void *popped_data = NULL;
+	dll_iter_t iterator = DLLIterPrev(DLLEnd(dll));
 	
 	if (dll->last->npx != dll->first)
 	{
-		/*iterator.curr_node = dll->last;
-		iterator.prev = dll->last->npx;
+		to_pop = iterator.curr_node;
+		popped_data =to_pop->data;
+		
 		iterator.list = dll;
-		to_pop = dll->last->npx;
-		popped_data = to_pop->data;
 		
 		iterator = DLLIterPrev(iterator);
-		iterator.curr_node->npx = NodeXOR(NodeXOR(iterator.prev, to_pop), dll->last);
+		iterator.curr_node->npx = NodeXOR(NodeXOR(iterator.curr_node->npx, to_pop), dll->last);
+		
 		dll->last->npx = iterator.curr_node;
-		*/
+		
 		free(to_pop);
 	}
 	
