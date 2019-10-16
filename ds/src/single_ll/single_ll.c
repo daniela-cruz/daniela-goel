@@ -1,4 +1,3 @@
-#include <stdio.h> /* pfrintf */
 #include <stdlib.h> /* malloc, free */
 #include <stddef.h> /* size_t */
 #include <assert.h> /* assert */
@@ -11,27 +10,24 @@ sll_node_t *SLLCreateNode(void *data, sll_node_t *next)
 	sll_node_t *new_node = NULL;
 	
 	new_node = malloc(sizeof(*new_node));
-	
 	if (NULL == new_node)
 	{
-		perror("Could not allocate memory for Create.");
+		return NULL;
 	}
 
 	new_node->data = data;
-	next = new_node;
-	next->next = NULL;
+	new_data->next = next;
 
 	return new_node;
 }
 
 void SLLFreeAll(sll_node_t *root)
 {
-	if (NULL != root->next)
+	for (; NULL != root->next; root->next = root->next->next)
 	{
 		SLLRemove(root->next);
 	}
 	
-	root->next = NULL;
 	free(root); root = NULL;
 }
 
@@ -40,7 +36,7 @@ sll_node_t *SLLRemove(sll_node_t *target)
 	sll_node_t *temp_node = NULL;
 	
 	temp_node = target->next;
-	free(target->next);
+	free(target);
 	
 	return temp_node;
 }
