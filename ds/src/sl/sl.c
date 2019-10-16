@@ -151,3 +151,19 @@ sl_iter_t  SLFindIf(sl_cmp_func_t func, void *data, void *param)
 	
 	return iterator; 	
 }
+
+sl_iter_t SLMerge(sl_iter_t to, sl_iter_t from);
+{
+	for (to.iterator = DLLBegin(to.iterator), from = SLBegin(from.list);
+		(!SLIsEqual(from, SLEnd(from->sl))); 
+		from = SLIterNext(from))
+	{
+		if (to->sl.is_before(SLGetData(from), SLGetData(to), to->sl.param))
+		{
+			to = SLInsert(to, SLGetData(from));
+			to = SLIterNext(to);
+		}
+	}
+	
+	return SLBegin(to);
+}

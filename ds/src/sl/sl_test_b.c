@@ -88,6 +88,6 @@ static void InsertTests()
 
 int IsBefore(void *node1, void *node2, void *param)
 {
-	return node1 > node2;
+	return node1 < node2;
 }
 
