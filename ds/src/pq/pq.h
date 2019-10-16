@@ -44,7 +44,4 @@ void *PQPeek(const pq_t *queue);
 /* 		Count number of tasks left in queue					*/
 size_t PQCount(const pq_t *queue);
 
-/*		Append queue "src" to "dest". Sort by priority		*/
-pq_t *PQAppend(pq_t *dest, pq_t *src);
-
 #endif /*__PQ_H__*/
