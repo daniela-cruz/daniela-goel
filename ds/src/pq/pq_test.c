@@ -16,14 +16,23 @@ int main()
 
 void CreatePriority()
 {
-	int num = 1;
+	int num = 1, num2 = 2, num3 = 3;
 	pq_t *q = NULL;
 	
 	printf("\nCreate test: \n");
 	q = PQCreate(IsBefore, &num);
-	(NULL != q) ? printf("New queue was created\n") : printf("FAILURE! Could not create new queue\n");
+	(NULL != q) ? printf("New queue was created\n") : printf("FAILURE! Could not create queue\n");
+	(1 == PQIsEmpty(q)) ? printf("SUCCESS! Queue is empty\n") : printf("Failure. Queue is not empty\n");
 	
-	printf("Insert test: \n");
+	printf("Insert test: \t\t");
+	(1 == PQEnqueue(q, &num)) ? printf("Task successfully enqueued\n") : printf("Failed\n");
+	(0 == PQIsEmpty(q)) ? printf("SUCCESS! Queue is not empty\n") : printf("Failure. Queue is empty\n");
+	
+	printf("Insert test: \t\t");
+	(1 == PQEnqueue(q, &num2)) ? printf("Task successfully enqueued\n") : printf("Failed\n");
+	
+	printf("Insert test: \t\t");
+	(1 == PQEnqueue(q, &num3)) ? printf("Task successfully enqueued\n") : printf("Failed\n");
 	
 	PQDestroy(q);
 }
