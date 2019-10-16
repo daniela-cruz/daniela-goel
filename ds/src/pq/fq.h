@@ -1,5 +1,5 @@
-#ifndef __QUEUE_H__
-#define __QUEUE_H__
+#ifndef __FQ_H__
+#define __FQ_H__
 #include <stddef.h> /* size_t */
 
 enum status {SUCCESS, FAILURE};
@@ -32,5 +32,5 @@ size_t QueueCount(const queue_t *first);
 
 queue_t *QueueAppend(queue_t *dest, queue_t *src);
 
-#endif /* __QUEUE_H__ */
+#endif /* __FQ_H__ */
 
