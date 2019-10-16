@@ -131,14 +131,23 @@ void *SLGetData(sl_iter_t iterator)
  ************************************************/
 int SLForEach(sl_iter_t from, sl_iter_t to, sl_act_func_t func, void *param)
 {
-	
-	return 0;
+	return DLLForEach(from.iterator, to.iterator, func, param);
 }
 
-sl_iter_t  SLFind(sl_iter_t from, sl_iter_t to, sl_is_before_t func, void *param);
+sl_iter_t  SLFind(sl_iter_t from, sl_iter_t to, sl_is_before_t func, void *param)
+{
+	SL_iter_t iterator;
+	
+	iterator.iterator = DLLForEach(from.iterator, to.iterator, func, param);
 
-sl_iter_t  SLFindIf(sl_cmp_func_t func, void *data, void *param);
+	return iterator;
+}
 
-/*************************************************
- *		 		Internal functions					*
- ************************************************/
+sl_iter_t  SLFindIf(sl_cmp_func_t func, void *data, void *param)
+{
+	SL_iter_t iterator;
+	
+	iterator.iterator = DLLForEach(from.iterator, to.iterator, func, param);
+	
+	return iterator; 	
+}
