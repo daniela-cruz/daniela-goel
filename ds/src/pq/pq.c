@@ -59,3 +59,17 @@ size_t PQCount(const pq_t *queue)
 {
 	return SLSize(queue->list);
 }
+
+void PQErase(pq_t *queue, pq_is_match_t func, void *param)
+{
+	pq_iter_t it;
+	
+	for (it = PQBegin(queue); (!PQIsEqual(it, PQEnd(queue))); it = PQIterNext(it))
+	{
+		if (1 == func(PQGetData(it), param))
+		{
+			it.iterator = SLRemove(it.iterator);
+			break;
+		}
+	}
+}

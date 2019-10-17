@@ -152,18 +152,26 @@ sl_iter_t  SLFindIf(sl_iter_t from, sl_iter_t to, sl_cmp_func_t func, void *para
 	return iterator; 	
 }
 
-sl_iter_t SLMerge(sl_iter_t to, sl_iter_t from)
+sl_iter_t SLMerge(sl_t *to, sl_t *from)
 {
-	for (to = SLBegin(to.sl), from = SLBegin(from.sl);
-		(!SLIsEqual(from, SLEnd(from.sl))); 
-		from = SLIterNext(from))
+	sl_iter_t src;
+	sl_iter_t dest;
+	
+	for (dest = SLBegin(to), src = SLBegin(from);
+		((!SLIsEqual(src, SLEnd(from))) && (!SLIsEqual(dest, SLEnd(to)))); 
+		src = SLIterNext(src))
 	{
-		if (to.sl->is_before(SLGetData(from), SLGetData(to), to.sl->param))
+		if (to->is_before(SLGetData(src), SLGetData(dest), to->param))
 		{
-			to = SLInsert(to, SLGetData(from));
-			to = SLIterNext(to);
+			DLLSplice(dest.iterator, src.iterator, src.iterator);
+			dest = SLIterNext(dest);
 		}
 	}
 	
-	return SLBegin(to.sl);
+	if (!SLIsEqual(src, SLEnd(from)))
+	{
+		DLLSplice(dest.iterator, src.iterator, SLEnd(from).iterator);
+	}
+	
+	return SLBegin(to);
 }

@@ -3,7 +3,7 @@
 #include <stddef.h> /* size_t */
 #include <assert.h> /* assert */
 
-#include "queue.h"
+#include "fq.h"
 
 typedef struct node q_node_t;
 
@@ -20,21 +20,21 @@ struct queue
 	size_t size;
 };
 
-queue_t *QueueCreate()
+fq_t *FQCreate()
 {
-	queue_t *new_queue = NULL;
+	fq_t *new_queue = NULL;
 	
 	new_queue  = malloc(sizeof(*new_queue));
 	if (NULL == new_queue)
 	{
-		perror("QueueCreate, new queue ");
+		perror("FQCreate, new queue ");
 		return NULL;
 	}
 	
 	new_queue->front  = malloc(sizeof(*new_queue->front));
 	if (NULL == new_queue->front)
 	{
-		perror("QueueCreate, front node ");
+		perror("FQCreate, front node ");
 		free(new_queue);
 		return NULL;
 	}
@@ -42,7 +42,7 @@ queue_t *QueueCreate()
 	new_queue->back = malloc(sizeof(*new_queue->back));
 	if (NULL == new_queue->back)
 	{
-		perror("QueueCreate, back node ");
+		perror("FQCreate, back node ");
 		free(new_queue); free(new_queue->front);
 		return NULL;
 	}
@@ -54,13 +54,13 @@ queue_t *QueueCreate()
 	return new_queue;
 }
 
-void QueueDestroy(queue_t *queue)
+void FQDestroy(fq_t *queue)
 {
 	assert(NULL != queue);
 	
 	for (; 	0 < queue->size; )
 	{
-		QueueDequeue(queue);
+		FQDequeue(queue);
 	}
 	
 	free(queue->front);
@@ -69,7 +69,7 @@ void QueueDestroy(queue_t *queue)
 	free(queue);
 }
 
-int QueueEnqueue(queue_t *queue, void *data)
+int FQEnqueue(fq_t *queue, void *data)
 {
 	q_node_t *new_node = NULL;
 	q_node_t *temp = NULL;
@@ -81,7 +81,7 @@ int QueueEnqueue(queue_t *queue, void *data)
 	
 	if (NULL == new_node)
 	{
-		perror("QueueEnqueue, new node ");
+		perror("FQEnqueue, new node ");
 		
 		return FAILURE;
 	}
@@ -95,7 +95,7 @@ int QueueEnqueue(queue_t *queue, void *data)
 	return SUCCESS;
 }
 
-void *QueueDequeue(queue_t *queue)
+void *FQDequeue(fq_t *queue)
 {
 	q_node_t *temp = NULL;
 	void *temp2 = NULL;
@@ -116,28 +116,28 @@ void *QueueDequeue(queue_t *queue)
 	return temp2;
 }
 
-int QueueIsEmpty(const queue_t *queue)
+int FQIsEmpty(const fq_t *queue)
 {
 	assert(NULL != queue);
 	
 	return 0 == queue->size;
 }
 
-void *QueuePeek(const queue_t *queue)
+void *FQPeek(const fq_t *queue)
 {
 	assert(NULL != queue);
 	
 	return queue->front->next->data;
 }
 
-size_t QueueCount(const queue_t *queue)
+size_t FQCount(const fq_t *queue)
 {
 	assert(NULL != queue);
 	
 	return queue->size;
 }
 
-queue_t *QueueAppend(queue_t *dest, queue_t *src)
+fq_t *FQAppend(fq_t *dest, fq_t *src)
 {
 	assert(NULL != dest);
 	assert(NULL != src);

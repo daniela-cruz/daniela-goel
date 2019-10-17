@@ -5,14 +5,17 @@
 
 static void CreateAndDestroyTest();
 static void InsertTests();
-
+void MergeTest();
 
 int IsBefore(void *node1, void *node2, void *param);
+
+void PrintList(sl_t *list);
 
 int main()
 {
 	/*CreateAndDestroyTest();*/
-	InsertTests();
+	/*InsertTests();*/
+	MergeTest();
 	return 0;
 }
 
@@ -76,7 +79,47 @@ static void InsertTests()
 	SLDestroy(sl);
 }
 
+void MergeTest()
+{
+	sl_t *sl1 = NULL;
+	sl_t *sl2 = NULL;
+	sl_iter_t iterator1, iterator2;
+	int num1 = 1, num2 = 4, num3 = 7;
+	int num4 = 2, num5 = 3, num6 = 8;
+	
+	printf("\nMerge Test:\n");
+	sl1 = SLCreate(IsBefore, (void *)&num1);
+	iterator1 = SLBegin(sl1);
+	iterator1 = SLInsert(iterator1, (void *)&num1);
+	iterator1 = SLInsert(iterator1, (void *)&num2);
+	SLInsert(iterator1, (void *)&num3);
 
+	printf("\nPrinting list:\n");
+	for (iterator1 = SLBegin(sl1); !SLIsEqual(iterator1, SLEnd(sl1)); iterator1 = SLIterNext(iterator1))
+	{
+		printf("%d ", *(int*)SLGetData(iterator1));
+	}
+		
+	sl2 = SLCreate(IsBefore, (void *)&num1);
+	iterator2 = SLBegin(sl2);
+	iterator2 = SLInsert(iterator2, (void *)&num4);
+	iterator2 = SLInsert(iterator2, (void *)&num5);
+	iterator2 = SLInsert(iterator2, (void *)&num6);
+	
+	printf("\nPrinting list:\n");
+	for (iterator2 = SLBegin(sl2); !SLIsEqual(iterator2, SLEnd(sl2)); iterator2 = SLIterNext(iterator2))
+	{
+		printf("%d ", *(int*)SLGetData(iterator2));
+	}
+	
+	iterator1 = SLMerge(sl1, sl2);
+	printf("\nPrinting list:\n");
+	for (iterator1 = SLBegin(sl1); !SLIsEqual(iterator1, SLEnd(sl1)); iterator1 = SLIterNext(iterator1))
+	{
+		printf("%d \n", *(int*)SLGetData(iterator1));
+	}
+	
+}
 
 /***************************************
  * 			Functions Tests:			*
@@ -85,6 +128,17 @@ static void InsertTests()
 /***************************************
  * 			internal functions			*
  **************************************/
+ 
+void PrintList(sl_t *list)
+{
+	sl_iter_t it;
+	
+	printf("Printing list:\n");
+	for (it = SLBegin(list); !SLIsEqual(SLBegin(list), SLEnd(list)); it = SLIterNext(it))
+	{
+		printf("%d ", *(int*)SLGetData(it));
+	}
+}
 
 int IsBefore(void *node1, void *node2, void *param)
 {

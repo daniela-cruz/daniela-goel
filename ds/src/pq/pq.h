@@ -18,6 +18,9 @@ typedef struct task
 /*		Priority sorting function provided by user 			*/
 typedef int (*pq_is_before_t)(void *data1, void *data2, void *param);
 
+/*		Matching function by user									*/
+typedef int (*pq_is_match_t)(void *data, void *param);
+
 /* 		the user will receive a pointer to the new 
  * 		memory location. If allocation fails the function
  * 		returns NULL							 						*/
@@ -44,6 +47,7 @@ void *PQPeek(const pq_t *queue);
 /* 		Count number of tasks left in queue					*/
 size_t PQCount(const pq_t *queue);
 
-void PQErase(pq_t *queue, );
+/*		Erase particular node in list by matching data		*/
+void PQErase(pq_t *queue, pq_is_match_t func, void *param);
 
 #endif /*__PQ_H__*/
