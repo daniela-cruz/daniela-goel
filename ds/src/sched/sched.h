@@ -12,7 +12,7 @@ sched_t *SchedCreate();
 
 my_uid_t SchedAddTask(sched_t *scheduler, handle_func func, size_t interval_in_seconds, void *param);
 
-void SchedRemoveTask(sched_t *scheduler, my_uid_t task);
+void SchedRemoveTask(sched_t *scheduler, const my_uid_t *task);
 
 void SchedStop(sched_t *scheduler);
 

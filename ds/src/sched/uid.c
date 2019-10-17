@@ -3,21 +3,39 @@
 #include <unistd.h>
 #include <time.h> /* time_t */
 
-struct user_id
+ilrd_uid_t UIDCreate()
 {
-	time_t curr_time;
-	size_t counter;
-	int is_error;
-	pid_t process_id;
-};
-
-my_uid_t UIDCreate()
-{
-	pid_t process_id;
-
-	process_id = getpid();
+	ilrd_uid_t uid;
+	static size_t counter = 0;
+	
+	uid.curr_time = time(NULL);
+	uid.process_is = getpid();
+	uid.counter = counter++;
+	uid.is_error = 	UIDIsError(uid);
+	
+	return uid;
 }
 
-int UIDIsEqual(my_uid_t task1, my_uid_t task2);
+int UIDIsEqual(ilrd_uid_t task1, ilrd_uid_t task2)
+{
+	if ((uid1.curr_time == uid2.curr_time) || 
+		(uid1.process_is == uid2.process_is) || 
+		(uid1.counter == uid2.counter))
+	{
+		return 1;
+	}
+	
+	return 0;
+}
 
-int UIDIsError(my_uid_t task);
+int UIDIsError(ilrd_uid_t task)
+{
+	if ((NULL == uid.curr_time) || 
+		(NULL == uid.process_is) || 
+		(NULL == uid.counter))
+	{
+		return 1;
+	}
+	
+	return 0;
+}

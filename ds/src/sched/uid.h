@@ -3,12 +3,18 @@
 
 #include <stddef.h> /* size_t */
 
-typedef struct user_id my_uid_t;
+typedef struct unique_id
+{
+	time_t curr_time;
+	pid_t pid;
+	size_t counter;
+	int is_error;
+} ilrd_uid_t;
 
-my_uid_t UIDCreate();
+ilrd_uid_t UIDCreate();
 
-int UIDIsEqual(my_uid_t task1, my_uid_t task2);
+int UIDIsEqual(ilrd_uid_t uid1, ilrd_uid_t uid2);
 
-int UIDIsError(my_uid_t task);
+int UIDIsError(ilrd_uid_t uid);
 
 #endif /*__UID_H__*/
