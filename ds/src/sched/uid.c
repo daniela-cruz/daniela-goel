@@ -20,8 +20,8 @@ ilrd_uid_t UIDCreate()
 
 int UIDIsEqual(ilrd_uid_t uid1, ilrd_uid_t uid2)
 {
-	if ((uid1.curr_time == uid2.curr_time) || 
-		(uid1.pid == uid2.pid) || 
+	if ((uid1.curr_time == uid2.curr_time) && 
+		(uid1.pid == uid2.pid) && 
 		(uid1.counter == uid2.counter))
 	{
 		return 1;
@@ -33,8 +33,7 @@ int UIDIsEqual(ilrd_uid_t uid1, ilrd_uid_t uid2)
 int UIDIsError(ilrd_uid_t uid)
 {
 	if ((0 == uid.curr_time) || 
-		(0 == uid.pid) || 
-		(0 == uid.counter))
+		(0 == uid.pid))
 	{
 		return 1;
 	}
