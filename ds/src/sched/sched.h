@@ -10,9 +10,9 @@ typedef struct scheduler sched_t;
 
 sched_t *SchedCreate();
 
-uid_t SchedAdd(sched_t *scheduler, handle_func func, size_t interval_in_seconds, void *param);
+my_uid_t SchedAddTask(sched_t *scheduler, handle_func func, size_t interval_in_seconds, void *param);
 
-void SchedRemove(sched_t *scheduler, uid_t task);
+void SchedRemoveTask(sched_t *scheduler, my_uid_t task);
 
 void SchedStop(sched_t *scheduler);
 
