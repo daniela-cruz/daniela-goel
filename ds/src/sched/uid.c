@@ -3,23 +3,25 @@
 #include <unistd.h>
 #include <time.h> /* time_t */
 
+#include "uid.h"
+
 ilrd_uid_t UIDCreate()
 {
 	ilrd_uid_t uid;
 	static size_t counter = 0;
 	
 	uid.curr_time = time(NULL);
-	uid.process_is = getpid();
+	uid.pid = getpid();
 	uid.counter = counter++;
 	uid.is_error = 	UIDIsError(uid);
 	
 	return uid;
 }
 
-int UIDIsEqual(ilrd_uid_t task1, ilrd_uid_t task2)
+int UIDIsEqual(ilrd_uid_t uid1, ilrd_uid_t uid2)
 {
 	if ((uid1.curr_time == uid2.curr_time) || 
-		(uid1.process_is == uid2.process_is) || 
+		(uid1.pid == uid2.pid) || 
 		(uid1.counter == uid2.counter))
 	{
 		return 1;
@@ -28,11 +30,11 @@ int UIDIsEqual(ilrd_uid_t task1, ilrd_uid_t task2)
 	return 0;
 }
 
-int UIDIsError(ilrd_uid_t task)
+int UIDIsError(ilrd_uid_t uid)
 {
-	if ((NULL == uid.curr_time) || 
-		(NULL == uid.process_is) || 
-		(NULL == uid.counter))
+	if ((0 == uid.curr_time) || 
+		(0 == uid.pid) || 
+		(0 == uid.counter))
 	{
 		return 1;
 	}
