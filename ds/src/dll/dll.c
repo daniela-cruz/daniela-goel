@@ -324,7 +324,7 @@ void *DLLGetData(dll_iter_t it)
 }
 
 /***************************************
- * 		EXTRA functions:		 			*
+ * 		EXTRA functions:		 	*
 ***************************************/
 dll_iter_t DLLFind(dll_iter_t it_start, dll_iter_t it_end, dll_cmp_func_t find_func, void *param)
 {
@@ -356,28 +356,14 @@ int DLLForEach(dll_iter_t from, dll_iter_t to, dll_act_func_t func, void *param)
 
 dll_iter_t DLLSplice(dll_iter_t where, dll_iter_t from, dll_iter_t to)
 {
-	if (DLLIterIsEqual(where, DLLEnd(where.list)))
-	{
-		where.curr_node = where.list->last;
-		where.prev = where.list->last->npx;
-	}
-	
-	where.curr_node->npx = NodeXOR(NodeXOR(where.prev, where.curr_node->npx ), to.curr_node);
-	where.prev->npx = NodeXOR(NodeXOR(where.prev->npx, where.curr_node), from.curr_node);
-	
+	where.prev->npx = NodeXOR(DLLIterPrev(where).prev, from.curr_node);
 	from.curr_node->npx = NodeXOR(NodeXOR(from.curr_node->npx, from.prev), where.prev);
-				
-	if (0 == DLLIterIsEqual(from, to))
-	{
-		to.curr_node->npx = 
-				NodeXOR(NodeXOR(to.curr_node->npx, DLLIterNext(to).curr_node) , where.curr_node);
-	}
+	where.curr_node->npx = NodeXOR(NodeXOR(where.curr_node->npx, where.prev), to.curr_node);
+	to.curr_node->npx = NodeXOR(to.prev, where.curr_node);
 
 	return from;
 }
-/***************************************
- * Internal functions:			 			*
-***************************************/
+/*******Internal functions:*********/
 static dll_node_t *DLLCreateNode(const void *data)
 {
 	dll_node_t *node = NULL;
