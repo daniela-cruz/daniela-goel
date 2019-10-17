@@ -20,9 +20,7 @@ struct dll
 static dll_node_t *DLLCreateNode(const void *data);
 static dll_node_t *NodeXOR(dll_node_t *a, dll_node_t *b);
 
-/******************************************
- * dll functions: 									*
-******************************************/
+/******dll functions:********/
 dll_t *DLLCreate()
 {
 	dll_t *dll = NULL;
@@ -93,7 +91,7 @@ dll_iter_t DLLRemove(dll_iter_t iterator)
 	
 	/* if we are at the first or last nodes do nothing */
 	if (((NodeXOR(NULL, next_addr) == curr_addr->npx)) &&
-		(NodeXOR(NULL, prev_addr)== curr_addr->npx))
+		(NodeXOR(NULL, prev_addr) == curr_addr->npx))
 	{
 		iterator.curr_node = NULL;
 		
@@ -109,10 +107,8 @@ dll_iter_t DLLRemove(dll_iter_t iterator)
 	/* if we are in the middle of the list */
 	else
 	{
-		prev_addr->npx = 
-			NodeXOR((dll_node_t *)NodeXOR((dll_node_t *)prev_addr->npx, curr_addr), next_addr);
-		next_addr->npx = 
-			NodeXOR(prev_addr, (dll_node_t *)NodeXOR(curr_addr, (dll_node_t *)next_addr->npx));
+		prev_addr->npx = NodeXOR(NodeXOR(prev_addr->npx, curr_addr), next_addr);
+		next_addr->npx = NodeXOR(prev_addr, NodeXOR(curr_addr, next_addr->npx));
 	}
 	
 	free(curr_addr);
@@ -133,6 +129,7 @@ dll_iter_t DLLPushBack(dll_t *dll, const void *data)
 	dll_iter_t it_prev = {NULL, NULL, NULL};
 	dll_node_t *new_node = NULL;
 	
+	assert(NULL != dll);
 	iterator.curr_node = dll->last;
 	iterator.prev = dll->last->npx;
 	iterator.list = dll;
@@ -150,9 +147,6 @@ dll_iter_t DLLPushBack(dll_t *dll, const void *data)
 	
 	it_prev.curr_node = iterator.prev;
 	it_prev.curr_node->npx = NodeXOR(NodeXOR(iterator.prev->npx, iterator.curr_node), new_node);
-	/*
-	iterator.prev->npx = NodeXOR(NodeXOR(iterator.prev->npx, dll->last), new_node);
-	*/
 	iterator.curr_node = new_node;
 	
 	return iterator;
@@ -187,6 +181,7 @@ dll_iter_t DLLPushFront(dll_t *dll, const void *data)
 	dll_iter_t iterator = {NULL, NULL, NULL};
 	dll_node_t *new_node = NULL;
 	
+	assert(NULL != dll);
 	iterator.curr_node = dll->first;
 	iterator.prev = NULL;
 	iterator.list = dll;
@@ -215,6 +210,7 @@ void *DLLPopFront(dll_t *dll)
 	void *popped_data = NULL;
 	dll_iter_t iterator = {NULL, NULL, NULL};
 	
+	assert(NULL != dll);
 	if (dll->first->npx != dll->last)
 	{
 		to_pop = dll->first->npx;
@@ -238,10 +234,10 @@ void *DLLPopFront(dll_t *dll)
 size_t DLLSize(const dll_t *dll)
 {
 	size_t size = 0;
-	
 	dll_iter_t start = {NULL, NULL, NULL};
 	dll_iter_t end = {NULL, NULL, NULL};
 	
+	assert(NULL != dll);
 	if (1 == DLLIsEmpty(dll))
 	{
 		return 0;

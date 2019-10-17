@@ -53,6 +53,15 @@ static void SpliceTest()
 	{
 		printf("%d\n", *(int*)DLLGetData(iterator1));
 	}
+	
+	DLLPopBack(new_dll);
+	DLLPopBack(new_dll);
+	DLLPopBack(new_dll);
+	
+	for (iterator1 = DLLBegin(new_dll); !DLLIterIsEqual(iterator1, DLLEnd(new_dll)); iterator1 = DLLIterNext(iterator1))
+	{
+		printf("%d\n", *(int*)DLLGetData(iterator1));
+	}
 }
 /*
 static void FindTest(dll_iter_t iterator)
