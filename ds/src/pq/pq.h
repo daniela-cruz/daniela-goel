@@ -44,4 +44,6 @@ void *PQPeek(const pq_t *queue);
 /* 		Count number of tasks left in queue					*/
 size_t PQCount(const pq_t *queue);
 
+void PQErase(pq_t *queue, );
+
 #endif /*__PQ_H__*/
