@@ -43,21 +43,25 @@ static void SpliceTest()
 	iterator1 = DLLPushBack(new_dll, &num3);
 	
 	dll2 = DLLCreate();
-	iterator2 = DLLPushBack(dll2, &num4);
-	iterator2 = DLLPushBack(dll2, &num5);
-	iterator2 = DLLPushBack(dll2, &num6);
+	iterator2 = DLLPushFront(dll2, &num4);
+	iterator2 = DLLPushFront(dll2, &num5);
+	iterator2 = DLLPushFront(dll2, &num6);
 	
-	DLLSplice(DLLIterPrev(DLLEnd(new_dll)), DLLBegin(dll2), iterator2);
+	DLLSplice(DLLIterPrev(DLLEnd(new_dll)), DLLBegin(dll2), DLLEnd(dll2));
 	
 	for (iterator1 = DLLBegin(new_dll); !DLLIterIsEqual(iterator1, DLLEnd(new_dll)); iterator1 = DLLIterNext(iterator1))
 	{
 		printf("%d\n", *(int*)DLLGetData(iterator1));
 	}
 	
-	DLLPopBack(new_dll);
-	DLLPopBack(new_dll);
-	DLLPopBack(new_dll);
+	iterator1 = DLLRemove(DLLIterPrev(DLLEnd(new_dll)));
+	iterator1 = DLLRemove(DLLIterPrev(iterator1));
+	iterator1 = DLLRemove(DLLIterPrev(iterator1));
+	iterator1 = DLLRemove(DLLIterPrev(DLLEnd(new_dll)));
+	iterator1 = DLLPushFront(new_dll, &num4);
+	iterator1 = DLLPushFront(new_dll, &num5);
 	
+	printf("\nPrint after pop:\n");
 	for (iterator1 = DLLBegin(new_dll); !DLLIterIsEqual(iterator1, DLLEnd(new_dll)); iterator1 = DLLIterNext(iterator1))
 	{
 		printf("%d\n", *(int*)DLLGetData(iterator1));
