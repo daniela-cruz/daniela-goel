@@ -19,9 +19,7 @@ int main()
 	return 0;
 }
 
-/***************************************
- * 			System Tests:				*
-***************************************/
+/*******System Tests:	*******/
 static void CreateAndDestroyTest()
 {
 	sl_t *sl = NULL;
@@ -44,35 +42,48 @@ static void InsertTests()
 {
 	sl_t *sl = NULL;
 	sl_iter_t iterator;
-	int num1 = 123, num2 = 456, num3 = 789;
+	int num1 = 1, num2 = 4, num3 = 7, num4 = 9;
 	
 	printf("\n\nPUSH test. . .\n");	
 	sl = SLCreate(IsBefore, (void *)&num1);
-	iterator = SLIterNext(SLBegin(sl));
 	printf("Number of elements in list: %ld\n", SLSize(sl));
+	printf("IsEmpty test: \t\t\t");
+	(1 == SLIsEmpty(sl)) ? printf("SUCCESS!\n") : printf("FAILURE\n");
+	
 	
 	printf("Insert test. . . \n");
-	iterator = SLInsert(iterator, (void *)&num1);
+	iterator = SLInsert(sl, (void *)&num4);
+	printf("Number of elements in list: %ld\n", SLSize(sl));
+	printf("Data element is: %d\n",*(int*)SLGetData(iterator));
+	
+	iterator = SLInsert(sl, (void *)&num2);
+	printf("Number of elements in list: %ld\n", SLSize(sl));
+	printf("Data element is: %d\n",*(int*)SLGetData(iterator));
+	
+	iterator = SLInsert(sl, (void *)&num3);
+	printf("Number of elements in list: %ld\n", SLSize(sl));
+	printf("Data element is: %d\n",*(int*)SLGetData(iterator));
+	
+	iterator = SLInsert(sl, (void *)&num1);
+	printf("Number of elements in list: %ld\n", SLSize(sl));
+	printf("Data element is: %d\n",*(int*)SLGetData(iterator));
+	
 	printf("IsEmpty test: \t\t\t");
 	(0 == SLIsEmpty(sl)) ? printf("SUCCESS!\n") : printf("FAILURE\n");
-	printf("Number of elements in list: %ld\n", SLSize(sl));
 	
-	iterator = SLIterNext(iterator);
-	iterator = SLInsert(iterator, (void *)&num2);
-	printf("Number of elements in list: %ld\n", SLSize(sl));
+		
 	printf("Data element is: %d\n",*(int*)SLGetData(iterator));
 	printf("Popped data element is: %d\n",*(int*)SLPopBack(sl));
 	
-	iterator = SLBegin(sl);
-	iterator = SLIterNext(iterator);
-	iterator = SLIterNext(iterator);
-	iterator = SLInsert(iterator, (void *)&num3);
 	printf("IsEmpty test: \t\t\t");
 	(0 == SLIsEmpty(sl)) ? printf("SUCCESS!\n") : printf("FAILURE\n");
 	printf("Number of elements in list: %ld\n", SLSize(sl));
+	iterator = SLBegin(sl);
 	printf("Data element is: %d\n",*(int*)SLGetData(iterator));
 	
-	iterator = SLBegin(sl);
+	iterator = SLIterNext(iterator);
+	printf("Data element is: %d\n",*(int*)SLGetData(iterator));
+	
 	iterator = SLIterNext(iterator);
 	printf("Data element is: %d\n",*(int*)SLGetData(iterator));
 	
@@ -90,11 +101,11 @@ void MergeTest()
 	printf("\nMerge Test:\n");
 	sl1 = SLCreate(IsBefore, (void *)&num1);
 	iterator1 = SLBegin(sl1);
-	iterator1 = SLInsert(iterator1, (void *)&num1);
-	iterator1 = SLInsert(iterator1, (void *)&num2);
-	SLInsert(iterator1, (void *)&num3);
+	iterator1 = SLInsert(sl1, (void *)&num2);
+	iterator1 = SLInsert(sl1, (void *)&num3);
+	iterator1 = SLInsert(sl1, (void *)&num1);
 
-	printf("\nPrinting list:\n");
+	printf("\nPrinting list I:\n");
 	for (iterator1 = SLBegin(sl1); !SLIsEqual(iterator1, SLEnd(sl1)); iterator1 = SLIterNext(iterator1))
 	{
 		printf("%d ", *(int*)SLGetData(iterator1));
@@ -102,23 +113,23 @@ void MergeTest()
 		
 	sl2 = SLCreate(IsBefore, (void *)&num1);
 	iterator2 = SLBegin(sl2);
-	iterator2 = SLInsert(iterator2, (void *)&num4);
-	iterator2 = SLInsert(iterator2, (void *)&num5);
-	iterator2 = SLInsert(iterator2, (void *)&num6);
+	iterator2 = SLInsert(sl2, (void *)&num4);
+	iterator2 = SLInsert(sl2, (void *)&num6);
+	iterator2 = SLInsert(sl2, (void *)&num5);
 	
-	printf("\nPrinting list:\n");
+	printf("\nPrinting list II:\n");
 	for (iterator2 = SLBegin(sl2); !SLIsEqual(iterator2, SLEnd(sl2)); iterator2 = SLIterNext(iterator2))
 	{
 		printf("%d ", *(int*)SLGetData(iterator2));
 	}
 	
 	iterator1 = SLMerge(sl1, sl2);
-	printf("\nPrinting list:\n");
+	printf("\nNumber of elements in list: %ld\n", SLSize(sl1));
+	printf("\nPrinting merged list:\n");
 	for (iterator1 = SLBegin(sl1); !SLIsEqual(iterator1, SLEnd(sl1)); iterator1 = SLIterNext(iterator1))
 	{
 		printf("%d \n", *(int*)SLGetData(iterator1));
 	}
-	
 }
 
 /***************************************
@@ -142,6 +153,6 @@ void PrintList(sl_t *list)
 
 int IsBefore(void *node1, void *node2, void *param)
 {
-	return node1 < node2;
+	return *(int*)node1 < *(int*)node2;
 }
 

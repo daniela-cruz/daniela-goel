@@ -45,8 +45,14 @@ void SLDestroy(sl_t *sorted_list)
 	free(sorted_list);
 }
 
-sl_iter_t SLInsert(sl_iter_t iterator, void *data)
+sl_iter_t SLInsert(sl_t *list, void *data)
 {
+	sl_iter_t iterator;
+	
+	assert(NULL != list);
+	iterator = SLBegin(list);
+	
+	iterator = SLFind(SLBegin(iterator.sl), SLEnd(iterator.sl), data);
 	iterator.iterator = DLLInsert(iterator.iterator, data);
 	
 	return iterator;
@@ -58,6 +64,33 @@ sl_iter_t SLRemove(sl_iter_t iterator)
 	
 	return iterator;
 }
+/*
+sl_iter_t SLInsert(sl_t *sl, const void *data)
+{
+	sl_iter_t sl_iter = {NULL};
+	
+	assert(sl && data);	
+	
+	if (SLIsEmpty(sl))
+	{
+		sl_iter.iterator = DLLInsert(DLLBegin(sl->list), data);
+		return sl_iter;
+	}
+		
+	for (sl_iter = SLBegin(sl) ; !SLIterIsEqual(sl_iter, SLEnd(sl)); 
+	 sl_iter = SLIterNext(sl_iter))
+	 {
+	 	if(sl->IsBefore((void *)data, SLIterGetData(sl_iter), sl->param))
+	 	{
+	 		sl_iter.iterator = DLLInsert(sl_iter.iterator, data);
+	 		return sl_iter;
+	 	}
+	 }
+	 
+	 sl_iter.iterator = DLLInsert(DLLEnd(sl->list), data);
+	  
+	 return sl_iter;
+}*/
 
 void *SLPopBack(sl_t *list)
 {
@@ -138,7 +171,7 @@ sl_iter_t  SLFind(sl_iter_t from, sl_iter_t to, void *data)
 {
 	sl_iter_t iterator;
 	
-	iterator.iterator = DLLFind(from.iterator, to.iterator, (dll_cmp_func_t)to.sl->is_before, data);
+	iterator.iterator = DLLFind(from.iterator, to.iterator, (dll_cmp_func_t)to.sl->is_before, to.sl->param);
 
 	return iterator;
 }
@@ -157,14 +190,14 @@ sl_iter_t SLMerge(sl_t *to, sl_t *from)
 	sl_iter_t src;
 	sl_iter_t dest;
 	
-	for (dest = SLBegin(to), src = SLBegin(from);
-		((!SLIsEqual(src, SLEnd(from))) && (!SLIsEqual(dest, SLEnd(to)))); 
-		src = SLIterNext(src))
+	for (dest = SLBegin(to), src = SLBegin(from); 
+		(!SLIsEqual(src, SLEnd(from))) && (!SLIsEqual(dest, SLEnd(to))); 
+		dest = SLIterNext(dest))
 	{
 		if (to->is_before(SLGetData(src), SLGetData(dest), to->param))
 		{
-			DLLSplice(dest.iterator, src.iterator, src.iterator);
-			dest = SLIterNext(dest);
+			dest.iterator = DLLSplice(dest.iterator, src.iterator, src.iterator);
+			src = SLIterNext(src);
 		}
 	}
 	

@@ -37,7 +37,7 @@ sl_t *SLCreate(sl_is_before_t is_before_func, void *param);
 void SLDestroy(sl_t *sorted_list);
 
 /*	Insert a new node in place							*/
-sl_iter_t SLInsert(sl_iter_t iterator, void *data);
+sl_iter_t SLInsert(sl_t *list, void *data);
 
 /*	Remove a new node in place						*/
 sl_iter_t SLRemove(sl_iter_t iterator);
