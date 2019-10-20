@@ -2,6 +2,7 @@
 #include <stddef.h> /* size_t */
 
 #include "pq.h" /* pq_t and all functions below */
+#include "sl.h" /* sorted list implementation */
 
 struct priority_queue
 {
@@ -21,6 +22,7 @@ pq_t *PQCreate(pq_is_before_t func, void *param)
 	queue->list = SLCreate((sl_is_before_t)func, param);
 	if (NULL == queue->list)
 	{
+		free(queue);
 		return NULL;
 	}
 	
@@ -62,14 +64,5 @@ size_t PQCount(const pq_t *queue)
 
 void PQErase(pq_t *queue, pq_is_match_t func, void *param)
 {
-	pq_iter_t it;
-	
-	for (it = PQBegin(queue); (!PQIsEqual(it, PQEnd(queue))); it = PQIterNext(it))
-	{
-		if (1 == func(PQGetData(it), param))
-		{
-			it.iterator = SLRemove(it.iterator);
-			break;
-		}
-	}
+	SLRemove(SLFindIf(SLBegin(queue->list), SLEnd(queue->list), func, param));
 }
