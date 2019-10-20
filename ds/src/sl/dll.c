@@ -56,8 +56,9 @@ dll_iter_t DLLInsert(dll_iter_t iterator, const void *data)
 	new_node->npx = NodeXOR(iterator.prev, iterator.curr_node);
 	iterator.prev->npx = NodeXOR(NodeXOR(iterator.prev->npx, iterator.curr_node), new_node);
 	iterator.curr_node->npx = NodeXOR(NodeXOR(iterator.curr_node->npx, iterator.prev), new_node);
+	iterator.curr_node = new_node;
 	
-	return DLLIterPrev(iterator);
+	return iterator;
 }
 
 dll_iter_t DLLRemove(dll_iter_t iterator)

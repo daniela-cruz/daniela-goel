@@ -48,11 +48,22 @@ void SLDestroy(sl_t *sorted_list)
 sl_iter_t SLInsert(sl_t *list, void *data)
 {
 	sl_iter_t iterator;
+	/*int is_found = 0;*/
 	
 	assert(NULL != list);
-	iterator = SLBegin(list);
+	/*if ((0 == is_found) || (1 == SLIsEmpty(list)))
+	{
+		iterator = SLEnd(list);
+	}*/
 	
-	iterator = SLFind(SLBegin(iterator.sl), SLEnd(iterator.sl), data);
+	for (iterator = SLBegin(list); (!SLIsEqual(iterator, SLEnd(list))); iterator = SLIterNext(iterator))
+	{
+		if (1 == list->is_before(data, SLGetData(iterator), list->param))
+		{
+			break;
+		}
+	}
+	
 	iterator.iterator = DLLInsert(iterator.iterator, data);
 	
 	return iterator;
