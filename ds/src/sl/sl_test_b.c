@@ -112,7 +112,6 @@ void MergeTest()
 	}
 		
 	sl2 = SLCreate(IsBefore, (void *)&num1);
-	iterator2 = SLBegin(sl2);
 	iterator2 = SLInsert(sl2, (void *)&num4);
 	iterator2 = SLInsert(sl2, (void *)&num6);
 	iterator2 = SLInsert(sl2, (void *)&num5);
@@ -122,6 +121,7 @@ void MergeTest()
 	{
 		printf("%d ", *(int*)SLGetData(iterator2));
 	}
+	printf("\n\n");
 	
 	iterator1 = SLMerge(sl1, sl2);
 	printf("\nNumber of elements in list: %ld\n", SLSize(sl1));
@@ -130,6 +130,9 @@ void MergeTest()
 	{
 		printf("%d \n", *(int*)SLGetData(iterator1));
 	}
+	
+	SLDestroy(sl1);
+	SLDestroy(sl2);
 }
 
 /***************************************
