@@ -19,6 +19,7 @@ typedef struct task
 } task_t;
 
 sl_is_before_t SortingOperation(void *uid1, void *uid2, void *param);
+task_t *CreateTask(handle_func func, size_t interval_in_seconds, void *param);
 
 sched_t *SchedCreate()
 {
@@ -41,7 +42,7 @@ sched_t *SchedCreate()
 ilrd_uid_t 
 SchedAddTask(sched_t *scheduler, handle_func func, size_t interval_in_seconds, void *param)
 {
-	task_t *new_task = malloc(sizeof(*new_task));
+	task_t *new_task = CreateTask(func, interval_in_seconds, param);
 	ilrd_uid_t task_id = UIDCreate();
 	
 	assert(NULL != scheduler);
@@ -51,15 +52,9 @@ SchedAddTask(sched_t *scheduler, handle_func func, size_t interval_in_seconds, v
 		return task_id;
 	}
 	
-	new_task->handle_id = task_id;
-	new_task->iterval = interval_in_seconds;
-	new_task->data = param;
-	new_task->func = func;
-	new_task->act_time = interval_in_seconds;
-	
 	PQEnqueue(scheduler.queue, new_task);
 	
-	return task_id;
+	return new_task->handle_id;
 }
 
 void SchedRemoveTask(sched_t *scheduler, const ilrd_uid_t *task);
@@ -79,4 +74,29 @@ sl_is_before_t SortingOperation(void *uid1, void *uid2, void *param)
 {
 	(void)param;
 	return 1 == UIDIsEqual((ilrd_uid_t *)uid1, (ilrd_uid_t *)uid2);
+}
+
+task_t *CreateTask(handle_func func, size_t interval_in_seconds, void *param)
+{
+	ilrd_uid_t task_id = UIDCreate();
+	task_t *new_task = malloc(sizeof(*new_task));
+	
+	if (NULL == new_task)
+	{
+		return NULL;
+	}
+	
+	if (UIDIsError(task_id))
+	{
+		free(new_task);
+		return NULL;
+	}
+	
+	new_task->handle_id = task_id;
+	new_task->iterval = interval_in_seconds;
+	new_task->data = param;
+	new_task->func = func;
+	new_task->act_time = interval_in_seconds;
+	
+	return new_task;
 }
