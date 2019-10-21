@@ -303,25 +303,22 @@ int DLLForEach(dll_iter_t from, dll_iter_t to, dll_act_func_t func, void *param)
 
 dll_iter_t DLLSplice(dll_iter_t where, dll_iter_t from, dll_iter_t to)
 {
-	/*where.prev->npx = NodeXOR(DLLIterPrev(where).prev, from.curr_node);
-	from.curr_node->npx = NodeXOR(NodeXOR(from.curr_node->npx, from.prev), where.prev);
-	where.curr_node->npx = NodeXOR(NodeXOR(where.curr_node->npx, where.prev), to.curr_node);
-	to.curr_node->npx = NodeXOR(to.prev, where.curr_node);
-	
-	from.prev->npx = NodeXOR(NodeXOR(from.curr_node, from.prev->npx), DLLIterNext(to).curr_node);
-	DLLIterNext(to).curr_node->npx = NodeXOR(NodeXOR(DLLIterNext(to).curr_node->npx, to.prev), from.prev);
-
-	return from;*/
-	/************************/
 	dll_node_t *from_next = DLLIterNext(from).curr_node;
-	dll_node_t *to_next = DLLIterNext(to).curr_node;;
+	dll_node_t *to_next = DLLIterNext(to).curr_node;
+	dll_node_t *where_next = DLLIterNext(where).curr_node;
 	
 	from.prev->npx = NodeXOR(NodeXOR((from.prev)->npx, from.curr_node) , to_next);
 	to_next->npx = NodeXOR(from.prev, NodeXOR(to_next->npx, to.curr_node));  
 	
+	if (DLLIterIsEqual(to, DLLEnd(to.list)) && (!DLLIterIsEqual(to, from)))
+	{
+		to = DLLIterPrev(to);
+	}
+	
 	if (DLLIterIsEqual(to, from))
 	{
-		from_next = to_next = where.curr_node;
+		from_next = to_next;
+		to_next = where.curr_node;
 		from.prev = to.prev = where.prev;
 	}
 	
@@ -331,10 +328,10 @@ dll_iter_t DLLSplice(dll_iter_t where, dll_iter_t from, dll_iter_t to)
 	from.curr_node->npx = NodeXOR(from.prev, from_next);
 	from.prev->npx = NodeXOR(NodeXOR((where.prev)->npx, where.curr_node), from.curr_node);
 
-	where.curr_node->npx = NodeXOR(to.curr_node, DLLIterNext(where).curr_node);
+	where.curr_node->npx = NodeXOR(to.curr_node, where_next);
 	where.prev = to.curr_node;
 	
-	return from;
+	return DLLIterPrev(from);
 }
 
 /*******Internal functions:*********/

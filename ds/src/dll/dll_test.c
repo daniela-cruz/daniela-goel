@@ -60,8 +60,9 @@ static void SpliceTest()
 	{
 		printf("%d\n", *(int*)DLLGetData(iterator2));
 	}
-	
-	DLLSplice(DLLIterPrev(DLLEnd(new_dll)), DLLBegin(dll2), DLLEnd(dll2));
+	iterator1 = DLLIterPrev(DLLEnd(new_dll));
+	iterator2 = DLLBegin(dll2);
+	DLLSplice(iterator1, iterator2, DLLEnd(dll2));
 	
 	printf("\nPrint after splice:\n");
 	for (iterator1 = DLLBegin(new_dll); !DLLIterIsEqual(iterator1, DLLEnd(new_dll)); iterator1 = DLLIterNext(iterator1))
@@ -69,7 +70,7 @@ static void SpliceTest()
 		printf("%d\n", *(int*)DLLGetData(iterator1));
 	}
 	
-	iterator1 = DLLRemove(DLLIterPrev(DLLEnd(new_dll)));
+	iterator1 = DLLRemove(DLLEnd(new_dll));
 	iterator1 = DLLRemove(DLLIterPrev(iterator1));
 	iterator1 = DLLRemove(DLLIterPrev(iterator1));
 	iterator1 = DLLRemove(DLLIterPrev(DLLEnd(new_dll)));
