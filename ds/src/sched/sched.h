@@ -2,7 +2,7 @@
 #define __SCHED_H__
 #include <stddef.h> /* size_t */
 
-#include "uid.h"
+#include "uid.h" /* unique task id */
 
 /*		function pointer to a callback function 
 * 		of a task 																*/
@@ -25,10 +25,11 @@ sched_t *SchedCreate();
  * 		each task run time and func is the 
  * 		particular callback function to be 
  * 		executed by SchedRun										*/
-ilrd_uid_t SchedAddTask(sched_t *scheduler, handle_func func, size_t interval_in_seconds, void *param);
+ilrd_uid_t 
+SchedAddTask(sched_t *scheduler, operation_func_t func, size_t interval_in_seconds, void *param);
 
 /* 		remove entire task from schedule 					*/
-void SchedRemoveTask(sched_t *scheduler, const ilrd_uid_t *task);
+void SchedRemoveTask(sched_t *scheduler, ilrd_uid_t task);
 
 /*		if current task->data > 0, sleep will be
  * 		activated for data number of seconds 				*/
