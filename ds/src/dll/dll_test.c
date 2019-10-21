@@ -34,21 +34,36 @@ static void SpliceTest()
 	static dll_t *dll2 = NULL;
 	static dll_t *new_dll = NULL;
 	dll_iter_t iterator1, iterator2;
+	int n1 = 123, n2 = 456, n3 = 789;
+	int n4 = 1, n5 = 2, n6 = 3;
 	
 	printf("Splice:\n");
 	
 	new_dll = DLLCreate();
-	iterator1 = DLLPushBack(new_dll, &num1);
-	iterator1 = DLLPushBack(new_dll, &num2);
-	iterator1 = DLLPushBack(new_dll, &num3);
+	iterator1 = DLLPushBack(new_dll, &n1);
+	iterator1 = DLLPushBack(new_dll, &n2);
+	iterator1 = DLLPushBack(new_dll, &n3);
+	
+	printf("\nPrint before pop 1:\n");
+	for (iterator1 = DLLBegin(new_dll); !DLLIterIsEqual(iterator1, DLLEnd(new_dll)); iterator1 = DLLIterNext(iterator1))
+	{
+		printf("%d\n", *(int*)DLLGetData(iterator1));
+	}
 	
 	dll2 = DLLCreate();
-	iterator2 = DLLPushFront(dll2, &num4);
-	iterator2 = DLLPushFront(dll2, &num5);
-	iterator2 = DLLPushFront(dll2, &num6);
+	iterator2 = DLLPushFront(dll2, &n4);
+	iterator2 = DLLPushFront(dll2, &n5);
+	iterator2 = DLLPushFront(dll2, &n6);
+	
+	printf("\nPrint before pop 2:\n");
+	for (iterator2 = DLLBegin(dll2); !DLLIterIsEqual(iterator2, DLLEnd(dll2)); iterator2 = DLLIterNext(iterator2))
+	{
+		printf("%d\n", *(int*)DLLGetData(iterator2));
+	}
 	
 	DLLSplice(DLLIterPrev(DLLEnd(new_dll)), DLLBegin(dll2), DLLEnd(dll2));
 	
+	printf("\nPrint after splice:\n");
 	for (iterator1 = DLLBegin(new_dll); !DLLIterIsEqual(iterator1, DLLEnd(new_dll)); iterator1 = DLLIterNext(iterator1))
 	{
 		printf("%d\n", *(int*)DLLGetData(iterator1));
@@ -58,8 +73,8 @@ static void SpliceTest()
 	iterator1 = DLLRemove(DLLIterPrev(iterator1));
 	iterator1 = DLLRemove(DLLIterPrev(iterator1));
 	iterator1 = DLLRemove(DLLIterPrev(DLLEnd(new_dll)));
-	iterator1 = DLLPushFront(new_dll, &num4);
-	iterator1 = DLLPushFront(new_dll, &num5);
+	iterator1 = DLLPushFront(new_dll, &n4);
+	iterator1 = DLLPushFront(new_dll, &n5);
 	
 	printf("\nPrint after pop:\n");
 	for (iterator1 = DLLBegin(new_dll); !DLLIterIsEqual(iterator1, DLLEnd(new_dll)); iterator1 = DLLIterNext(iterator1))
