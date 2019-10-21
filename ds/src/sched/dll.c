@@ -314,7 +314,7 @@ dll_iter_t DLLSplice(dll_iter_t where, dll_iter_t from, dll_iter_t to)
 	return from;*/
 	/************************/
 	dll_node_t *from_next = DLLIterNext(from).curr_node;
-	dll_node_t *to_next = DLLIterNext(to).curr_node;
+	dll_node_t *to_next = DLLIterNext(to).curr_node;;
 	
 	from.prev->npx = NodeXOR(NodeXOR((from.prev)->npx, from.curr_node) , to_next);
 	to_next->npx = NodeXOR(from.prev, NodeXOR(to_next->npx, to.curr_node));  
@@ -322,8 +322,7 @@ dll_iter_t DLLSplice(dll_iter_t where, dll_iter_t from, dll_iter_t to)
 	if (DLLIterIsEqual(to, from))
 	{
 		from_next = to_next = where.curr_node;
-		from.prev = to.prev;
-		to.prev = where.prev;
+		from.prev = to.prev = where.prev;
 	}
 	
 	from.prev = where.prev;

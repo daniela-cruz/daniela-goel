@@ -1,5 +1,12 @@
 #include <stddef.h> /* size_t */
 
+/* for sleep() portability: */
+#ifdef _WIN32
+#include <Windows.h>
+#else
+#include <unistd.h>
+#endif
+
 #include "sched.h" /* types and all functions below */
 #include "uid.h" /* ilrd_uid_t */
 #include "pq.h" /* the below functions are priority queue based */
@@ -60,9 +67,22 @@ SchedAddTask(sched_t *scheduler, handle_func func, size_t interval_in_seconds, v
 	return new_task->handle_id;
 }
 
-void SchedRemoveTask(sched_t *scheduler, const ilrd_uid_t *task);
+void SchedRemoveTask(sched_t *scheduler, const ilrd_uid_t *task)
+{
+	PQErase(scheduler->queue, task->handle_id, NULL);
+}
 
-void SchedStop(sched_t *scheduler);
+void SchedStop(sched_t *scheduler)
+{
+	task_t *current_task = NULL;
+	int no_sleep = 0;
+	
+	assert(NULL != scheduler);
+	current_task = PQPeek(scheduler->queue);
+	(no_sleep < *(int*)current_task->data) ? sleep(current_task->interval) : sleep(no_sleep);
+	
+	PQPeek(scheduler->queue)->data = (void *)&no_sleep;
+}
 
 void SchedRun(sched_t *schedule)
 {
@@ -82,6 +102,7 @@ void SchedRun(sched_t *schedule)
 			{
 				curr_task->func(curr_task->data);
 				curr_task->act_time = curr_time;
+				curr_task->data = curr_task->interval;
 				PQEnqueue(schedule->queue, curr_task);
 			}
 		}

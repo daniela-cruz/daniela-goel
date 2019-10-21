@@ -1,6 +1,6 @@
 #include <stddef.h> /* size_t */
 #include <sys/types.h> /* pid_t */
-#include <unistd.h>
+#include <unistd.h> /* handle sleep() */
 #include <time.h> /* time_t */
 
 #include "uid.h"
