@@ -309,28 +309,27 @@ dll_iter_t DLLSplice(dll_iter_t where, dll_iter_t from, dll_iter_t to)
 	dll_iter_t to_next = DLLIterNext(to);
 	dll_iter_t where_prev = DLLIterPrev(where);
 	
+	/* connect from  to where_prev */	
+	from.curr_node->npx = 
+		NodeXOR(NodeXOR(from.curr_node->npx, from_prev.curr_node), where_prev.curr_node);
+	where_prev.curr_node->npx = 
+		NodeXOR(NodeXOR(where_prev.curr_node->npx, where.curr_node), from.curr_node);
+
+	if (DLLIterIsEqual(from, to))
+	{
+		to = from;
+	}
+	/* connect to node to where node */
+	to.curr_node->npx = 
+		NodeXOR(NodeXOR(to.curr_node->npx, to_next.curr_node), where.curr_node);
+	where.curr_node->npx = 
+		NodeXOR(NodeXOR(where.curr_node->npx, where_prev.curr_node), to.curr_node);
+	
 	/* link remaining list from which nodes will be removed */
 	from_prev.curr_node->npx = 
 		NodeXOR(NodeXOR(from_prev.curr_node->npx, from.curr_node), to_next.curr_node);
 	to_next.curr_node->npx = 
 		NodeXOR(NodeXOR(to_next.curr_node->npx, to_next.prev), from_prev.curr_node);
-
-	/* connect source nodes to destination nodes */	
-	from.curr_node->npx = 
-		NodeXOR(NodeXOR(from.curr_node->npx, from_prev.curr_node), where_prev.curr_node);
-	
-	if (DLLIterIsEqual(to, DLLEnd(to.list)) && (!(DLLIterIsEqual(from, to))))
-	{
-		to = DLLIterPrev(to);
-	}
-	to.curr_node->npx = 
-		NodeXOR(NodeXOR(to.curr_node->npx, to_next.curr_node), where.curr_node);
-	
-	/* connect destination nodes to source nodes */
-	where_prev.curr_node->npx = 
-		NodeXOR(NodeXOR(where_prev.curr_node->npx, where.curr_node), from.curr_node);
-	where.curr_node->npx = 
-		NodeXOR(NodeXOR(where.curr_node->npx, where_prev.curr_node), to.curr_node);
 	
 	return where;
 	/*where.prev->npx = NodeXOR(where_prev.curr_node, from.curr_node);
