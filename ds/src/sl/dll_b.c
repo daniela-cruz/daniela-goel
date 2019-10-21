@@ -65,7 +65,7 @@ dll_iter_t DLLRemove(dll_iter_t iterator)
 {
 	dll_node_t *next_addr = DLLIterNext(iterator).curr_node;
 	
-	if ((iterator.curr_node == &iterator.list->first) || (iterator.curr_node == &iterator.list->last))
+	if (1 == DLLIterIsEqual(iterator, DLLEnd(iterator.list)) || (1 == DLLIsEmpty(iterator.list)))
 	{
 		return DLLEnd(iterator.list);
 	}
@@ -88,12 +88,11 @@ dll_iter_t DLLPushBack(dll_t *dll, const void *data)
 {
 	dll_iter_t iterator = {NULL, NULL, NULL};
 	dll_iter_t it_prev = {NULL, NULL, NULL};
-	dll_node_t *new_node = NULL;
+	dll_node_t *new_node = DLLCreateNode(data);
 	
 	assert(NULL != dll);
 	iterator = DLLEnd(dll);
 	
-	new_node = DLLCreateNode(data);
 	if (NULL == new_node)
 	{
 		return iterator;
@@ -107,6 +106,8 @@ dll_iter_t DLLPushBack(dll_t *dll, const void *data)
 	iterator.curr_node = new_node;
 	
 	return iterator;
+	
+	/*return DLLInsert(DLLEnd(dll),data);*/
 }
 
 void *DLLPopBack(dll_t *dll)
@@ -157,6 +158,7 @@ dll_iter_t DLLPushFront(dll_t *dll, const void *data)
 	iterator.prev = &dll->first;
 	
 	return iterator;
+	/*return DLLInsert(DLLBegin(dll),data);*/
 }
 
 void *DLLPopFront(dll_t *dll)
@@ -191,14 +193,16 @@ size_t DLLSize(const dll_t *dll)
 {
 	size_t size = 0;
 	dll_iter_t start = {NULL, NULL, NULL};
+	dll_iter_t end = {NULL, NULL, NULL};
 	
 	assert(NULL != dll);
-	for (start = DLLBegin(dll), size = 0; 
-			!DLLIterIsEqual(start, DLLEnd(dll)); 
-			start = DLLIterNext(start))
+	if (1 == DLLIsEmpty(dll))
 	{
-		size++;
+		return 0;
 	}
+	
+	for (start = DLLBegin(dll), end = DLLEnd(dll), size = 1; 
+			!DLLIterIsEqual(DLLIterNext(start), end); size++, start = DLLIterNext(start));
 
 	return size;
 }
@@ -301,8 +305,34 @@ int DLLForEach(dll_iter_t from, dll_iter_t to, dll_act_func_t func, void *param)
 
 dll_iter_t DLLSplice(dll_iter_t where, dll_iter_t from, dll_iter_t to)
 {
-	/*where.prev->npx = NodeXOR(DLLIterPrev(where).prev, from.curr_node);
-	from.curr_node->npx = NodeXOR(NodeXOR(from.curr_node->npx, from.prev), where.prev);
+	dll_iter_t from_prev = DLLIterPrev(from);
+	dll_iter_t to_next = DLLIterNext(to);
+	dll_iter_t where_prev = DLLIterPrev(where);
+	
+	/* connect from  to where_prev */	
+	from.curr_node->npx = 
+		NodeXOR(NodeXOR(from.curr_node->npx, from_prev.curr_node), where_prev.curr_node);
+	where_prev.curr_node->npx = 
+		NodeXOR(NodeXOR(where_prev.curr_node->npx, where.curr_node), from.curr_node);
+
+	if (DLLIterIsEqual(from, to))
+	{
+		to = from;
+	}
+	/* connect to node to where node */
+	to.curr_node->npx = 
+		NodeXOR(NodeXOR(to.curr_node->npx, to_next.curr_node), where.curr_node);
+	where.curr_node->npx = 
+		NodeXOR(NodeXOR(where.curr_node->npx, where_prev.curr_node), to.curr_node);
+	
+	/* link remaining list from which nodes will be removed */
+	from_prev.curr_node->npx = 
+		NodeXOR(NodeXOR(from_prev.curr_node->npx, from.curr_node), to_next.curr_node);
+	to_next.curr_node->npx = 
+		NodeXOR(NodeXOR(to_next.curr_node->npx, to_next.prev), from_prev.curr_node);
+	
+	return where;
+	/*where.prev->npx = NodeXOR(where_prev.curr_node, from.curr_node);
 	where.curr_node->npx = NodeXOR(NodeXOR(where.curr_node->npx, where.prev), to.curr_node);
 	to.curr_node->npx = NodeXOR(to.prev, where.curr_node);
 	
@@ -311,8 +341,8 @@ dll_iter_t DLLSplice(dll_iter_t where, dll_iter_t from, dll_iter_t to)
 
 	return from;*/
 	/************************/
-	dll_node_t *from_next = DLLIterNext(from).curr_node;
-	dll_node_t *to_next = DLLIterNext(to).curr_node;;
+	/*dll_node_t *from_next = DLLIterNext(from).curr_node;
+	dll_node_t *to_next = DLLIterNext(to).curr_node;
 	
 	from.prev->npx = NodeXOR(NodeXOR((from.prev)->npx, from.curr_node) , to_next);
 	to_next->npx = NodeXOR(from.prev, NodeXOR(to_next->npx, to.curr_node));  
@@ -320,7 +350,8 @@ dll_iter_t DLLSplice(dll_iter_t where, dll_iter_t from, dll_iter_t to)
 	if (DLLIterIsEqual(to, from))
 	{
 		from_next = to_next = where.curr_node;
-		from.prev = to.prev = where.prev;
+		from.prev = to.prev;
+		to.prev = where.prev;
 	}
 	
 	from.prev = where.prev;
@@ -332,7 +363,7 @@ dll_iter_t DLLSplice(dll_iter_t where, dll_iter_t from, dll_iter_t to)
 	where.curr_node->npx = NodeXOR(to.curr_node, DLLIterNext(where).curr_node);
 	where.prev = to.curr_node;
 	
-	return from;
+	return from;*/
 }
 
 /*******Internal functions:*********/
