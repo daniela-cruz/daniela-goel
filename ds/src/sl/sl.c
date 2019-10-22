@@ -48,13 +48,8 @@ void SLDestroy(sl_t *sorted_list)
 sl_iter_t SLInsert(sl_t *list, void *data)
 {
 	sl_iter_t iterator;
-	/*int is_found = 0;*/
 	
 	assert(NULL != list);
-	/*if ((0 == is_found) || (1 == SLIsEmpty(list)))
-	{
-		iterator = SLEnd(list);
-	}*/
 	
 	for (iterator = SLBegin(list); (!SLIsEqual(iterator, SLEnd(list))); iterator = SLIterNext(iterator))
 	{
@@ -75,33 +70,6 @@ sl_iter_t SLRemove(sl_iter_t iterator)
 	
 	return iterator;
 }
-/*
-sl_iter_t SLInsert(sl_t *sl, const void *data)
-{
-	sl_iter_t sl_iter = {NULL};
-	
-	assert(sl && data);	
-	
-	if (SLIsEmpty(sl))
-	{
-		sl_iter.iterator = DLLInsert(DLLBegin(sl->list), data);
-		return sl_iter;
-	}
-		
-	for (sl_iter = SLBegin(sl) ; !SLIterIsEqual(sl_iter, SLEnd(sl)); 
-	 sl_iter = SLIterNext(sl_iter))
-	 {
-	 	if(sl->IsBefore((void *)data, SLIterGetData(sl_iter), sl->param))
-	 	{
-	 		sl_iter.iterator = DLLInsert(sl_iter.iterator, data);
-	 		return sl_iter;
-	 	}
-	 }
-	 
-	 sl_iter.iterator = DLLInsert(DLLEnd(sl->list), data);
-	  
-	 return sl_iter;
-}*/
 
 void *SLPopBack(sl_t *list)
 {

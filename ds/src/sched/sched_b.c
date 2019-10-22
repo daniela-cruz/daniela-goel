@@ -1,6 +1,6 @@
-#include <stdlib.h> /* malloc, free */
-#include <stddef.h> /* size_t */
-#include <assert.h> /* assert */
+#include <stdlib.h> 			/* malloc, free */
+#include <stddef.h> 		/* size_t */
+#include <assert.h> 		/* assert */
 
 /* for sleep() portability: */
 #ifdef _WIN32
@@ -9,22 +9,22 @@
 #include <unistd.h>
 #endif
 
-#include "sched.h" /* types and all functions below */
-#include "uid.h" /* ilrd_uid_t */
-#include "pq.h" /* the below functions are priority queue based */
+#include "sched.h" 			/* types and all functions below */
+#include "uid.h" 				/* ilrd_uid_t */
+#include "pq.h" 				/* the below functions are priority queue based */
 
 
 struct scheduler
 {
-    pq_t *queue; /* priority queue */
-	int should_i_sleep; /* zero when no need to call SchedStop and one when it's time to sleep */
+    pq_t *queue; 				/* priority queue */
+	int should_i_sleep; 		/* zero when no need to call SchedStop and one when it's time to sleep*/
 };
 
 typedef struct
 {
 	ilrd_uid_t handle_id;
-	time_t execute_time; 		/* last time the function ran */
-	size_t interval; 				/* defines how often a task will run */
+	time_t execute_time; 	/* last time the function ran */
+	size_t interval; 			/* defines how often a task will run */
 	void *data;
 	operation_func_t func; 	/* function pointer to the task */
 } sched_task_t;

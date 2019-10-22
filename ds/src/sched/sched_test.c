@@ -2,7 +2,7 @@
 #include <stddef.h> /* size_t */
 
 #include "sched.h" /* scheduler functions */
-#include "uid.h" /* ilrd_uid_t */
+#include "tester.h" /* debug funcs */
 
 struct action_func_data
 {
@@ -19,6 +19,9 @@ int main()
 	
 	ad[0].msg = "hello";
 	ad[0].uid = SchedAddTask(sch, PrintNonsense, 2, ad[0].msg);
+	
+	ad[1].msg = "world";
+	ad[1].uid = SchedAddTask(sch, PrintNonsense, 3, ad[0].msg);
 	
 	return 0;
 }
