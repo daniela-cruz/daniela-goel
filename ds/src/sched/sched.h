@@ -5,17 +5,17 @@
 #include "uid.h" /* unique task id */
 
 /*		function pointer to a callback function 
-* 		of a task 																*/
+* 		of a task 													*/
 typedef int (*operation_func_t)(void *);	
 
 /*		the user will receive a pointer to new
  * 		scheduler whenever SchedCreate 
- * 		will be called 														*/
+ * 		will be called 												*/
 typedef struct scheduler sched_t;
 
 /*		create a new scheduler. SchedDestroy
  * 		must be called in order to terminate
- * 		this program 														*/
+ * 		this program 												*/
 sched_t *SchedCreate();
 
 /*		add new task to scheduler. Note that 
@@ -24,15 +24,15 @@ sched_t *SchedCreate();
  * 		determines minimal interval between 
  * 		each task run time and func is the 
  * 		particular callback function to be 
- * 		executed by SchedRun										*/
+ * 		executed by SchedRun								*/
 ilrd_uid_t 
 SchedAddTask(sched_t *scheduler, operation_func_t func, size_t interval_in_seconds, void *param);
 
 /* 		remove entire task from schedule 					*/
-void SchedRemoveTask(sched_t *scheduler, ilrd_uid_t task);
+void SchedRemoveTask(sched_t *scheduler, ilrd_uid_t *task_uid);
 
 /*		if current task->data > 0, sleep will be
- * 		activated for data number of seconds 				*/
+ * 		activated for data number of seconds 			*/
 void SchedStop(sched_t *scheduler);
 
 /*		run tasks in queue until SchedDestroy is 
