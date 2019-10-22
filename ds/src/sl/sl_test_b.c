@@ -14,8 +14,8 @@ void PrintList(sl_t *list);
 int main()
 {
 	/*CreateAndDestroyTest();*/
-	/*InsertTests();*/
-	MergeTest();
+	InsertTests();
+	/*MergeTest();*/
 	return 0;
 }
 
@@ -71,6 +71,11 @@ static void InsertTests()
 	printf("IsEmpty test: \t\t\t");
 	(0 == SLIsEmpty(sl)) ? printf("SUCCESS!\n") : printf("FAILURE\n");
 	
+	printf("\nPrinting list:\n");
+	for (iterator = SLBegin(sl); !SLIsEqual(iterator, SLEnd(sl)); iterator = SLIterNext(iterator))
+	{
+		printf("%d \n", *(int*)SLGetData(iterator));
+	}
 		
 	printf("Data element is: %d\n",*(int*)SLGetData(iterator));
 	printf("Popped data element is: %d\n",*(int*)SLPopBack(sl));
@@ -86,6 +91,12 @@ static void InsertTests()
 	
 	iterator = SLIterNext(iterator);
 	printf("Data element is: %d\n",*(int*)SLGetData(iterator));
+	
+	printf("\nPrinting list:\n");
+	for (iterator = SLBegin(sl); !SLIsEqual(iterator, SLEnd(sl)); iterator = SLIterNext(iterator))
+	{
+		printf("%d ", *(int*)SLGetData(iterator));
+	}
 	
 	SLDestroy(sl);
 }
