@@ -86,105 +86,36 @@ int DLLIsEmpty(const dll_t *dll)
 
 dll_iter_t DLLPushBack(dll_t *dll, const void *data)
 {
-	dll_iter_t iterator = {NULL, NULL, NULL};
-	dll_iter_t it_prev = {NULL, NULL, NULL};
-	dll_node_t *new_node = DLLCreateNode(data);
-	
 	assert(NULL != dll);
-	iterator = DLLEnd(dll);
 	
-	if (NULL == new_node)
-	{
-		return iterator;
-	}
-	
-	new_node->npx = NodeXOR(iterator.prev, &dll->last);
-	dll->last.npx = new_node;
-	
-	it_prev.curr_node = iterator.prev;
-	it_prev.curr_node->npx = NodeXOR(NodeXOR(iterator.prev->npx, iterator.curr_node), new_node);
-	iterator.curr_node = new_node;
-	
-	return iterator;
-	
-	/*return DLLInsert(DLLEnd(dll),data);*/
+	return DLLInsert(DLLEnd(dll),data);
 }
 
 void *DLLPopBack(dll_t *dll)
 {
-	dll_node_t *to_pop = NULL;
 	void *popped_data = NULL;
-	dll_iter_t iterator;
 	
 	assert(NULL != dll);
-	iterator = DLLIterPrev(DLLEnd(dll));
-	if (dll->last.npx == &dll->first)
-	{
-		return NULL;
-	}
-	
-	to_pop = iterator.curr_node;
-	popped_data =to_pop->data;
-	
-	iterator = DLLIterPrev(iterator);
-	iterator.curr_node->npx = NodeXOR(NodeXOR(iterator.curr_node->npx, to_pop), &dll->last);
-	
-	dll->last.npx = iterator.curr_node;
-	
-	free(to_pop);
+	popped_data = DLLGetData(DLLIterPrev(DLLEnd(dll)));
+	DLLRemove(DLLIterPrev(DLLEnd(dll)));
 	
 	return popped_data;
 }
 
 dll_iter_t DLLPushFront(dll_t *dll, const void *data)
 {
-	dll_iter_t iterator = {NULL, NULL, NULL};
-	dll_node_t *new_node = NULL;
-	
 	assert(NULL != dll);
-	iterator = DLLBegin(dll);
 	
-	new_node = DLLCreateNode(data);
-	if (NULL == new_node)
-	{
-		return DLLEnd(dll);
-	}
-	
-	new_node->npx = NodeXOR(dll->first.npx, &dll->first);
-	dll->first.npx->npx = NodeXOR(NodeXOR(dll->first.npx->npx, &dll->first), new_node);
-	dll->first.npx = new_node;
-	
-	iterator.curr_node = new_node;
-	iterator.prev = &dll->first;
-	
-	return iterator;
-	/*return DLLInsert(DLLBegin(dll),data);*/
+	return DLLInsert(DLLBegin(dll),data);
 }
 
 void *DLLPopFront(dll_t *dll)
 {
-	dll_node_t *to_pop = NULL;
 	void *popped_data = NULL;
-	dll_iter_t iterator = {NULL, NULL, NULL};
 	
 	assert(NULL != dll);
-	if (dll->first.npx == &dll->last)
-	{
-		return NULL;
-	}
-	to_pop = dll->first.npx;
-	popped_data = dll->first.npx->data;
-	
-	iterator.list = dll;
-	iterator.curr_node = dll->first.npx;
-	iterator.prev = &dll->first;
-	
-	iterator = DLLIterNext(iterator);
-	iterator.curr_node->npx = NodeXOR(NodeXOR(iterator.curr_node->npx, to_pop), &dll->first);
-	
-	dll->first.npx = iterator.curr_node;
-	
-	free(to_pop);
+	popped_data = DLLGetData(DLLIterPrev(DLLEnd(dll)));
+	DLLRemove(DLLBegin(dll));
 	
 	return popped_data;
 }
@@ -305,12 +236,12 @@ int DLLForEach(dll_iter_t from, dll_iter_t to, dll_act_func_t func, void *param)
 
 dll_iter_t DLLSplice(dll_iter_t where, dll_iter_t from, dll_iter_t to)
 {
-	dll_iter_t from_prev = DLLIterPrev(from);
+	/*dll_iter_t from_prev = DLLIterPrev(from);
 	dll_iter_t to_next = DLLIterNext(to);
-	dll_iter_t where_prev = DLLIterPrev(where);
+	dll_iter_t where_prev = DLLIterPrev(where);*/
 	
 	/* connect from  to where_prev */	
-	from.curr_node->npx = 
+	/*from.curr_node->npx = 
 		NodeXOR(NodeXOR(from.curr_node->npx, from_prev.curr_node), where_prev.curr_node);
 	where_prev.curr_node->npx = 
 		NodeXOR(NodeXOR(where_prev.curr_node->npx, where.curr_node), from.curr_node);
@@ -318,20 +249,21 @@ dll_iter_t DLLSplice(dll_iter_t where, dll_iter_t from, dll_iter_t to)
 	if (DLLIterIsEqual(from, to))
 	{
 		to = from;
-	}
+	}*/
 	/* connect to node to where node */
-	to.curr_node->npx = 
+	/*to.curr_node->npx = 
 		NodeXOR(NodeXOR(to.curr_node->npx, to_next.curr_node), where.curr_node);
 	where.curr_node->npx = 
-		NodeXOR(NodeXOR(where.curr_node->npx, where_prev.curr_node), to.curr_node);
+		NodeXOR(NodeXOR(where.curr_node->npx, where_prev.curr_node), to.curr_node);*/
 	
 	/* link remaining list from which nodes will be removed */
-	from_prev.curr_node->npx = 
+	/*from_prev.curr_node->npx = 
 		NodeXOR(NodeXOR(from_prev.curr_node->npx, from.curr_node), to_next.curr_node);
 	to_next.curr_node->npx = 
 		NodeXOR(NodeXOR(to_next.curr_node->npx, to_next.prev), from_prev.curr_node);
 	
-	return where;
+	return where;*/
+	/*********************/
 	/*where.prev->npx = NodeXOR(where_prev.curr_node, from.curr_node);
 	where.curr_node->npx = NodeXOR(NodeXOR(where.curr_node->npx, where.prev), to.curr_node);
 	to.curr_node->npx = NodeXOR(to.prev, where.curr_node);
@@ -341,17 +273,23 @@ dll_iter_t DLLSplice(dll_iter_t where, dll_iter_t from, dll_iter_t to)
 
 	return from;*/
 	/************************/
-	/*dll_node_t *from_next = DLLIterNext(from).curr_node;
+	dll_node_t *from_next = DLLIterNext(from).curr_node;
 	dll_node_t *to_next = DLLIterNext(to).curr_node;
+	dll_node_t *where_next = DLLIterNext(where).curr_node;
 	
 	from.prev->npx = NodeXOR(NodeXOR((from.prev)->npx, from.curr_node) , to_next);
 	to_next->npx = NodeXOR(from.prev, NodeXOR(to_next->npx, to.curr_node));  
 	
+	if (DLLIterIsEqual(to, DLLEnd(to.list)) && (!DLLIterIsEqual(to, from)))
+	{
+		to = DLLIterPrev(to);
+	}
+	
 	if (DLLIterIsEqual(to, from))
 	{
-		from_next = to_next = where.curr_node;
-		from.prev = to.prev;
-		to.prev = where.prev;
+		from_next = to_next;
+		to_next = where.curr_node;
+		from.prev = to.prev = where.prev;
 	}
 	
 	from.prev = where.prev;
@@ -360,10 +298,10 @@ dll_iter_t DLLSplice(dll_iter_t where, dll_iter_t from, dll_iter_t to)
 	from.curr_node->npx = NodeXOR(from.prev, from_next);
 	from.prev->npx = NodeXOR(NodeXOR((where.prev)->npx, where.curr_node), from.curr_node);
 
-	where.curr_node->npx = NodeXOR(to.curr_node, DLLIterNext(where).curr_node);
+	where.curr_node->npx = NodeXOR(to.curr_node, where_next);
 	where.prev = to.curr_node;
 	
-	return from;*/
+	return DLLIterPrev(from);
 }
 
 /*******Internal functions:*********/

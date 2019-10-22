@@ -65,7 +65,7 @@ dll_iter_t DLLRemove(dll_iter_t iterator)
 {
 	dll_node_t *next_addr = DLLIterNext(iterator).curr_node;
 	
-	if ((iterator.curr_node == &iterator.list->first) || (iterator.curr_node == &iterator.list->last))
+	if (1 == DLLIterIsEqual(iterator, DLLEnd(iterator.list)) || (1 == DLLIsEmpty(iterator.list)))
 	{
 		return DLLEnd(iterator.list);
 	}
@@ -86,103 +86,36 @@ int DLLIsEmpty(const dll_t *dll)
 
 dll_iter_t DLLPushBack(dll_t *dll, const void *data)
 {
-	dll_iter_t iterator = {NULL, NULL, NULL};
-	dll_iter_t it_prev = {NULL, NULL, NULL};
-	dll_node_t *new_node = NULL;
-	
 	assert(NULL != dll);
-	iterator = DLLEnd(dll);
 	
-	new_node = DLLCreateNode(data);
-	if (NULL == new_node)
-	{
-		return iterator;
-	}
-	
-	new_node->npx = NodeXOR(iterator.prev, &dll->last);
-	dll->last.npx = new_node;
-	
-	it_prev.curr_node = iterator.prev;
-	it_prev.curr_node->npx = NodeXOR(NodeXOR(iterator.prev->npx, iterator.curr_node), new_node);
-	iterator.curr_node = new_node;
-	
-	return iterator;
+	return DLLInsert(DLLEnd(dll),data);
 }
 
 void *DLLPopBack(dll_t *dll)
 {
-	dll_node_t *to_pop = NULL;
 	void *popped_data = NULL;
-	dll_iter_t iterator;
 	
 	assert(NULL != dll);
-	iterator = DLLIterPrev(DLLEnd(dll));
-	if (dll->last.npx == &dll->first)
-	{
-		return NULL;
-	}
-	
-	to_pop = iterator.curr_node;
-	popped_data =to_pop->data;
-	
-	iterator = DLLIterPrev(iterator);
-	iterator.curr_node->npx = NodeXOR(NodeXOR(iterator.curr_node->npx, to_pop), &dll->last);
-	
-	dll->last.npx = iterator.curr_node;
-	
-	free(to_pop);
+	popped_data = DLLGetData(DLLIterPrev(DLLEnd(dll)));
+	DLLRemove(DLLIterPrev(DLLEnd(dll)));
 	
 	return popped_data;
 }
 
 dll_iter_t DLLPushFront(dll_t *dll, const void *data)
 {
-	dll_iter_t iterator = {NULL, NULL, NULL};
-	dll_node_t *new_node = NULL;
-	
 	assert(NULL != dll);
-	iterator = DLLBegin(dll);
 	
-	new_node = DLLCreateNode(data);
-	if (NULL == new_node)
-	{
-		return DLLEnd(dll);
-	}
-	
-	new_node->npx = NodeXOR(dll->first.npx, &dll->first);
-	dll->first.npx->npx = NodeXOR(NodeXOR(dll->first.npx->npx, &dll->first), new_node);
-	dll->first.npx = new_node;
-	
-	iterator.curr_node = new_node;
-	iterator.prev = &dll->first;
-	
-	return iterator;
+	return DLLInsert(DLLBegin(dll),data);
 }
 
 void *DLLPopFront(dll_t *dll)
 {
-	dll_node_t *to_pop = NULL;
 	void *popped_data = NULL;
-	dll_iter_t iterator = {NULL, NULL, NULL};
 	
 	assert(NULL != dll);
-	if (dll->first.npx == &dll->last)
-	{
-		return NULL;
-	}
-	to_pop = dll->first.npx;
-	popped_data = dll->first.npx->data;
-	
-	iterator.list = dll;
-	iterator.curr_node = dll->first.npx;
-	iterator.prev = &dll->first;
-	
-	iterator = DLLIterNext(iterator);
-	iterator.curr_node->npx = NodeXOR(NodeXOR(iterator.curr_node->npx, to_pop), &dll->first);
-	
-	dll->first.npx = iterator.curr_node;
-	
-	free(to_pop);
+	popped_data = DLLGetData(DLLIterPrev(DLLEnd(dll)));
+	DLLRemove(DLLBegin(dll));
 	
 	return popped_data;
 }
