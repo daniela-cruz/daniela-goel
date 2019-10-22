@@ -1,3 +1,6 @@
+/* 
+* gd sched.c sched.h sched_test.c uid.c uid.h tester.h ../dll/dll.c ../sl/sl.c ../pq/pq.c -I ../dll/ ../sl/ ../pq/
+*/
 #include <stdio.h> /* printf */
 #include <stddef.h> /* size_t */
 
@@ -22,6 +25,8 @@ int main()
 	
 	ad[1].msg = "world";
 	ad[1].uid = SchedAddTask(sch, PrintNonsense, 3, ad[0].msg);
+	
+	printf("Elements number in queue: %ld\n", PrintQueueSize(sch));
 	
 	return 0;
 }

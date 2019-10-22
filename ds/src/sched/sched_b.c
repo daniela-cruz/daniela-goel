@@ -156,3 +156,13 @@ static sched_task_t *CreateTask(operation_func_t func, size_t interval_in_second
 	
 	return new_task;
 }
+
+/***********************************
+* 		DBUG FUNCTIONS 	*
+***********************************/
+ 
+ size_t PrintQueueSize(sched_t *scheduler)
+{
+	assert(NULL != scheduler);
+	return PQCount(scheduler->queue);
+}
