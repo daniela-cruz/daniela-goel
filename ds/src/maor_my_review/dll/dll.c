@@ -46,17 +46,15 @@ static dll_node_t *DLLCreateNode(const void *data);
 /* Free node */
 static void DLLFreeNode(dll_node_t *node);
 
+/* Disconnect nodes from existing list */
+void DLLDisconnectNodes(dll_iter_t from, dll_iter_t to);
+
 /*******************************************************************************
 *                                                                              *
 * Implementation                                                               *
 *                                                                              *
 *******************************************************************************/
 
-/* Disconnect nodes from existing list */
-void DLLDisconnectNodes(dll_iter_t from, dll_iter_t to);
-
-
-/* Creates a new list and returns a pointer to it */
 dll_t *DLLCreate()
 {
     dll_t *new_list = NULL;
@@ -119,14 +117,13 @@ static void DLLFreeNode(dll_node_t *node)
     free(node);
 }
 
-/* push node before head node and returns an iterator to the next node */
 dll_iter_t DLLPushFront(dll_t *list, const void *data)
 {
     assert(list);
 
     return DLLInsert(DLLBegin(list),data);
 }
-/* push node after last node and return an iterator to the next node */
+
 dll_iter_t DLLPushBack(dll_t *list, const void *data)
 {
     assert(list);
@@ -138,10 +135,16 @@ void *DLLPopFront(dll_t *list)
 {
     void *tmp_data = NULL;
     
-    assert(list && !DLLIsEmpty(list));
+    assert(list);
 
     tmp_data = DLLIterGetData(DLLBegin(list));
 
+    /* if list is empty return NULL */
+    if (DLLIsEmpty(list))
+    {
+        return NULL;
+    }
+    
     DLLRemove(DLLBegin(list));
 
     return tmp_data;
@@ -151,7 +154,13 @@ void *DLLPopBack(dll_t *list)
 {
     void *tmp_data = NULL;
     
-    assert(list && !DLLIsEmpty(list));
+    assert(list);
+    
+    /* if list is empty return NULL */
+    if (DLLIsEmpty(list))
+    {
+        return NULL;
+    }
 
     tmp_data = DLLIterGetData(DLLIterPrev(DLLEnd(list)));
 
@@ -160,8 +169,6 @@ void *DLLPopBack(dll_t *list)
     return tmp_data;
 }
 
-/* DLLInsert: Insert node at current iter position
- * Return iterator that point to new node                                     */
 dll_iter_t DLLInsert(dll_iter_t iter, const void *data)
 {
     dll_node_t *new_node = NULL;
@@ -182,10 +189,7 @@ dll_iter_t DLLInsert(dll_iter_t iter, const void *data)
     new_node->next = iter.current;
     new_node->prev->next = new_node;
    
-    iter = DLLIterPrev(iter);
-    /*iter.current = iter.current->prev;*/
-
-    return iter;
+    return DLLIterPrev(iter); 
 }
 
 dll_iter_t DLLRemove(dll_iter_t iter)
@@ -193,11 +197,13 @@ dll_iter_t DLLRemove(dll_iter_t iter)
     dll_iter_t tmp = {NULL,NULL};
      
     /* check iter.current is NULL or list is empty */
-    assert((iter.current) && (iter.list));
+    if ((NULL == iter.current) ||  (NULL == iter.list))
+    {
+        return DLLEnd(iter.list);
+    }
     
     /* hold iter next node members */
-    tmp.current = iter.current->next;
-    tmp.list = iter.list;
+    tmp = DLLIterNext(iter);
     
     /* Change pointers of next and prev nodes of current */
     iter.current->next->prev = iter.current->prev;
@@ -212,10 +218,11 @@ dll_iter_t DLLRemove(dll_iter_t iter)
 int DLLForEach(dll_iter_t start, dll_iter_t end, dll_act_func_t act_func, void *param)
 {
     dll_iter_t iter = {NULL, NULL};
-    
-    for (iter = start; !DLLIterIsEqual(iter,end); iter = DLLIterNext(iter))
+    int status = 0; /* success == 0 */
+
+    for (iter = start; !status && !DLLIterIsEqual(iter,end); iter = DLLIterNext(iter))
     {
-        act_func(DLLIterGetData(iter),param);
+        status = act_func(DLLIterGetData(iter),param);
     }
 
     return 0;
@@ -227,16 +234,15 @@ dll_iter_t DLLFind(dll_iter_t start, dll_iter_t end, dll_cmp_func_t cmp_func, vo
     
     for (iter = start; !DLLIterIsEqual(iter, end); iter = DLLIterNext(iter))
     {
-        if (0 == cmp_func(DLLIterGetData(iter),param))
+        if (1 == cmp_func(DLLIterGetData(iter),param))
         {
             return iter;
         }
     }
     
-    return iter;
+    return DLLEnd(start.list);
 }
 
-/* move elements [from,to] to where */
 dll_iter_t DLLSplice(dll_iter_t where, dll_iter_t from, dll_iter_t to)
 {
     /* Disconnect nodes from source list */

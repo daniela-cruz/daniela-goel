@@ -21,6 +21,7 @@ typedef enum sched_status_t {READY, WAITING, INACTIVE}; /*?*/
 struct scheduler
 {
     pq_t *queue; /* priority queue */
+    int should_i_sleep; /* zero when no need to call SchedStop and one when it's time to sleep */
 };
 
 typedef struct task_t
@@ -46,6 +47,8 @@ sched_t *SchedCreate()
 		free(schedule);
 		return NULL;
 	}
+	
+	schedule->should_i_sleep = 0;
 	
 	return schedule;
 }
@@ -87,27 +90,21 @@ void SchedStop(sched_t *scheduler)
 
 void SchedRun(sched_t *schedule)
 {
-	time_t curr_time = time(NULL);
-	task_t *curr_task = NULL;
-	
 	assert(NULL != schedule);
 	
-	while (SchedDestroy(schedule) != PQPeek(schedule->queue)->func(schedule))
+	while (0 == schedule->should_i_sleep)
 	{
-		for (; !PQIsEmpty(schedule->queue); PQDequeue(schedule->queue))
+		time_t curr_time = time(NULL);
+		task_t *curr_task = PQPeek(schedule->queue);
+		
+		if (curr_time >= (curr_task->act_time + curr_task->interval))
 		{
-			curr_time = time(NULL);
-			curr_task = PQPeek(schedule->queue);
-			
-			if (curr_time >= (curr_task->act_time + curr_task->interval))
-			{
-				curr_task->func(curr_task->data);
-				curr_task->act_time = curr_time;
-				curr_task->data = curr_task->interval;
-			}
-			
-			PQEnqueue(schedule->queue, curr_task);
+			curr_task->func(curr_task->data);
+			curr_task->act_time = curr_time;
+			curr_task->data = curr_task->interval;
 		}
+		
+		PQEnqueue(schedule->queue, curr_task);
 	}
 	
 	SchedDestroy(schedule);

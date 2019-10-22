@@ -225,5 +225,5 @@ int IntAddNum(void *data, void *param)
 
 int IntFindNum(const void *data, void *param)
 {
-    return (*(int *)data == *(int *)param) ? 0 : -1;
+    return (*(int *)data == *(int *)param) ? 1 : 0;
 }
