@@ -76,7 +76,8 @@ static void InsertTests()
 	{
 		printf("%d \n", *(int*)SLGetData(iterator));
 	}
-		
+	
+	iterator = SLBegin(sl);
 	printf("Data element is: %d\n",*(int*)SLGetData(iterator));
 	printf("Popped data element is: %d\n",*(int*)SLPopBack(sl));
 	
