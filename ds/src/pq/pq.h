@@ -3,7 +3,6 @@
 
 #include <stddef.h> /* size_t */
 
-#include "sl.h" /* sl_t and other sorted list functions */
 #include "dll.h" /* the sorted list operats using doubly linked list */
 
 enum status {SUCCESS, FAILURE};

@@ -1,7 +1,7 @@
 #include <stdlib.h> /* malloc, free */
 #include <stddef.h> /* size_t */
 
-#include "pq.h" /* pq_t and all functions below */
+#include "pq.h"
 #include "sl.h" /* sorted list implementation */
 
 struct priority_queue
