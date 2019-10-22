@@ -18,6 +18,8 @@ struct scheduler
 {
     pq_t *queue; 				/* priority queue */
 	int should_i_sleep; 		/* zero when no need to call SchedStop and one when it's time to sleep*/
+	task_t *task_running;
+	int remove_me;
 };
 
 typedef struct
@@ -29,8 +31,14 @@ typedef struct
 	operation_func_t func; 	/* function pointer to the task */
 } sched_task_t;
 
+/*************TIME ******************/
 static int CmpExeTime(void *task1, void *task2, void *param);
+
+/*************TASKS ***************/
 static sched_task_t *CreateTask(operation_func_t func, size_t interval_in_seconds, void *param);
+static int RunTask(sched_task_t *task);
+
+/************SORTING*************/
 static int IsSameUID(void *element_uid, void *task_uid);
 
 sched_t *SchedCreate()
@@ -49,6 +57,8 @@ sched_t *SchedCreate()
 	}
 	
 	schedule->should_i_sleep = 0;
+	schedule->task_running = NULL;
+	schedule->remove_me = 0;
 	
 	return schedule;
 }
@@ -74,7 +84,10 @@ SchedAddTask(sched_t *scheduler, operation_func_t func, size_t interval_in_secon
 
 void SchedRemoveTask(sched_t *scheduler, ilrd_uid_t *task_uid)
 {
-	PQErase(scheduler->queue, IsSameUID, task_uid);
+	assert(NULL != scheduler);
+	assert(NULL != task_uid);
+	
+	PQErase(scheduler->queue, IsSameUID, (void *)task_uid);
 }
 
 void SchedStop(sched_t *scheduler)
@@ -93,18 +106,17 @@ void SchedRun(sched_t *schedule)
 {
 	assert(NULL != schedule);
 	
-	while (0 == schedule->should_i_sleep)
+	while ((0 == schedule->remove_me) && (0 == PQIsEmpty(schedule->queue)))
 	{
 		time_t curr_time = time(NULL);
-		sched_task_t *curr_task = PQPeek(schedule->queue);
+		task_t *curr_task = PQPeek(schedule->queue);
 		
-		if (curr_time >= (curr_task->execute_time + curr_task->interval))
+		if (curr_time >= (curr_task->execute_time))
 		{
-			curr_task->func(curr_task->data);
+			curr_task->task_running(curr_task->data);
 			curr_task->execute_time = curr_time;
-			*(size_t*)curr_task->data = curr_task->interval;
 		}
-		
+			
 		PQEnqueue(schedule->queue, curr_task);
 	}
 	
@@ -113,18 +125,28 @@ void SchedRun(sched_t *schedule)
 
 void SchedDestroy(sched_t *scheduler)
 {
+	while (!PQIsEmpty(scheduler->queue))
+	{
+		PQDequeue(scheduler->queue);
+	}
+	
 	PQDestroy(scheduler->queue);
 	free(scheduler); scheduler = NULL;
 }
 
-/*********INTERNAL FUNCTIONS*********/
+/***********************************
+* 	INTERNAL FUNCTIONS 	*
+***********************************/
+
+/************SORTING*************/
 static int CmpExeTime(void *task1, void *task2, void *param)
 {
 	assert(NULL != task1);
 	assert(NULL != task2);
 	(void)param;
 	
-	return (int)((time_t)(((sched_task_t *)task1)->execute_time) - (time_t)(((sched_task_t *)task2)->execute_time));
+	return (int)((time_t)(((sched_task_t *)task1)->execute_time) - 
+			(time_t)(((sched_task_t *)task2)->execute_time));
 }
 
 static int IsSameUID(void *element_uid, void *task_uid)
@@ -132,6 +154,7 @@ static int IsSameUID(void *element_uid, void *task_uid)
 	return UIDIsEqual(*(ilrd_uid_t*)element_uid, *(ilrd_uid_t*)task_uid);
 }
 
+/*************TASKS ***************/
 static sched_task_t *CreateTask(operation_func_t func, size_t interval_in_seconds, void *param)
 {
 	ilrd_uid_t task_id = UIDCreate();
@@ -155,6 +178,11 @@ static sched_task_t *CreateTask(operation_func_t func, size_t interval_in_second
 	new_task->execute_time = interval_in_seconds;
 	
 	return new_task;
+}
+
+static int RunTask(sched_task_t *task)
+{
+
 }
 
 /***********************************

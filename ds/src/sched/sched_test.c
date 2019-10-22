@@ -29,6 +29,11 @@ int main()
 	
 	printf("Elements number in queue: %ld\n", PrintQueueSize(sch));
 	
+	SchedRemoveTask(sch, &ad[0].uid);
+	SchedRemoveTask(sch, &ad[1].uid);
+	
+	printf("Elements number in queue: %ld\n", PrintQueueSize(sch));
+	
 	SchedDestroy(sch);
 	
 	return 0;
