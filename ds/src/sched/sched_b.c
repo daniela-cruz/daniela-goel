@@ -78,8 +78,6 @@ SchedAddTask(sched_t *scheduler, operation_func_t func, size_t interval_in_secon
 
 void SchedRemoveTask(sched_t *scheduler, ilrd_uid_t *task_uid)
 {
-	void *task_to_destroy = NULL;
-	
 	assert(NULL != scheduler);
 	
 	if ((NULL != scheduler->task_running) && 
@@ -89,8 +87,7 @@ void SchedRemoveTask(sched_t *scheduler, ilrd_uid_t *task_uid)
 	}
 	else
 	{
-		task_to_destroy = PQErase(scheduler->queue, (pq_is_match_t)TimeCmp, &task_uid);
-		free(task_to_destroy); task_to_destroy = NULL;
+		TaskDestroy(PQErase(scheduler->queue, (pq_is_match_t)TimeCmp, &task_uid));
 	}
 }
 

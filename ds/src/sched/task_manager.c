@@ -41,5 +41,5 @@ int TaskExecute(sched_task_t *task)
 
 void TaskDestroy(sched_task_t *task)
 {
-	free(task);
+	free(task); task = NULL;
 }
