@@ -3,7 +3,9 @@
 #include <assert.h> /* assert */
 
 #include "task_manager.h" /* sched_task_t */
-#include "pq.h" /* PQEnqueue */
+#include "pq.h" /* PQEnqueue, PQPeek */
+#include "sl.h" /**/
+#include "dll.h" /* dll_iter_t */
 #include "uid.h" /* UIDIsEqual*/
 
 sched_task_t *TaskCreate(operation_func_t func, size_t interval_in_seconds, void *param)
@@ -33,16 +35,6 @@ TaskInit(sched_task_t *new_task, operation_func_t func, size_t interval_in_secon
 int TaskExecute(sched_t *scheduler, sched_task_t *task)
 {
 	return FAILURE;
-}
-
-sched_task_t *TaskFinder(sched_t *scheduler, ilrd_uid_t task_id)
-{
-	sched_task_t *task_match = NULL;
-	
-	assert(NULL != scheduler);
-	
-		
-	return task_match;
 }
 
 void TaskDestroy(sched_task_t *task)

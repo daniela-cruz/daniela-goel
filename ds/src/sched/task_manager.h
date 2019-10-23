@@ -21,10 +21,8 @@ sched_task_t *TaskCreate(operation_func_t func, size_t interval_in_seconds, void
 sched_task_t *
 TaskInit(sched_task_t *new_task, operation_func_t func, size_t interval_in_seconds, void *param);
 
-sched_task_t *TaskFinder(sched_t *scheduler, ilrd_uid_t task_id);
-
 int TaskExecute(sched_t *scheduler, sched_task_t *task);
 
 void TaskDestroy(sched_task_t *task);
 
-#endif /* __TM_H__ */
+   #endif /* __TM_H__ */

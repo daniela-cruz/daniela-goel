@@ -25,9 +25,6 @@ struct scheduler
 /*************TIME ******************/
 static int CmpExeTime(void *task1, void *task2, void *param);
 
-/************SORTING*************/
-static int IsSameUID(void *element_uid, void *task_uid);
-
 sched_t *SchedCreate()
 {
 	sched_t *schedule = malloc(sizeof(*schedule));
@@ -80,37 +77,30 @@ void SchedRemoveTask(sched_t *scheduler, ilrd_uid_t *task_uid)
 	void *task_to_destroy = NULL;
 	
 	assert(NULL != scheduler);
-	/*
-	if ((NULL != sched->current_task) && 
-	   (UIDIsEqual(task_uid, sched->current_task.uid)))
+	
+	if ((NULL != scheduler->task_running) && 
+		(UIDIsEqual(*task_uid, scheduler->task_running->handle_id)))
 	{
-		sched->remove_me = 1;
+		scheduler->remove_me = 1;
 	}
 	else
 	{
-		task_to_destroy = PQErase(sched->queue, &task_uid, IsUidMatchTask);
+		task_to_destroy = PQErase(scheduler->queue, (pq_is_match_t)UIDIsEqual, &task_uid);
 		TaskDestroy(task_to_destroy); 
-	}*/
-	
+	}
 }
 
 void SchedStop(sched_t *scheduler)
 {
-	sched_task_t *current_task = NULL;
-	int no_sleep = 0;
-	
 	assert(NULL != scheduler);
-	current_task = PQPeek(scheduler->queue);
-	(no_sleep < *(int*)current_task->data) ? sleep(current_task->interval) : sleep(no_sleep);
-	
-	*(int*)PQPeek(scheduler->queue) = no_sleep;
+	sched->stop_run = 1;
 }
 
 void SchedRun(sched_t *schedule)
 {
 	assert(NULL != schedule);
 	
-	while ((0 == schedule->remove_me) && (0 == PQIsEmpty(schedule->queue)))
+	for (; (0 == schedule->remove_me) && (0 == PQIsEmpty(schedule->queue)); )
 	{
 		time_t curr_time = time(NULL);
 		sched_task_t *curr_task = (sched_task_t *)PQPeek(schedule->queue);
@@ -150,11 +140,6 @@ static int CmpExeTime(void *task1, void *task2, void *param)
 	
 	return (int)((time_t)(((sched_task_t *)task1)->execute_time) - 
 			(time_t)(((sched_task_t *)task2)->execute_time));
-}
-
-static int IsSameUID(void *element_uid, void *task_uid)
-{
-	return UIDIsEqual(*(ilrd_uid_t*)element_uid, *(ilrd_uid_t*)task_uid);
 }
 
 /***********************************
