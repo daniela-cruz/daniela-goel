@@ -34,6 +34,7 @@ int main()
 	SchedRemoveTask(sch, &ad[1].uid);
 	
 	printf("Elements number in queue: %ld\n", PrintQueueSize(sch));
+	SchedStop(sch);
 	
 	SchedRun(sch);
 		

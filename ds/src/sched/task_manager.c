@@ -34,7 +34,9 @@ TaskInit(sched_task_t *new_task, operation_func_t func, size_t interval_in_secon
 
 int TaskExecute(sched_task_t *task)
 {
-	return FAILURE;
+	assert(NULL != task);
+	
+	return task->func(task->data);
 }
 
 void TaskDestroy(sched_task_t *task)

@@ -23,11 +23,12 @@ struct scheduler
 };
 
 /*************TIME ******************/
-static int CmpExeTime(void *task1, void *task2, void *param);
+int TimeCmp(void *task1, void *task2, void *param);
 static void ForceSleep(time_t current_task_execution_time);
 time_t TimeExeUpdate(sched_task_t *task_running);
 time_t TimeOfExe(sched_task_t *task);
 
+/**********IMPLEMENTATION************/
 sched_t *SchedCreate()
 {
 	sched_t *schedule = malloc(sizeof(*schedule));
@@ -36,7 +37,7 @@ sched_t *SchedCreate()
 		return NULL;
 	}
 	
-	schedule->queue = PQCreate((pq_is_before_t)CmpExeTime, "useless_param");
+	schedule->queue = PQCreate((pq_is_before_t)TimeCmp, "useless_param");
 	if (NULL == schedule->queue)
 	{
 		free(schedule);
@@ -88,8 +89,8 @@ void SchedRemoveTask(sched_t *scheduler, ilrd_uid_t *task_uid)
 	}
 	else
 	{
-		task_to_destroy = PQErase(scheduler->queue, (pq_is_match_t)UIDIsEqual, &task_uid);
-		TaskDestroy(task_to_destroy); 
+		task_to_destroy = PQErase(scheduler->queue, (pq_is_match_t)TimeCmp, &task_uid);
+		free(task_to_destroy); task_to_destroy = NULL;
 	}
 }
 
@@ -138,12 +139,28 @@ void SchedRun(sched_t *scheduler)
 
 void SchedDestroy(sched_t *scheduler)
 {
-	while (!PQIsEmpty(scheduler->queue))
+	/*while (!PQIsEmpty(scheduler->queue))
 	{
 		PQDequeue(scheduler->queue);
 	}
 	
 	PQDestroy(scheduler->queue);
+	free(scheduler); scheduler = NULL;*/
+	
+	assert(NULL != scheduler);
+	
+	while (!PQIsEmpty(scheduler->queue))
+	{
+		void *task_to_destroy = PQPeek(scheduler->queue);
+		TaskDestroy(task_to_destroy);
+		PQDequeue(scheduler->queue);
+	}
+	
+	scheduler->remove_me = 1;
+	
+	/*SchedClear(scheduler);*/
+	PQDestroy(scheduler->queue); scheduler->queue = NULL;
+	free(scheduler->task_running); scheduler->task_running = NULL;
 	free(scheduler); scheduler = NULL;
 }
 
@@ -173,8 +190,7 @@ time_t TimeOfExe(sched_task_t *task)
 	return task->execute_time;
 }
 
-/************SORTING*************/
-static int CmpExeTime(void *task1, void *task2, void *param)
+int TimeCmp(void *task1, void *task2, void *param)
 {
 	assert(NULL != task1);
 	assert(NULL != task2);
