@@ -27,6 +27,7 @@ int TimeCmp(void *task1, void *task2, void *param);
 static void ForceSleep(time_t current_task_execution_time);
 time_t TimeExeUpdate(sched_task_t *task_running);
 time_t TimeOfExe(sched_task_t *task);
+int TimeDifference(sched_task_t *task);
 
 /**********IMPLEMENTATION************/
 sched_t *SchedCreate()
@@ -99,7 +100,7 @@ void SchedStop(sched_t *scheduler)
 
 void SchedRun(sched_t *scheduler)
 {
-	void *task_to_dequeue = PQPeek(scheduler->queue);
+	/*void *task_to_dequeue = PQPeek(scheduler->queue);
 	time_t current_task_execution_time = 0;
 	
 	assert(NULL != scheduler);
@@ -131,7 +132,36 @@ void SchedRun(sched_t *scheduler)
 		scheduler->task_running = NULL;
 	}
 	
-	scheduler->should_i_sleep = 0; 
+	scheduler->should_i_sleep = 0; */
+	sched_task_t *task = NULL;
+	sched_t *sched = scheduler;
+	
+	sched->remove_me = 0;
+
+	while(!sched->remove_me)
+	{
+		time_t sleep_timer = TimeDifference((sched_task_t *)PQPeek(sched->queue));
+		
+		if(0 > sleep_timer)
+		{
+			sleep_timer = 0;
+		}
+		
+		sleep(sleep_timer);
+		
+		task = ((sched_task_t *)PQDequeue(sched->queue));
+		
+		if(TaskExecute(task))
+		{
+			task->execute_time += task->interval;
+			PQEnqueue(sched->queue, task);
+		}
+		else
+		{
+			free(task);
+		}
+	}
+
 }
 
 void SchedDestroy(sched_t *scheduler)
@@ -187,6 +217,11 @@ int TimeCmp(void *task1, void *task2, void *param)
 	
 	return (int)((time_t)(((sched_task_t *)task1)->execute_time) - 
 			(time_t)(((sched_task_t *)task2)->execute_time));
+}
+
+int TimeDifference(sched_task_t *task)
+{
+	return (int)(task->execute_time - time(NULL));
 }
 
 /***********************************
