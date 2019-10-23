@@ -12,7 +12,7 @@ typedef struct priority_queue pq_t;
 typedef struct task
 {
 	void *task;
-} task_t;
+} pq_task_t;
 
 /*		Priority sorting function provided by user 			*/
 typedef int (*pq_is_before_t)(void *data1, void *data2, void *param);
@@ -47,6 +47,6 @@ void *PQPeek(const pq_t *queue);
 size_t PQCount(const pq_t *queue);
 
 /*		Erase particular node in list by matching data		*/
-void PQErase(pq_t *queue, pq_is_match_t func, void *param);
+void *PQErase(pq_t *queue, pq_is_match_t func, void *param);
 
 #endif /*__PQ_H__*/
