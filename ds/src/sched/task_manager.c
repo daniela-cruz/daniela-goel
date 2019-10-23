@@ -32,7 +32,7 @@ TaskInit(sched_task_t *new_task, operation_func_t func, size_t interval_in_secon
 	return new_task;
 }
 
-int TaskExecute(sched_t *scheduler, sched_task_t *task)
+int TaskExecute(sched_task_t *task)
 {
 	return FAILURE;
 }

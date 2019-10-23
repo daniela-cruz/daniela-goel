@@ -35,8 +35,8 @@ int main()
 	
 	printf("Elements number in queue: %ld\n", PrintQueueSize(sch));
 	
-	SchedDestroy(sch);
-	
+	SchedRun(sch);
+		
 	return 0;
 }
 

@@ -24,6 +24,9 @@ struct scheduler
 
 /*************TIME ******************/
 static int CmpExeTime(void *task1, void *task2, void *param);
+static void ForceSleep(time_t current_task_execution_time);
+time_t TimeExeUpdate(sched_task_t *task_running);
+time_t TimeOfExe(sched_task_t *task);
 
 sched_t *SchedCreate()
 {
@@ -93,27 +96,44 @@ void SchedRemoveTask(sched_t *scheduler, ilrd_uid_t *task_uid)
 void SchedStop(sched_t *scheduler)
 {
 	assert(NULL != scheduler);
-	sched->stop_run = 1;
+	scheduler->should_i_sleep = 1;
 }
 
-void SchedRun(sched_t *schedule)
+void SchedRun(sched_t *scheduler)
 {
-	assert(NULL != schedule);
+	void *task_to_dequeue = PQPeek(scheduler->queue);
+	time_t current_task_execution_time = 0;
 	
-	for (; (0 == schedule->remove_me) && (0 == PQIsEmpty(schedule->queue)); )
+	assert(NULL != scheduler);
+	
+	for (;  (!scheduler->should_i_sleep) && (!PQIsEmpty(scheduler->queue)); )
 	{
-		time_t curr_time = time(NULL);
-		sched_task_t *curr_task = (sched_task_t *)PQPeek(schedule->queue);
+		task_to_dequeue = PQPeek(scheduler->queue);
+		current_task_execution_time = TimeOfExe(task_to_dequeue);
 		
-		if (curr_time >= curr_task->execute_time)
+		scheduler->task_running = task_to_dequeue;
+		PQDequeue(scheduler->queue);
+		ForceSleep(current_task_execution_time); 
+		
+		if (TaskExecute(scheduler->task_running) && (!scheduler->remove_me))
 		{
-			curr_task->execute_time = curr_time;
-		}
+			TimeExeUpdate(scheduler->task_running);
 			
-		PQEnqueue(schedule->queue, curr_task);
+			if (0 != PQEnqueue(scheduler->queue, scheduler->task_running))
+			{
+				break;
+			}
+		}
+		else
+		{			
+			TaskDestroy(scheduler->task_running);
+			scheduler->remove_me = 0;
+		}
+		
+		scheduler->task_running = NULL;
 	}
 	
-	SchedDestroy(schedule);
+	scheduler->should_i_sleep = 0; 
 }
 
 void SchedDestroy(sched_t *scheduler)
@@ -130,6 +150,28 @@ void SchedDestroy(sched_t *scheduler)
 /***********************************
 * 	INTERNAL FUNCTIONS 	*
 ***********************************/
+static void ForceSleep(time_t current_task_execution_time)
+{
+	while (current_task_execution_time)
+	{
+		current_task_execution_time = sleep(current_task_execution_time - time(NULL));
+	}
+}
+
+/************TIME**********************/
+time_t TimeExeUpdate(sched_task_t *task_running)
+{
+	assert(NULL != task_running);
+	
+	task_running->execute_time = time(NULL) + task_running->interval;
+	
+	return task_running->execute_time;
+}
+
+time_t TimeOfExe(sched_task_t *task)
+{
+	return task->execute_time;
+}
 
 /************SORTING*************/
 static int CmpExeTime(void *task1, void *task2, void *param)
