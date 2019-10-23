@@ -166,7 +166,7 @@ void SchedDestroy(sched_t *scheduler)
 ***********************************/
 static void ForceSleep(time_t current_task_execution_time)
 {
-	while (current_task_execution_time)
+	for (; current_task_execution_time; )
 	{
 		current_task_execution_time = sleep(current_task_execution_time - time(NULL));
 	}
@@ -184,7 +184,7 @@ time_t TimeExeUpdate(sched_task_t *task_running)
 
 time_t TimeOfExe(sched_task_t *task)
 {
-	return task->execute_time;
+	return task->execute_time + task->interval;
 }
 
 int TimeCmp(void *task1, void *task2, void *param)
