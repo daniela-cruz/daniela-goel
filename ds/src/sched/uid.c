@@ -40,3 +40,10 @@ int UIDIsError(ilrd_uid_t uid)
 	
 	return 0;
 }
+
+ilrd_uid_t UIDError(ilrd_uid_t uid)
+{
+	uid.is_error = 1;
+	
+	return uid;
+}

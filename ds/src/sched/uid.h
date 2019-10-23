@@ -3,7 +3,6 @@
 
 #include <stddef.h> /* size_t */
 #include <sys/types.h> /* pid_t */
-/*#include <unistd.h>*/
 #include <time.h> /* time_t */
 
 typedef struct unique_id
@@ -19,5 +18,7 @@ ilrd_uid_t UIDCreate();
 int UIDIsEqual(ilrd_uid_t uid1, ilrd_uid_t uid2);
 
 int UIDIsError(ilrd_uid_t uid);
+
+ilrd_uid_t UIDError(ilrd_uid_t uid);
 
 #endif /*__UID_H__*/

@@ -1,12 +1,13 @@
 /* 
  * Please save some time and copy this line: 
-* gd sched_b.c sched.h sched_test.c uid.c uid.h tester.h ../dll/dll.c ../sl/sl.c ../pq/pq.c -I ../dll/ -I ../sl/ -I ../pq/
+* gd sched_b.c sched.h sched_test.c task_manager.c uid.c uid.h tester.h ../dll/dll.c ../sl/sl.c ../pq/pq.c -I ../dll/ -I ../sl/ -I ../pq/
 */
 #include <stdio.h> /* printf */
 #include <stddef.h> /* size_t */
 
 #include "sched.h" /* scheduler functions */
 #include "tester.h" /* debug funcs */
+
 
 struct action_func_data
 {
