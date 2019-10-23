@@ -136,26 +136,18 @@ void SchedRun(sched_t *scheduler)
 
 void SchedDestroy(sched_t *scheduler)
 {
-	/*while (!PQIsEmpty(scheduler->queue))
-	{
-		PQDequeue(scheduler->queue);
-	}
-	
-	PQDestroy(scheduler->queue);
-	free(scheduler); scheduler = NULL;*/
-	
 	assert(NULL != scheduler);
 	
-	while (!PQIsEmpty(scheduler->queue))
+	for (; !PQIsEmpty(scheduler->queue); )
 	{
 		void *task_to_destroy = PQPeek(scheduler->queue);
+		
 		TaskDestroy(task_to_destroy);
 		PQDequeue(scheduler->queue);
 	}
 	
 	scheduler->remove_me = 1;
 	
-	/*SchedClear(scheduler);*/
 	PQDestroy(scheduler->queue); scheduler->queue = NULL;
 	free(scheduler->task_running); scheduler->task_running = NULL;
 	free(scheduler); scheduler = NULL;
@@ -177,14 +169,14 @@ time_t TimeExeUpdate(sched_task_t *task_running)
 {
 	assert(NULL != task_running);
 	
-	task_running->execute_time = time(NULL) + task_running->interval;
-	
-	return task_running->execute_time;
+	return time(NULL) + task_running->interval;
 }
 
 time_t TimeOfExe(sched_task_t *task)
 {
-	return task->execute_time + task->interval;
+	assert(NULL != task);
+	
+	return task->execute_time;
 }
 
 int TimeCmp(void *task1, void *task2, void *param)
