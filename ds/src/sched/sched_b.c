@@ -161,7 +161,7 @@ void SchedRun(sched_t *scheduler)
 		}
 		else
 		{
-			free(task);
+			TaskDestroy(task);
 		}
 	}
 }
