@@ -27,7 +27,7 @@ TaskInit(sched_task_t *new_task, operation_func_t func, size_t interval_in_secon
 	new_task->interval = interval_in_seconds;
 	new_task->data = param;
 	new_task->func = func;
-	new_task->execute_time = interval_in_seconds;
+	new_task->execute_time = time(NULL) + interval_in_seconds;
 	
 	return new_task;
 }

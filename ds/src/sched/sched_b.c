@@ -25,7 +25,7 @@ struct scheduler
 /*************TIME ******************/
 int TimeCmp(void *task1, void *task2, void *param);
 static void ForceSleep(time_t current_task_execution_time);
-time_t TimeExeUpdate(sched_task_t *task_running);
+void TimeExeUpdate(sched_task_t *task_running);
 time_t TimeOfExe(sched_task_t *task);
 int TimeDifference(sched_task_t *task);
 
@@ -135,25 +135,28 @@ void SchedRun(sched_t *scheduler)
 	scheduler->should_i_sleep = 0; */
 	sched_task_t *task = NULL;
 	sched_t *sched = scheduler;
+	time_t sleep_timer = 0;
+	int task_status = 0;
 	
-	sched->remove_me = 0;
+	sched->should_i_sleep = 0;
 
-	while(!sched->remove_me)
+	while(!sched->should_i_sleep)
 	{
-		time_t sleep_timer = TimeDifference((sched_task_t *)PQPeek(sched->queue));
+		task = (sched_task_t *)PQPeek(sched->queue);
+		sleep_timer = TimeDifference(task);
 		
-		if(0 > sleep_timer)
+		if (0 >= sleep_timer)
 		{
 			sleep_timer = 0;
 		}
 		
 		sleep(sleep_timer);
-		
+		task_status = TaskExecute(task);
 		task = ((sched_task_t *)PQDequeue(sched->queue));
 		
-		if(TaskExecute(task))
+		if (0 == task_status)
 		{
-			task->execute_time += task->interval;
+			TimeExeUpdate(task);
 			PQEnqueue(sched->queue, task);
 		}
 		else
@@ -161,7 +164,6 @@ void SchedRun(sched_t *scheduler)
 			free(task);
 		}
 	}
-
 }
 
 void SchedDestroy(sched_t *scheduler)
@@ -195,11 +197,11 @@ static void ForceSleep(time_t current_task_execution_time)
 }
 
 /************TIME**********************/
-time_t TimeExeUpdate(sched_task_t *task_running)
+void TimeExeUpdate(sched_task_t *task_running)
 {
 	assert(NULL != task_running);
 	
-	return time(NULL) + task_running->interval;
+	task_running->execute_time = time(NULL) + task_running->interval;
 }
 
 time_t TimeOfExe(sched_task_t *task)
@@ -215,7 +217,7 @@ int TimeCmp(void *task1, void *task2, void *param)
 	assert(NULL != task2);
 	(void)param;
 	
-	return (int)((time_t)(((sched_task_t *)task1)->execute_time) - 
+	return ((time_t)(((sched_task_t *)task1)->execute_time) < 
 			(time_t)(((sched_task_t *)task2)->execute_time));
 }
 

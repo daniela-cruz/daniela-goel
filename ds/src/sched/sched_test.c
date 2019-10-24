@@ -57,8 +57,9 @@ int main()
 	uid_array[3] = SchedAddTask(sch, PrintMsg2, 2, NULL);
 	uid_array[4] = SchedAddTask(sch, PrintMsg3, 4, NULL);
 	uid_array[5] = SchedAddTask(sch, TestAdd, 18, sch);
-
-	printf("no. of tasks in scheduler: %lu\n", PrintQueueSize(sch));
+	
+	SchedStop(sch);
+	/*printf("no. of tasks in scheduler: %lu\n", PrintQueueSize(sch));*/
 	SchedRun(sch);
 	
 	
