@@ -154,7 +154,7 @@ void SchedRun(sched_t *scheduler)
 		task_status = TaskExecute(task);
 		task = ((sched_task_t *)PQDequeue(sched->queue));
 		
-		if (0 == task_status)
+		if (1 == task_status)
 		{
 			TimeExeUpdate(task);
 			PQEnqueue(sched->queue, task);
