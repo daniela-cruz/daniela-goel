@@ -31,9 +31,7 @@ int main()
 
 void TestScheduler()
 {
-	struct action_func_data ad[3];
 	sched_t *sch = SchedCreate();
-	ilrd_uid_t task_id;
 	
 	PrintElementsAmount(sch);
 	SchedAddTask(sch, Task1, 2, "Hey");
