@@ -52,17 +52,11 @@ int TaskExecute(sched_task_t *task)
 	return task->func(task->data);
 }
 
-int TaskCmp(void *task, void *task_id)
+int TaskIsEqual(void *task_id, void *curr_task, void *param)
 {
-	sched_task_t *curr_task = (sched_task_t *)task;
-	int cmp_status = UIDIsEqual(*(ilrd_uid_t *)task_id, curr_task->handle_id);
+	(void) param;
 	
-	assert(NULL != task);
-	assert(NULL != task_id);
-	
-	/* if task_t < task->handle_id return 1*/
-	
-	return cmp_status;
+	return UIDIsEqual(*(ilrd_uid_t *)task_id, ((sched_task_t *)curr_task)->handle_id);
 }
 
 void TaskDestroy(sched_task_t *task)

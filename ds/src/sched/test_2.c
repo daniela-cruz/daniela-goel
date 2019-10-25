@@ -39,7 +39,7 @@ void TestScheduler()
 	SchedAddTask(sch, Task1, 2, "Hey");
 	SchedAddTask(sch, Task2, 5, "Jo");
 	SchedAddTask(sch, Task3, 3, "Go home");
-	SchedAddTask(sch, Task4, 1, sch);
+	SchedAddTask(sch, Task4, 6, sch);
 	
 	PrintElementsAmount(sch);
 	
@@ -72,6 +72,8 @@ int Task4(void *scheduler)
 {
 	printf("I am stopping now. . .\n");
 	SchedStop(scheduler);
+	
+	return 0;
 }
 
 int PrintElementsAmount(void *sch)

@@ -24,9 +24,9 @@ TaskInit(sched_task_t *new_task, operation_func_t func, size_t interval_in_secon
 
 sched_task_t *TaskGetCurrent(pq_t *q);
 
-int TaskExecute(sched_task_t *task);
+int TaskIsEqual(void *task_id, void *curr_task, void *param);
 
-int TaskCmp(void *task_id, void *task);
+int TaskExecute(sched_task_t *task);
 
 void TaskDestroy(sched_task_t *task);
 

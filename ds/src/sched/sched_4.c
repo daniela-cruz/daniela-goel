@@ -78,7 +78,7 @@ void SchedRemoveTask(sched_t *scheduler, ilrd_uid_t *task_uid)
 	assert(NULL != scheduler);
 	if (1 != PQIsEmpty(scheduler->queue))
 	{
-		free(PQErase(scheduler->queue, (pq_is_match_t)TaskCmp, task_uid));
+		free(PQErase(scheduler->queue, (pq_is_match_t)TaskIsEqual, task_uid));
 	}
 }
 
@@ -90,25 +90,33 @@ void SchedStop(sched_t *scheduler)
 
 void SchedRun(sched_t *scheduler)
 {
-	sched_task_t *curr_task = NULL;
 	assert(NULL != scheduler);
 	
 	printf("stop me value: %d\n", scheduler->stop_me);
 	for (; 1 != scheduler->stop_me;)
 	{
-		printf("\nIn loop stop me value: %d\n", scheduler->stop_me);
-		curr_task = PQPeek(scheduler->queue);
+		sched_task_t *curr_task = PQDequeue(scheduler->queue);
+		int task_status = 0;
+		
 		printf("Run current task - task id is: %ld process id is: %d\n", curr_task->handle_id.counter, curr_task->handle_id.pid);
+		
 		if (0 >= TimeDifference(curr_task))
 		{
 			curr_task->execute_time = time(NULL);
 		}
 		
 		sleep(TimeDifference(curr_task));
-		TaskExecute(curr_task);
+		task_status = TaskExecute(curr_task);
 		
-		SchedAddTask(scheduler, curr_task->func, curr_task->interval, curr_task->data);
-		PQDequeue(scheduler->queue);
+		if (0 == task_status)
+		{
+			TimeExeUpdate(curr_task);
+			SchedAddTask(scheduler, curr_task->func, curr_task->interval, curr_task->data);
+		}
+		else
+		{
+			TaskDestroy(curr_task);
+		}
 	}
 }
 
