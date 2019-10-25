@@ -1,7 +1,6 @@
-#include <stdio.h>
 #include <stdlib.h> 			/* malloc, free */
-#include <stddef.h> 		/* size_t */
-#include <assert.h> 		/* assert */
+#include <stddef.h> 			/* size_t */
+#include <assert.h> 			/* assert */
 
 /* for sleep() portability: */
 #ifdef _WIN32
@@ -10,23 +9,17 @@
 #include <unistd.h>
 #endif
 
-#include "sched.h" 			/* types and all functions below */
-#include "uid.h" 				/* ilrd_uid_t */
-#include "pq.h" 				/* the below functions are priority queue based */
-#include "task_manager.h" /* sched_task_t */
+#include "sched.h" 				/* types and all functions below */
+#include "uid.h" 						/* ilrd_uid_t */
+#include "pq.h" 						/* the below functions are priority queue based */
+#include "task_manager.h" 	/* sched_task_t */
+#include "time_manager.h" 	/* TimeIsBefore, TimeDifference */
 
 struct scheduler
 {
     pq_t *queue; 				/* priority queue */
 	int stop_me;
 };
-
-/***************TIME***********************/
-int TimeIsBefore(void *task1, void *task2, void *param);
-int TimeDifference(sched_task_t *task);
-time_t TimeOfExe(sched_task_t *task);
-void TimeExeUpdate(sched_task_t *task_running);
-/*******************************************/
 
 sched_t *SchedCreate()
 {
@@ -53,8 +46,6 @@ ilrd_uid_t
 SchedAddTask(sched_t *scheduler, operation_func_t func, size_t interval_in_seconds, void *param)
 {
 	sched_task_t *new_task = TaskCreate(func, interval_in_seconds, param);
-	
-	printf("task id is: %ld process id is: %d\n", new_task->handle_id.counter, new_task->handle_id.pid);
 	
 	assert(NULL != scheduler);
 	if (NULL == new_task)
@@ -92,24 +83,17 @@ void SchedRun(sched_t *scheduler)
 {
 	assert(NULL != scheduler);
 	
-	printf("\nstop me value: %d\n", scheduler->stop_me);
 	for (; 1 != scheduler->stop_me;)
 	{
-		int task_status = 0;
 		sched_task_t *curr_task = PQDequeue(scheduler->queue);
 		int halt = TimeDifference(curr_task);
-		
-		printf("Run current task - task id is: %ld process id is: %d\n", curr_task->handle_id.counter, curr_task->handle_id.pid);
 		
 		if (0 >= halt)
 		{
 			halt = 0;
 		}
 		
-		printf("\nHalt is: %d\n", halt);
-		
 		sleep(halt);
-		
 		if ((0 == TaskExecute(curr_task)) && (1 != scheduler->stop_me))
 		{
 			SchedAddTask(scheduler, curr_task->func, curr_task->interval, curr_task->data);
@@ -136,7 +120,7 @@ void SchedDestroy(sched_t *scheduler)
 ***********************************/
 
 /************TIME**********************/
-void TimeExeUpdate(sched_task_t *task_running)
+/*void TimeExeUpdate(sched_task_t *task_running)
 {
 	assert(NULL != task_running);
 	
@@ -160,7 +144,7 @@ int TimeIsBefore(void *new_task, void *first_task, void *param)
 int TimeDifference(sched_task_t *task)
 {
 	return (int)((int)task->execute_time - (int)time(NULL));
-}
+}*/
 
 /***********************************
 * 		DBUG FUNCTIONS 	*

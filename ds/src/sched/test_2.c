@@ -38,13 +38,9 @@ void TestScheduler()
 	PrintElementsAmount(sch);
 	
 	task_uid = SchedAddTask(sch, Task3, 2, "Go home");
-	printf("\nInterval is: %ld\n", GetTaskInterval(sch, task_uid));
 	task_uid = SchedAddTask(sch, Task2, 5, "Jo");
-	printf("\nInterval is: %ld\n", GetTaskInterval(sch, task_uid));
-	task_uid = SchedAddTask(sch, Task4, 6, sch);
-	printf("\nInterval is: %ld\n", GetTaskInterval(sch, task_uid));
+	task_uid = SchedAddTask(sch, Task4, 13, sch);
 	task_uid = SchedAddTask(sch, Task1, 3, "Hey");
-	printf("\nInterval is: %ld\n", GetTaskInterval(sch, task_uid));
 	
 	PrintElementsAmount(sch);
 	
