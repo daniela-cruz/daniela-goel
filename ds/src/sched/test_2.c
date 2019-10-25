@@ -20,6 +20,7 @@ void TestScheduler();
 int Task1(void *str);
 int Task2(void *str);
 int Task3(void *str);
+int Task4(void *scheduler);
 int PrintElementsAmount(void *sch);
 
 int main()
@@ -35,10 +36,11 @@ void TestScheduler()
 	ilrd_uid_t task_id;
 	
 	PrintElementsAmount(sch);
-	task_id = SchedAddTask(sch, Task1, 2, "Hey");
-	SchedAddTask(sch, Task2, 3, "Jo");
-	SchedAddTask(sch, Task3, 4, "Go home");
-	SchedRemoveTask(sch, &task_id);
+	SchedAddTask(sch, Task1, 2, "Hey");
+	SchedAddTask(sch, Task2, 5, "Jo");
+	SchedAddTask(sch, Task3, 3, "Go home");
+	SchedAddTask(sch, Task4, 1, sch);
+	
 	PrintElementsAmount(sch);
 	
 	SchedRun(sch);
@@ -64,6 +66,12 @@ int Task3(void *str)
 	printf("I'm back, %s\n", (char*)str);
 	
 	return 0;
+}
+
+int Task4(void *scheduler)
+{
+	printf("I am stopping now. . .\n");
+	SchedStop(scheduler);
 }
 
 int PrintElementsAmount(void *sch)

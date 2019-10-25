@@ -22,9 +22,7 @@ struct scheduler
 };
 
 /***************TIME***********************/
-int TimeCmp(void *task1, void *task2, void *param);
-static int TimeIsBefore(sched_task_t *first_task, sched_task_t *new_task);
-
+int TimeIsBefore(void *task1, void *task2, void *param);
 int TimeDifference(sched_task_t *task);
 time_t TimeOfExe(sched_task_t *task);
 void TimeExeUpdate(sched_task_t *task_running);
@@ -39,7 +37,7 @@ sched_t *SchedCreate()
 		return NULL;
 	}
 	
-	new_scheduler->queue = PQCreate((pq_is_before_t)TimeCmp, NULL);
+	new_scheduler->queue = PQCreate((pq_is_before_t)TimeIsBefore, NULL);
 	if (NULL == new_scheduler->queue)
 	{
 		free(new_scheduler);
@@ -110,7 +108,7 @@ void SchedRun(sched_t *scheduler)
 		TaskExecute(curr_task);
 		
 		SchedAddTask(scheduler, curr_task->func, curr_task->interval, curr_task->data);
-		/*PQDequeue(scheduler->queue);*/
+		PQDequeue(scheduler->queue);
 	}
 }
 
@@ -143,29 +141,11 @@ time_t TimeOfExe(sched_task_t *task)
 	return task->execute_time;
 }
 
-int TimeCmp(void *task1, void *task2, void *param)
+int TimeIsBefore(void *new_task, void *first_task, void *param)
 {
 	(void)param;
 	
-	return TimeIsBefore((sched_task_t *)task1, (sched_task_t *)task2);
-}
-
-static int TimeIsBefore(sched_task_t *first_task, sched_task_t *new_task)
-{
-	time_t curr_task_time = 0;
-	time_t new_task_time = 0;
-	if (NULL != first_task)
-	{
-		curr_task_time = first_task->execute_time;
-	}
-	
-	if (NULL != new_task)
-	{
-		new_task_time = new_task->execute_time;
-	}
-	
-	return new_task_time < curr_task_time;
-	/*return new_task->execute_time < first_task->execute_time;*/
+	return ((sched_task_t *)new_task)->execute_time < ((sched_task_t *)first_task)->execute_time;
 }
 
 int TimeDifference(sched_task_t *task)

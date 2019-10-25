@@ -26,7 +26,7 @@ sched_task_t *TaskGetCurrent(pq_t *q);
 
 int TaskExecute(sched_task_t *task);
 
-int TaskCmp(pq_t *queue, ilrd_uid_t task_id);
+int TaskCmp(void *task_id, void *task);
 
 void TaskDestroy(sched_task_t *task);
 
