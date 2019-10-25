@@ -62,7 +62,7 @@ SchedAddTask(sched_t *scheduler, operation_func_t func, size_t interval_in_secon
 		return UIDError();
 	}
 	
-	if (1 == PQEnqueue(scheduler->queue, new_task))
+	if (0 == PQEnqueue(scheduler->queue, new_task))
 	{
 		TaskDestroy(new_task);
 		return UIDError();
@@ -92,25 +92,26 @@ void SchedRun(sched_t *scheduler)
 {
 	assert(NULL != scheduler);
 	
-	printf("stop me value: %d\n", scheduler->stop_me);
+	printf("\nstop me value: %d\n", scheduler->stop_me);
 	for (; 1 != scheduler->stop_me;)
 	{
-		sched_task_t *curr_task = PQDequeue(scheduler->queue);
 		int task_status = 0;
+		sched_task_t *curr_task = PQDequeue(scheduler->queue);
+		int halt = TimeDifference(curr_task);
 		
 		printf("Run current task - task id is: %ld process id is: %d\n", curr_task->handle_id.counter, curr_task->handle_id.pid);
 		
-		if (0 >= TimeDifference(curr_task))
+		if (0 >= halt)
 		{
-			curr_task->execute_time = time(NULL);
+			halt = 0;
 		}
 		
-		sleep(TimeDifference(curr_task));
-		task_status = TaskExecute(curr_task);
+		printf("\nHalt is: %d\n", halt);
 		
-		if (0 == task_status)
+		sleep(halt);
+		
+		if ((0 == TaskExecute(curr_task)) && (1 != scheduler->stop_me))
 		{
-			TimeExeUpdate(curr_task);
 			SchedAddTask(scheduler, curr_task->func, curr_task->interval, curr_task->data);
 		}
 		else
@@ -158,16 +159,24 @@ int TimeIsBefore(void *new_task, void *first_task, void *param)
 
 int TimeDifference(sched_task_t *task)
 {
-	return (int)(task->execute_time - time(NULL));
+	return (int)((int)task->execute_time - (int)time(NULL));
 }
 
 /***********************************
 * 		DBUG FUNCTIONS 	*
 ***********************************/
  
- size_t PrintQueueSize(sched_t *scheduler)
+size_t PrintQueueSize(sched_t *scheduler)
 {
 	assert(NULL != scheduler);
 	return PQCount(scheduler->queue);
 }
 
+size_t GetTaskInterval(sched_t *scheduler, ilrd_uid_t task_uid)
+{
+	sched_task_t *task = NULL;
+	
+	
+	task = (sched_task_t *)PQPeek(scheduler->queue);
+	return (size_t)(task->interval);
+}

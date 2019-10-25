@@ -1,3 +1,4 @@
+#include <stdio.h>
 #include <stdlib.h> /* malloc, free */
 #include <time.h> /* time_t */
 #include <assert.h> /* assert */
@@ -33,7 +34,7 @@ TaskInit(sched_task_t *new_task, operation_func_t func, size_t interval_in_secon
 	new_task->data = param;
 	new_task->func = func;
 	new_task->execute_time = time(NULL) + interval_in_seconds;
-	
+	printf("Execute time is: %ld\n", new_task->execute_time);
 	return new_task;
 }
 

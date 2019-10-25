@@ -32,12 +32,19 @@ int main()
 void TestScheduler()
 {
 	sched_t *sch = SchedCreate();
+	ilrd_uid_t task_uid;
+	int i = 0;
 	
 	PrintElementsAmount(sch);
-	SchedAddTask(sch, Task1, 2, "Hey");
-	SchedAddTask(sch, Task2, 5, "Jo");
-	SchedAddTask(sch, Task3, 3, "Go home");
-	SchedAddTask(sch, Task4, 6, sch);
+	
+	task_uid = SchedAddTask(sch, Task3, 2, "Go home");
+	printf("\nInterval is: %ld\n", GetTaskInterval(sch, task_uid));
+	task_uid = SchedAddTask(sch, Task2, 5, "Jo");
+	printf("\nInterval is: %ld\n", GetTaskInterval(sch, task_uid));
+	task_uid = SchedAddTask(sch, Task4, 6, sch);
+	printf("\nInterval is: %ld\n", GetTaskInterval(sch, task_uid));
+	task_uid = SchedAddTask(sch, Task1, 3, "Hey");
+	printf("\nInterval is: %ld\n", GetTaskInterval(sch, task_uid));
 	
 	PrintElementsAmount(sch);
 	
@@ -54,6 +61,7 @@ int Task1(void *str)
 
 int Task2(void *nothing)
 {
+	(void) nothing;
 	printf("Lalalalaaaaaaaaaaa\n");
 	
 	return 0;
