@@ -4,6 +4,7 @@
 
 #include "uid.h" /* ilrd_uid_t */
 #include "sched.h" /* sched_t */
+#include "pq.h" /* pq_t */
 
 typedef int (*task_cmp_func_t)(void*, void*);
 
@@ -21,7 +22,11 @@ sched_task_t *TaskCreate(operation_func_t func, size_t interval_in_seconds, void
 sched_task_t *
 TaskInit(sched_task_t *new_task, operation_func_t func, size_t interval_in_seconds, void *param);
 
+sched_task_t *TaskGetCurrent(pq_t *q);
+
 int TaskExecute(sched_task_t *task);
+
+int TaskCmp(pq_t *queue, ilrd_uid_t task_id);
 
 void TaskDestroy(sched_task_t *task);
 

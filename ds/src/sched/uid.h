@@ -19,6 +19,6 @@ int UIDIsEqual(ilrd_uid_t uid1, ilrd_uid_t uid2);
 
 int UIDIsError(ilrd_uid_t uid);
 
-ilrd_uid_t UIDError(ilrd_uid_t uid);
+ilrd_uid_t UIDError();
 
 #endif /*__UID_H__*/
