@@ -114,7 +114,7 @@ void *DLLPopFront(dll_t *dll)
 	void *popped_data = NULL;
 	
 	assert(NULL != dll);
-	popped_data = DLLGetData(DLLIterPrev(DLLEnd(dll)));
+	popped_data = DLLGetData(DLLBegin(dll));
 	DLLRemove(DLLBegin(dll));
 	
 	return popped_data;

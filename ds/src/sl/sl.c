@@ -18,8 +18,6 @@ sl_t *SLCreate(sl_is_before_t is_before_func, void *param)
 {
 	sl_t *sl = NULL;
 	
-	assert(NULL != param);
-	
 	sl = malloc(sizeof(*sl));
 	if (NULL == sl)
 	{
