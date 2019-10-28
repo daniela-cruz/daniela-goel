@@ -26,7 +26,7 @@ fsa_t *FSAInit(void *buffer, size_t buff_size, size_t block_size)
 	assert(NULL != buffer);
 	allocator = (fsa_t *)buffer;
 	
-	allocator->block_size = block_size;
+	allocator->block_size = block_size + block_header_size;
 	allocator->block_num = (buff_size - sizeof(*allocator)) / block_size;
 	allocator->buff_start = (char *)buffer + offsetof(fsa_t, next_free) + block_header_size;
 	InitBlocks(allocator);
@@ -65,7 +65,7 @@ size_t FSACountFree(const fsa_t *fsa)
 	assert(NULL != fsa);
 	for (i = 0; i < fsa_cpy->block_num; i++)
 	{
-		(0 == (fsa_cpy->buff_start + (i * fsa_cpy->block_size) - block_header_size)) ? 
+		(0 == (*(fsa->buff_start + (i * fsa->block_size) - block_header_size))) ? 
 			free_blocks_ctr++ : free_blocks_ctr;
 	}
 	
@@ -77,7 +77,6 @@ size_t FSASuggest(size_t block_num, size_t block_size)
 	size_t suggested_size = 0;
 	
 	suggested_size = sizeof(fsa_t *) + (block_num * (block_size + sizeof(size_t)));
-	(0 < (suggested_size % block_size)) ? suggested_size ++ : suggested_size;
 	
 	return suggested_size;
 }
