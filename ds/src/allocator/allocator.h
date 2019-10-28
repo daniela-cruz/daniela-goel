@@ -1,20 +1,20 @@
-#ifndef __ALLOCATOR_H__
-#define __ALLOCATOR_H__
+#ifndef __FSA_H__
+#define __FSA_H__
 
 #include <stddef.h> /* size_t */
 
-typedef struct allocator alloc_t;
+typedef struct fsa fsa_t;
 
-alloc_t *ALInit(void *buffer, size_t block_size, size_t block_num);
+fsa_t *FSAInit(void *buffer, size_t buff_size, size_t blick_size);
 
-void ALDestroy(alloc_t *allocated_space);
+void FSADestroy(fsa_t *fsa);
 
-void *ALallocator(alloc_t *allocated_space, void *element);
+void *FSAalloc(fsa_t *fsa);
 
-void ALFree(alloc_t *, void *);
+void FSAFree(void *block);
 
-size_t ALCountFreeBlocks(alloc_t *allocated_space);
+size_t FSACountFree(const fsa_t *fsa);
 
-size_t ALSuggest(size_t block_num, size_t block_size);
+size_t FSASuggest(size_t block_num, size_t block_size);
 
-#endif /* __ALLOCATOR_H__ */
+#endif /* __FSA_H__ */

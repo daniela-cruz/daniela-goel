@@ -1,7 +1,7 @@
+#include <stdlib.h> /* malloc, free */
 #include <stddef.h> /* size_t */
 
 #include "allocator.h"
-#include "bitarray.h" /* bitarray */
 
 struct allocator
 {
@@ -9,19 +9,17 @@ struct allocator
 	size_t block_size;
 	size_t block_num;
 	char *buff_start;
-	/*size_t arr_num;
-	size_t bit_arr;*/
 };
 
 static void *InitBlockArr(size_t block_num, char *block_arr);
-static size_t GetFirstFreeBlockNum(alloc_t *allocated_space);
+static size_t GetFirstFreeBlockNum(fsa_t *allocated_space);
 
 /********************************
  * 	IMPLEMENTATION: 	*
 ********************************/
-alloc_t *ALInit(void *buffer, size_t block_size, size_t block_num)
+fsa_t *FSAInit(void *buffer, size_t buff_size, size_t blick_size)
 {
-	alloc_t *allocator = NULL;
+	fsa_t *allocator = NULL;
 	
 	assert(NULL != buffer);
 	do
@@ -31,6 +29,7 @@ alloc_t *ALInit(void *buffer, size_t block_size, size_t block_num)
 		{
 			break;
 		}
+		buffer = allocator;
 		
 		allocator->block_arr = malloc(sizeof(*allocator->block_arr) * block_num);
 		if (NULL == allocator->block_arr)
@@ -41,7 +40,7 @@ alloc_t *ALInit(void *buffer, size_t block_size, size_t block_num)
 		allocator->block_arr = InitBlockArr(block_num, allocator->block_arr);
 		allocator->block_size = block_size;
 		allocator->block_num = block_num;
-		allocator->buff_start = buffer;
+		allocator->buff_start = buffer + offsetof(allocator, block_num);
 	
 	} while (0);
 	
@@ -52,7 +51,7 @@ alloc_t *ALInit(void *buffer, size_t block_size, size_t block_num)
 	return allocator;
 }
 
-void ALDestroy(alloc_t *allocated_space)
+void FSADestroy(fsa_t *fsa)
 {
 	assert(NULL != allocated_space);
 	free(allocated_space->block_arr);
@@ -60,27 +59,47 @@ void ALDestroy(alloc_t *allocated_space)
 	free(allocated_space); allocated_space = NULL;
 }
 
-void *ALallocator(alloc_t *allocated_space, void *element)
+void *FSAalloc(fsa_t *fsa)
 {
-	assert(NULL != allocated_space);
+	size_t free_block_idx = 0;
 	
-	element = allocated_space->buff_start + GetFirstFreeBlockNum(allocated_space);
+	assert(NULL != allocated_space);
+	free_block_idx = GetFirstFreeBlockNum(allocated_space);
+	allocated_space->buff_start + free_block_idx = element;
+	allocated_space->block_arr[free_block_idx] = 1;
 	
 	return element;
 }
 
-void ALFree(alloc_t *allocator, void *element)
+void FSAFree(void *block)
 {
 	free(element); element = NULL;
 	allocator->block_arr[(char *)element - allocator->buff_start] = 0;
 }
 
-size_t ALCountFreeBlocks(alloc_t *allocated_space);
+size_t FSACountFree(const fsa_t *fsa)
+{
+	size_t free_blocks_ctr = 0;
+	int i = 0;
+	
+	for (i = 0; i < allocated_space->block_num; i++)
+	{
+		(0 == allocated_space->block_arr[i]) ? free_blocks_ctr++ : free_blocks_ctr;
+	}
+	
+	return free_blocks_ctr;
+}
 
-size_t ALSuggest(size_t block_num, size_t block_size);
+size_t FSASuggest(size_t block_num, size_t block_size)
+{
+	size_t suggested_size = 0;
+	
+	suggested_size = sizeof(fsa_t *) + (block_num * block_size);
+	(0 != (suggested_size % block_size)) ? return suggested_size + 1 : return suggested_size;
+}
 
 /********************************
- * INTERNAL FUNCS: 		*
+ * INTERNFSA FUNCS: 		*
 ********************************/
 static void *InitBlockArr(size_t block_num, char *block_arr)
 {
@@ -95,7 +114,7 @@ static void *InitBlockArr(size_t block_num, char *block_arr)
 	return block_arr;
 }
 
-static size_t GetFirstFreeBlockNum(alloc_t *allocated_space)
+static size_t GetFirstFreeBlockNum(fsa_t *allocated_space)
 {
 	size_t i = 0;
 	
