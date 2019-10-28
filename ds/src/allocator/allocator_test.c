@@ -13,6 +13,7 @@ typedef struct
 
 static void SuggestedTest();
 static void InitTest();
+static void AllocTest(fsa_t *allocator);
 
 int main()
 {
@@ -25,7 +26,7 @@ int main()
 static void SuggestedTest()
 {
 	size_t blocks_num = 10;
-	size_t block_size = sizeof(person_t);
+	size_t block_size = sizeof(void *);
 	size_t suggested_size = 0;
 	
 	printf("\nSuggested test:\n");
@@ -37,7 +38,7 @@ static void SuggestedTest()
 
 static void InitTest()
 {
-	size_t blocks_num = 10;
+	size_t blocks_num = 7;
 	size_t block_size = sizeof(person_t);
 	size_t suggested_size = 0;
 	void *buffer = NULL;
@@ -56,5 +57,41 @@ static void InitTest()
 	
 	printf("Number of free blocks: %ld\n", FSACountFree(allocator));
 	
+	AllocTest(allocator);
+	
+	printf("Number of free blocks: %ld\n", FSACountFree(allocator));
+	
 	free(allocator);
+}
+
+static void AllocTest(fsa_t *allocator)
+{
+	void *michal, *potas2, *robin3, *jupi4, *shahar5, *dani6, *potal7;
+	
+	printf("\nAllocation test:\n");
+	michal = FSAalloc(allocator);
+	(NULL != michal) ? printf("Allocated Michal with address of: %p\n", michal) : 
+		printf("Couldn't allocate Michal\n");
+	potas2 = FSAalloc(allocator);
+	(NULL != potas2) ? printf("Allocated Potas with address of: %p\n", potas2) : 
+		printf("Couldn't allocate Michal\n");
+	/*robin3 = FSAalloc(allocator);
+	(NULL != robin3) ? printf("Allocated Robin with address of: %p\n", robin3) : 
+		printf("Couldn't allocate Michal\n");
+	jupi4 = FSAalloc(allocator);
+	(NULL != jupi4) ? printf("Allocated Jupiter with address of: %p\n", jupi4) : 
+		printf("Couldn't allocate Michal\n");
+	shahar5 = FSAalloc(allocator);
+	(NULL != shahar5) ? printf("Allocated Shahar with address of: %p\n", shahar5) : 
+		printf("Couldn't allocate Michal\n");
+	dani6 = FSAalloc(allocator);
+	(NULL != dani6) ? printf("Allocated me with address of: %p\n", dani6) : 
+		printf("Couldn't allocate Michal\n");
+	potal7 = FSAalloc(allocator);
+	(NULL != potal7) ? printf("Allocated Potal with address of: %p\n", potal7) : 
+		printf("Couldn't allocate Michal\n");
+	
+	printf("Number of free blocks before freeing: %ld\n", FSACountFree(allocator));
+	FSAFree(michal);
+	printf("Number of free blocks after freeing: %ld\n", FSACountFree(allocator));*/
 }
