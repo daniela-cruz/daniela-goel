@@ -27,7 +27,7 @@ fsa_t *FSAInit(void *buffer, size_t buff_size, size_t block_size)
 	allocator = (fsa_t *)buffer;
 	
 	allocator->block_size = block_size + block_header_size;
-	allocator->block_num = ((buff_size - sizeof(*allocator)) / (allocator->block_size)) + 1;
+	allocator->block_num = ((buff_size - offsetof(fsa_t, next_free)) / (allocator->block_size)) + 1;
 	allocator->buff_start = (char *)buffer + offsetof(fsa_t, next_free) + block_header_size;
 	InitBlocks(allocator);
 	allocator->next_free = (char *)buffer + offsetof(fsa_t, next_free) + block_header_size; 
@@ -44,13 +44,17 @@ void *FSAalloc(fsa_t *fsa)
 {
 	char *element = NULL;
 	size_t next_free_offset = 0;
+	size_t element_header = -1;
 	
 	assert(NULL != fsa);
 	next_free_offset = (size_t)(fsa->next_free - block_header_size);
-	element = fsa->next_free;
-	fsa->next_free = (size_t)((char *)element - block_header_size) + fsa->buff_start;
-	*(size_t*)((char *)element - block_header_size) = 
-		((fsa->buff_start + next_free_offset) != element) ?  next_free_offset : -1;
+	
+	element = (-1 != next_free_offset) ? fsa->next_free : NULL;
+	
+	element_header = (size_t)((char *)element - block_header_size);
+	fsa->next_free = fsa->buff_start + element_header;
+	element_header = (-1 != *(size_t *)(fsa->buff_start + (element_header) - block_header_size)) ? 
+		next_free_offset : -1;
 			
 	return (void *)element;
 }
@@ -91,7 +95,7 @@ static size_t InitBlocks(fsa_t *allocator)
 	for (i = 0; i < allocator->block_num - 1; i ++)
 	{
 		*(allocator->buff_start + (i * allocator->block_size) - block_header_size) = 
-			(( 1 + i) * allocator->block_size);
+			block_header_size + (( 1 + i) * allocator->block_size);
 	}
 	
 	*(allocator->buff_start + ((i = 1) * allocator->block_size) - block_header_size) = 0;
