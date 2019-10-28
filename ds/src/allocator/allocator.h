@@ -5,7 +5,7 @@
 
 typedef struct fsa fsa_t;
 
-fsa_t *FSAInit(void *buffer, size_t buff_size, size_t blick_size);
+fsa_t *FSAInit(void *buffer, size_t buff_size, size_t block_size);
 
 void FSADestroy(fsa_t *fsa);
 

@@ -5,58 +5,42 @@
 
 struct allocator
 {
-	char *block_arr;
 	size_t block_size;
 	size_t block_num;
+	char *next_free;
 	char *buff_start;
 };
 
-static void *InitBlockArr(size_t block_num, char *block_arr);
+static char *InitBlocks(fsa_t *allocator);
 static size_t GetFirstFreeBlockNum(fsa_t *allocated_space);
+
+const size_t block_header_size = sizeof(size_t);
 
 /********************************
  * 	IMPLEMENTATION: 	*
 ********************************/
-fsa_t *FSAInit(void *buffer, size_t buff_size, size_t blick_size)
+fsa_t *FSAInit(void *buffer, size_t buff_size, size_t block_size)
 {
 	fsa_t *allocator = NULL;
 	
 	assert(NULL != buffer);
-	do
-	{
-		allocator = malloc(sizeof(*allocator));
-		if (NULL == allocator)
-		{
-			break;
-		}
-		buffer = allocator;
-		
-		allocator->block_arr = malloc(sizeof(*allocator->block_arr) * block_num);
-		if (NULL == allocator->block_arr)
-		{
-			break;
-		}
-		
-		allocator->block_arr = InitBlockArr(block_num, allocator->block_arr);
-		allocator->block_size = block_size;
-		allocator->block_num = block_num;
-		allocator->buff_start = buffer + offsetof(allocator, block_num);
+	allocator = (fsa_t *)buffer;
 	
-	} while (0);
-	
-	/* cleanup */
-	(NULL == allocator) ? allocator = NULL: allocator;
-	(NULL == allocator->block_arr) ? free(allocator) : allocator->block_arr;
+	allocator->block_size = block_size;
+	allocator->block_num = block_num;
+	allocator->buff_start = (char *)buffer + offsetof(allocator, next_free);
+	allocator->next_free = allocator->buff_start;
+	InitBlocks(allocator);
 	
 	return allocator;
 }
 
 void FSADestroy(fsa_t *fsa)
 {
-	assert(NULL != allocated_space);
+	/*assert(NULL != allocated_space);
 	free(allocated_space->block_arr);
 	free(allocated_space->buff_start);
-	free(allocated_space); allocated_space = NULL;
+	free(allocated_space); allocated_space = NULL;*/
 }
 
 void *FSAalloc(fsa_t *fsa)
@@ -99,37 +83,25 @@ size_t FSASuggest(size_t block_num, size_t block_size)
 }
 
 /********************************
- * INTERNFSA FUNCS: 		*
+ * INTERNFSA FUNCS: 	*
 ********************************/
-static void *InitBlockArr(size_t block_num, char *block_arr)
+static char *InitBlocks(fsa_t *allocator)
 {
 	int i = 0;
 	
-	assert(NULL != block_arr);	
-	for (i = 0; 0 < block_num; i++)
+	for (i = 0; i < allocator->block_num; i++)
 	{
-		block_arr[i] = 0;
+		(allocator->buff_start[i * allocator->block_size] = 0;
 	}
 	
-	return block_arr;
+	allocator->next_free = offsetof(fsa_t, buff_start) + block_header_size;
 }
 
 static size_t GetFirstFreeBlockNum(fsa_t *allocated_space)
 {
 	size_t i = 0;
 	
-	for (i = 0; (i < (allocated_space->block_num)) && (0 != allocated_space->block_arr[i]); i++);
+	for (i = 0; (i < (allocated_space->block_num)) && (0 < allocated_space->block_arr[i]); i++);
 	
 	return i;
 }
-/*static GetBitArrNum(size_t block_num)
-{
-	size_t bit_arr_num = block_num / word_size;
-	
-	if (0 < block_num % word_size)
-	{
-	
-	}
-	
-	return bit_arr_num;
-}*/
