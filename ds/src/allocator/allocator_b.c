@@ -55,9 +55,13 @@ void *FSAalloc(fsa_t *fsa)
 void FSAFree(void *block)
 {
 	fsa_t *fsa_next_free = NULL;
+	char *block_cpy = NULL;
 	
 	assert(NULL != block);
-	/*fsa_next_free = (char *)(block + block_header_size) - offsetof(fsa_t, next_free);*/
+	block_cpy = (char *)block;
+	fsa_next_free = block_cpy - (*(size_t *)(block_cpy - block_header_size));
+	*(size_t *)(block_cpy - block_header_size) = fsa_next_free;
+	fsa_next_free = block_cpy;
 }
 
 size_t FSACountFree(const fsa_t *fsa)
@@ -65,9 +69,10 @@ size_t FSACountFree(const fsa_t *fsa)
 	size_t free_blocks_ctr = 0;
 	size_t i = 0;
 	fsa_t *fsa_cpy = (fsa_t *)fsa;
+	char *block = NULL;
 	
 	assert(NULL != fsa);
-	for (i = 0; i < fsa_cpy->block_num; i++)
+	for (i = 0, block = (char *)fsa_cpy + offsetof(fsa_t, next_free); i < fsa_cpy->block_num; i++)
 	{
 		(0 != (*(fsa->buff_start + (i * fsa->block_size) - block_header_size))) ? 
 			free_blocks_ctr++ : free_blocks_ctr;
@@ -84,7 +89,7 @@ size_t FSASuggest(size_t block_num, size_t block_size)
 /********************************
  * INTERNFSA FUNCS: 	*
 ********************************/
-static size_t InitBlocks(fsa_t *allocator)
+/*static size_t InitBlocks(fsa_t *allocator)
 {
 	size_t i = 0;
 	char *block = NULL;
@@ -100,4 +105,4 @@ static size_t InitBlocks(fsa_t *allocator)
 	*(block + ((i + 1) * allocator->block_size)) = block_header_size;
 	
 	return offsetof(fsa_t, buff_start) + block_header_size;
-}
+}*/
