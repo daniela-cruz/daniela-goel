@@ -69,32 +69,32 @@ static void AllocTest(fsa_t *allocator)
 	
 	printf("\nAllocation test:\n");
 	
-	michal = FSAalloc(allocator);
+	michal = FSAAlloc(allocator);
 	printf("Number of free blocks: %ld\n", FSACountFree(allocator));
 	(NULL != michal) ? printf("Allocated Michal with address of: %p\n", michal) : 
 		printf("Couldn't allocate Michal\n");
 	
-	potas2 = FSAalloc(allocator);
+	potas2 = FSAAlloc(allocator);
 	(NULL != potas2) ? printf("Allocated Potas with address of: %p\n", potas2) : 
 		printf("Couldn't allocate Michal\n");
 	
-	robin3 = FSAalloc(allocator);
+	robin3 = FSAAlloc(allocator);
 	(NULL != robin3) ? printf("Allocated Robin with address of: %p\n", robin3) : 
 		printf("Couldn't allocate Michal\n");
 	
-	jupi4 = FSAalloc(allocator);
+	jupi4 = FSAAlloc(allocator);
 	(NULL != jupi4) ? printf("Allocated Jupiter with address of: %p\n", jupi4) : 
 		printf("Couldn't allocate Michal\n");
 	
-	shahar5 = FSAalloc(allocator);
+	shahar5 = FSAAlloc(allocator);
 	(NULL != shahar5) ? printf("Allocated Shahar with address of: %p\n", shahar5) : 
 		printf("Couldn't allocate Michal\n");
 	
-	dani6 = FSAalloc(allocator);
+	dani6 = FSAAlloc(allocator);
 	(NULL != dani6) ? printf("Allocated me with address of: %p\n", dani6) : 
 		printf("Couldn't allocate Michal\n");
 	
-	potal7 = FSAalloc(allocator);
+	potal7 = FSAAlloc(allocator);
 	(NULL != potal7) ? printf("Allocated Potal with address of: %p\n", potal7) : 
 		printf("Couldn't allocate Michal\n");
 	

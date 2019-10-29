@@ -9,7 +9,7 @@ fsa_t *FSAInit(void *buffer, size_t buff_size, size_t block_size);
 
 void FSADestroy(fsa_t *fsa);
 
-void *FSAalloc(fsa_t *fsa);
+void *FSAAlloc(fsa_t *fsa);
 
 void FSAFree(void *block);
 
