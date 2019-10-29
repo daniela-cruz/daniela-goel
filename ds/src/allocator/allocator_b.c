@@ -33,10 +33,10 @@ fsa_t *FSAInit(void *buffer, size_t buff_size, size_t block_size)
 	for (i = 0, curr_block = (char *)allocator + offsetof(fsa_t, next_free); 
 		i < block_num; i++, curr_block += block_size)
 	{
-		*(size_t *)curr_block = (i + 1) * block_size;
+		*(size_t *)curr_block = sizeof(fsa_t) + ((i + 1) * block_size);
 	}
 	
-	*(size_t *)curr_block  = 0;
+	*(size_t *)(curr_block + block_size) = 0;
 	allocator->next_free = sizeof(size_t);
 		
 	return allocator;
@@ -89,12 +89,8 @@ size_t FSACountFree(const fsa_t *fsa)
 	char *next_block = NULL;
 	
 	assert(NULL != fsa);
-	/*for (curr_block = fsa_cpy + offsetof(fsa_t, next_free), 
-		next_block = curr_block + *(size_t *)curr_block;
-		curr_block != next_block; 
-		free_blocks_ctr++, curr_block = next_block, next_block += *(size_t *)next_block);*/
-	for (curr_block = fsa_cpy + sizeof(fsa_t), next_block = fsa_cpy + *(size_t *)curr_block;
-		*(size_t*)curr_block != *(size_t*)next_block;
+	for (curr_block = fsa_cpy + ((fsa_t *)fsa_cpy)->next_free , next_block = fsa_cpy + *(size_t *)curr_block;
+		(curr_block - fsa_cpy != ((fsa_t *)fsa_cpy)->next_free);
 		free_blocks_ctr++)
 	{
 		curr_block = fsa_cpy + ((fsa_t *)fsa_cpy)->next_free;
