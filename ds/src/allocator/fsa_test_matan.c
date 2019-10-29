@@ -69,7 +69,7 @@ int TestInit()
 	}
 
 	/*white box test*/
-
+	/*
 	curr = (char *)fsa2 + 8;
 
 	while (curr < (char *)fsa2 + buff_size)
@@ -81,7 +81,7 @@ int TestInit()
 		curr += 16;
 		++i;
 	}	
-
+*/
 	return 0;
 }
 

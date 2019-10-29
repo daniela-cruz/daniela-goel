@@ -4,6 +4,8 @@
 
 #include "allocator.h"
 
+#define WORD_SIZE sizeof(size_t)
+
 struct fsa
 {
 	size_t next_free;
@@ -87,17 +89,23 @@ size_t FSACountFree(const fsa_t *fsa)
 	char *next_block = NULL;
 	
 	assert(NULL != fsa);
-	for (curr_block = fsa_cpy + offsetof(fsa_t, next_free), 
+	/*for (curr_block = fsa_cpy + offsetof(fsa_t, next_free), 
 		next_block = curr_block + *(size_t *)curr_block;
 		curr_block != next_block; 
-		free_blocks_ctr++, curr_block = next_block, next_block += *(size_t *)next_block);
+		free_blocks_ctr++, curr_block = next_block, next_block += *(size_t *)next_block);*/
+	for (curr_block = fsa_cpy + sizeof(fsa_t), next_block = fsa_cpy + *(size_t *)curr_block;
+		*(size_t*)curr_block != *(size_t*)next_block;
+		free_blocks_ctr++)
+	{
+		curr_block = fsa_cpy + ((fsa_t *)fsa_cpy)->next_free;
+	}
 	
 	return free_blocks_ctr;
 }
 
 size_t FSASuggest(size_t block_num, size_t block_size)
 {
-	return sizeof(fsa_t) + (block_num * (block_header_size + block_size + CalcAlignedBlockSize(block_size)));
+	return sizeof(fsa_t)+ (block_num * (block_header_size + block_size + CalcAlignedBlockSize(block_size)));
 }
 
 /********************************
@@ -105,5 +113,7 @@ size_t FSASuggest(size_t block_num, size_t block_size)
 ********************************/
 static size_t CalcAlignedBlockSize(size_t block_size)
 {
+	for (; (block_size > WORD_SIZE); block_size -= WORD_SIZE);
+	
 	return sizeof(size_t) % block_size;
 }
