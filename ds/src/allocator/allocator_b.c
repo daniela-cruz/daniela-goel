@@ -9,7 +9,7 @@ struct fsa
 	size_t next_free;
 };
 
-static size_t InitBlocks(fsa_t *allocator);
+/*static size_t InitBlocks(fsa_t *allocator);*/
 
 const size_t block_header_size = sizeof(size_t);
 
@@ -20,17 +20,21 @@ fsa_t *FSAInit(void *buffer, size_t buff_size, size_t block_size)
 {
 	fsa_t *allocator = NULL;
 	size_t i = 0;
+	size_t block_num = 0;
+	char *curr_block = NULL;
 	
 	assert(NULL != buffer);
 	allocator = (fsa_t *)buffer;
-	allocator->next_free = offsetof(fsa_t, next_free);
+	block_num = (buff_size - offsetof(fsa_t, next_free) / block_size);
 	
-	for (i = 0; i < (buff_size - offsetof(fsa_t, next_free) / block_size) - 1; i++)
+	for (i = 0, curr_block = (char *)allocator + offsetof(fsa_t, next_free); 
+		i < block_num; i++, curr_block += block_size)
 	{
-		allocator->next_free + (i * block_size) = ((i + 1) * block_size);
+		*(size_t *)curr_block = (i + 1) * block_size;
+		/*allocator->next_free + (i * block_size) = (char *)allocator + ((i + 1) * block_size);*/
 	}
 	
-	allocator->next_free + ((i + 1) * block_size) = 0;
+	*(size_t *)curr_block  = 0;
 		
 	return allocator;
 }
@@ -54,29 +58,28 @@ void *FSAalloc(fsa_t *fsa)
 
 void FSAFree(void *block)
 {
-	fsa_t *fsa_next_free = NULL;
+	char *fsa_next_free = NULL;
 	char *block_cpy = NULL;
 	
 	assert(NULL != block);
 	block_cpy = (char *)block;
 	fsa_next_free = block_cpy - (*(size_t *)(block_cpy - block_header_size));
-	*(size_t *)(block_cpy - block_header_size) = fsa_next_free;
-	fsa_next_free = block_cpy;
+	*(size_t *)(block_cpy - block_header_size) = *(size_t *)fsa_next_free;
+	fsa_next_free = block_cpy - block_header_size;
 }
 
 size_t FSACountFree(const fsa_t *fsa)
 {
 	size_t free_blocks_ctr = 0;
-	size_t i = 0;
-	fsa_t *fsa_cpy = (fsa_t *)fsa;
-	char *block = NULL;
+	char *fsa_cpy = (char *)fsa;
+	char *curr_block = NULL;
+	char *next_block = NULL;
 	
 	assert(NULL != fsa);
-	for (i = 0, block = (char *)fsa_cpy + offsetof(fsa_t, next_free); i < fsa_cpy->block_num; i++)
-	{
-		(0 != (*(fsa->buff_start + (i * fsa->block_size) - block_header_size))) ? 
-			free_blocks_ctr++ : free_blocks_ctr;
-	}
+	for (curr_block = fsa_cpy + offsetof(fsa_t, next_free), 
+		next_block = curr_block + *(size_t *)curr_block;
+		curr_block != next_block; 
+		free_blocks_ctr++, curr_block = next_block, next_block += *(size_t *)next_block);
 	
 	return free_blocks_ctr;
 }

@@ -68,7 +68,6 @@ static void AllocTest(fsa_t *allocator)
 	void *michal, *potas2, *robin3, *jupi4, *shahar5, *dani6, *potal7;
 	
 	printf("\nAllocation test:\n");
-	printf("Number of free blocks: %ld\n", FSACountFree(allocator));
 	
 	michal = FSAalloc(allocator);
 	printf("Number of free blocks: %ld\n", FSACountFree(allocator));
