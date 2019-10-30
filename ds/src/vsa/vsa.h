@@ -11,6 +11,6 @@ void *VSAAlloc(vsa_t *vsa, size_t var_size);
 
 void VSAFree(void *block);
 
-size_t VSAMaxFreeSize(vsa_t *vsa);
+size_t VSAMaxFreeBlock(const vsa_t *vsa);
 
 #endif /* __VSA_H__ */

@@ -12,10 +12,12 @@ typedef struct
 }person_t;
 
 static void InitTest();
+static void AllocateTest();
 
 int main()
 {
-	InitTest();
+	/*InitTest();*/
+	AllocateTest();
 	
 	return 0;
 }
@@ -23,14 +25,14 @@ int main()
 static void InitTest()
 {
 	void *buffer = NULL;
-	size_t buff_size = 64;
+	size_t buff_size = 67;
 	vsa_t *vsa = NULL;
 	
 	printf("\nInit Test:\t");
 	buffer = malloc(buff_size);
 	vsa = VSAInit(buffer, buff_size);
 	(NULL != vsa) ? printf("Initiated vsa successfully\n") : printf("Could not initiate buffer\n");
-	(56 == VSAMaxFreeSize(vsa)) ? printf("Correct buffer size\n") : printf("ERROR: buffer size is: %ld\n", VSAMaxFreeSize(vsa));
+	(56 == VSAMaxFreeBlock(vsa)) ? printf("Correct buffer size\n") : printf("ERROR: buffer size is: %ld\n", VSAMaxFreeBlock(vsa));
 }
 
 static void AllocateTest()
@@ -43,5 +45,7 @@ static void AllocateTest()
 	printf("\nAllocate Test:\t");
 	buffer = malloc(buff_size);
 	vsa = VSAInit(buffer, buff_size);
-	
+	michal = VSAAlloc(vsa, sizeof(person_t));
+	(NULL != michal) ? printf("Allocated Michal successfully\n") : printf("Could not allocate Michal\n");
+	(56 - sizeof(*michal) == VSAMaxFreeBlock(vsa)) ? printf("Correct buffer size\n") : printf("ERROR: buffer size is: %ld\n", VSAMaxFreeBlock(vsa));
 }
