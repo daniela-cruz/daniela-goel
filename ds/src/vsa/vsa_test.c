@@ -41,11 +41,15 @@ static void AllocateTest()
 	size_t buff_size = 64;
 	vsa_t *vsa = NULL;
 	person_t *michal = NULL;
+	person_t *sigal = NULL;
 	
 	printf("\nAllocate Test:\t");
 	buffer = malloc(buff_size);
 	vsa = VSAInit(buffer, buff_size);
 	michal = VSAAlloc(vsa, sizeof(person_t));
 	(NULL != michal) ? printf("Allocated Michal successfully\n") : printf("Could not allocate Michal\n");
-	(56 - sizeof(*michal) == VSAMaxFreeBlock(vsa)) ? printf("Correct buffer size\n") : printf("ERROR: buffer size is: %ld\n", VSAMaxFreeBlock(vsa));
+	
+	sigal = VSAAlloc(vsa, sizeof(person_t));
+	(NULL != sigal) ? printf("Allocated sigal successfully\n") : printf("Could not allocate sigal\n");
+	/*(56 - sizeof(*michal) == VSAMaxFreeBlock(vsa)) ? printf("Correct buffer size\n") : printf("ERROR: buffer size is: %ld\n", VSAMaxFreeBlock(vsa));*/
 }
