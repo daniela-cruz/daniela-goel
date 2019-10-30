@@ -7,7 +7,7 @@ typedef struct vsa vsa_t;
 
 vsa_t *VSAInit(void *buffer, size_t buff_size);
 
-void *VSAAlloc(vsa_t *vsa);
+void *VSAAlloc(vsa_t *vsa, size_t var_size);
 
 void VSAFree(void *block);
 
