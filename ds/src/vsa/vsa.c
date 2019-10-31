@@ -21,9 +21,7 @@ static size_t AlignToBlockSize(size_t buff_size);
 static int IsFree(vsa_header_t *header);
 
 static vsa_header_t *FindRightSizeBlock(const vsa_t *vsa, size_t var_size);
-static int IsRIghtSize(vsa_header_t *header, size_t var_size);
 
-static void UpdateHeadersSizes(vsa_header_t *header, size_t var_size);
 static vsa_t *DefragFreeBlocks(const vsa_t *vsa);
 
 /*************************/
@@ -51,27 +49,25 @@ vsa_t *VSAInit(void *buffer, size_t buff_size)
 
 void *VSAAlloc(vsa_t *vsa, size_t var_size)
 {
-	char *element = NULL;
-	vsa_header_t *header = NULL;
-	size_t curr_size = 0;
+	vsa_header_t *element = NULL;
+	vsa_header_t *next_header = NULL;
 	
 	assert(NULL != vsa);
 	var_size += AlignVarSize(var_size);
+	element = (vsa_header_t *)vsa; 
 	
-	for (header = (vsa_header_t *)vsa; 
-		1 != header->size; 
-		header = (vsa_header_t *)((char *)header + header->size))
+	element = FindRightSizeBlock(vsa, var_size);
+	
+	if (var_size <= element->size - header_size)
 	{
-		if (var_size <= FindRightSizeBlock(vsa, var_size)->size)
+		next_header = (vsa_header_t *)((char *)element + var_size + header_size);
+		if (buff_end != next_header->size)
 		{
-			element = (char *)header + header_size;
-			curr_size = header->size;
-			header->size -= var_size + 1;
-			header = (vsa_header_t *)((char *)header + curr_size);
-			header->size = curr_size - var_size;
-			/*UpdateHeadersSizes(header, var_size);*/
-			break;
+			next_header->size = element->size - var_size;
 		}
+		
+		element->size = var_size + header_size + 1;
+		element = (vsa_header_t *)((char *)element + header_size);
 	}
 	
 	return (void *)element;
@@ -133,7 +129,7 @@ static vsa_header_t *FindRightSizeBlock(const vsa_t *vsa, size_t var_size)
 	assert(NULL != vsa);
 	for (header = curr_header = (vsa_header_t *)vsa; 
 		buff_end != header->size;
-		header = curr_header = (vsa_header_t *)((char *)header + header->size))
+		header = curr_header = (vsa_header_t *)((char *)header + header->size - 1))
 	{
 		for (curr_size = 0; 1 == IsFree(header); 
 			header = (vsa_header_t *)((char *)header + header->size))
@@ -141,7 +137,7 @@ static vsa_header_t *FindRightSizeBlock(const vsa_t *vsa, size_t var_size)
 			curr_size += header->size;
 			curr_header->size = curr_size;
 			
-			if (1 == IsRIghtSize(curr_header, var_size))
+			if (curr_size - header_size >= var_size)
 			{
 				return curr_header;
 			}
@@ -149,11 +145,6 @@ static vsa_header_t *FindRightSizeBlock(const vsa_t *vsa, size_t var_size)
 	}
 	
 	return NULL;
-}
-
-static int IsRIghtSize(vsa_header_t *header, size_t var_size)
-{
-	return (header->size - header_size >= var_size) ? 1 : 0;
 }
 
 static size_t AlignToBlockSize(size_t buff_size)
@@ -168,21 +159,6 @@ static int IsFree(vsa_header_t *header)
 	
 	return ((word_size <= header->size) && (0 == header->size % 2));
 }
-/*
-static void UpdateHeadersSizes(vsa_header_t *header, size_t var_size)
-{
-	vsa_header_t *next_header = NULL;
-	
-	assert(NULL != header);
-	next_header = (vsa_header_t *)((char *)header + header->size);
-	
-	if ((header->size > var_size + header_size) && (buff_end != next_header->size))
-	{
-		next_header->size = header->size - var_size;
-	}
-	
-	header->size = var_size + 1;
-}*/
 
 static vsa_t *DefragFreeBlocks(const vsa_t *vsa)
 {
