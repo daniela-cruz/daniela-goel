@@ -18,7 +18,6 @@ int main()
 {
 	/*InitTest();*/
 	AllocateTest();
-	
 	return 0;
 }
 
@@ -49,8 +48,10 @@ static void AllocateTest()
 	michal = VSAAlloc(vsa, sizeof(person_t));
 	(NULL != michal) ? printf("Allocated Michal successfully\n") : printf("Could not allocate Michal\n");
 	
-	printf("\nGet max: %ld\t", VSAMaxFreeBlock(vsa));
-	/*sigal = VSAAlloc(vsa, sizeof(person_t));
-	(NULL != sigal) ? printf("Allocated sigal successfully\n") : printf("Could not allocate sigal\n");*/
+	printf("\nGet max: %ld\n", VSAMaxFreeBlock(vsa));
+	sigal = VSAAlloc(vsa, sizeof(person_t));
+	(NULL != sigal) ? printf("Allocated sigal successfully\n") : printf("Could not allocate sigal\n");
+	
+	printf("\nGet max: %ld\n", VSAMaxFreeBlock(vsa));
 	
 }

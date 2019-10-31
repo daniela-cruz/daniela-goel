@@ -63,7 +63,7 @@ void *VSAAlloc(vsa_t *vsa, size_t var_size)
 		next_header = (vsa_header_t *)((char *)element + var_size + header_size);
 		if (buff_end != next_header->size)
 		{
-			next_header->size = element->size - var_size;
+			next_header->size = element->size - var_size - header_size;
 		}
 		
 		element->size = var_size + header_size + 1;
@@ -84,7 +84,7 @@ void VSAFree(void *block)
 
 size_t VSAMaxFreeBlock(const vsa_t *vsa)
 {
-	size_t max_size = 0;
+	size_t max_size = header_size;
 	size_t curr_max = 0;
 	vsa_header_t *header = NULL;
 	vsa_header_t *curr_header = NULL;
@@ -92,8 +92,7 @@ size_t VSAMaxFreeBlock(const vsa_t *vsa)
 	assert(NULL != vsa);
 	
 	for (header = curr_header = (vsa_header_t *)vsa, max_size = 0; 
-		buff_end != header->size; 
-		header = curr_header = (vsa_header_t *)((char *)header + header->size))
+		buff_end != header->size; )
 	{
 		if (IsFree(header))
 		{
@@ -107,10 +106,10 @@ size_t VSAMaxFreeBlock(const vsa_t *vsa)
 			curr_header->size = curr_max;
 		}
 		
-		/*else
+		else
 		{
-			header = curr_header = (vsa_header_t *)((char *)header - 1);
-		}*/
+			header = curr_header = (vsa_header_t *)(((char *)header)+ header->size- 1);
+		}
 	}
 	
 	return max_size - header_size;
