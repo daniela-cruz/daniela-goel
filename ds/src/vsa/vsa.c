@@ -28,7 +28,7 @@ static vsa_t *DefragFreeBlocks(const vsa_t *vsa);
 
 const size_t word_size = sizeof(size_t);
 const size_t header_size = sizeof(vsa_header_t);
-const size_t buff_end = -1;
+const size_t buff_end = 7;
 
 /**********IMPLEMENTATION:***************/
 vsa_t *VSAInit(void *buffer, size_t buff_size)
@@ -56,18 +56,19 @@ void *VSAAlloc(vsa_t *vsa, size_t var_size)
 	var_size += AlignVarSize(var_size);
 	element = (vsa_header_t *)vsa; 
 	
-	element = FindRightSizeBlock(vsa, var_size);
+	/*element = FindRightSizeBlock(vsa, var_size);*/
 	
-	if (var_size <= element->size - header_size)
+	if (var_size <= /*element->size - header_size*/ VSAMaxFreeBlock(vsa))
 	{
+		element = FindRightSizeBlock(vsa, var_size);
 		next_header = (vsa_header_t *)((char *)element + var_size + header_size);
 		if (buff_end != next_header->size)
 		{
 			next_header->size = element->size - var_size - header_size;
+			element->size = var_size + header_size + 1;
+			element = (vsa_header_t *)((char *)element + header_size);
 		}
 		
-		element->size = var_size + header_size + 1;
-		element = (vsa_header_t *)((char *)element + header_size);
 	}
 	
 	return (void *)element;
@@ -108,11 +109,11 @@ size_t VSAMaxFreeBlock(const vsa_t *vsa)
 		
 		else
 		{
-			header = curr_header = (vsa_header_t *)(((char *)header)+ header->size- 1);
+			header = curr_header = (vsa_header_t *)(((char *)header)+ header->size - 1);
 		}
 	}
 	
-	return max_size - header_size;
+	return max_size;
 }
 
 /****************************
