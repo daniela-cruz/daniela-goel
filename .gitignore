@@ -2,6 +2,7 @@
 !/**/
 !*.txt
 !*.c
+!*.o
 !.gitignore
 !*.h
 !*.md
