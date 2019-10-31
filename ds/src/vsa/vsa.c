@@ -87,27 +87,33 @@ size_t VSAMaxFreeBlock(const vsa_t *vsa)
 	size_t max_size = 0;
 	size_t curr_max = 0;
 	vsa_header_t *header = NULL;
+	vsa_header_t *curr_header = NULL;
 	
 	assert(NULL != vsa);
-	/*DefragFreeBlocks(vsa);*/
 	
-	for (header = (vsa_header_t *)vsa; 
+	for (header = curr_header = (vsa_header_t *)vsa, max_size = 0; 
 		buff_end != header->size; 
-		header = (vsa_header_t *)((char *)header + header->size + header_size))
+		header = curr_header = (vsa_header_t *)((char *)header + header->size))
 	{
 		if (IsFree(header))
 		{
-			curr_max += header->size;
-			max_size = (max_size < curr_max) ? curr_max : max_size;
+			for (curr_max = 0; (IsFree(header)) && buff_end != header->size; 
+				header = (vsa_header_t *)((char *)header + header->size))
+			{
+				curr_max += header->size;
+				max_size = (max_size < curr_max) ? curr_max : max_size;
+			}
+			
+			curr_header->size = curr_max;
 		}
-		else
+		
+		/*else
 		{
-			curr_max = 0;
-			header = (vsa_header_t *)((char *)header - 1);
-		}
+			header = curr_header = (vsa_header_t *)((char *)header - 1);
+		}*/
 	}
 	
-	return max_size;
+	return max_size - header_size;
 }
 
 /****************************
