@@ -42,21 +42,37 @@ static void AllocateTest()
 	person_t *michal = NULL;
 	person_t *sigal = NULL;
 	int num1 = 1, num2 = 2;
-	int *num_container = NULL;
+	int *num_container = NULL, *num_container2 = NULL;
 	
 	printf("\nAllocate Test:\t");
 	buffer = malloc(buff_size);
 	vsa = VSAInit(buffer, buff_size);
+	printf("Get max: %ld\n\n", VSAMaxFreeBlock(vsa));
+	
 	michal = VSAAlloc(vsa, sizeof(person_t));
 	(NULL != michal) ? printf("Allocated Michal successfully\n") : printf("Could not allocate Michal\n");
-	
-	printf("\nGet max: %ld\n", VSAMaxFreeBlock(vsa));
+	printf("Get max: %ld\n\n", VSAMaxFreeBlock(vsa));
 	
 	num_container = VSAAlloc(vsa, sizeof(*num_container));
+	(NULL != num_container) ? printf("Allocated num_container successfully\n") : printf("Could not allocate num_container\n");
+	printf("Get max: %ld\n\n", VSAMaxFreeBlock(vsa));
 	
-	printf("\nGet max: %ld\n", VSAMaxFreeBlock(vsa));
 	sigal = VSAAlloc(vsa, sizeof(person_t));
 	(NULL != sigal) ? printf("Allocated sigal successfully\n") : printf("Could not allocate sigal\n");
 	
-	printf("\nGet max: %ld\n", VSAMaxFreeBlock(vsa));
+	printf("\nFreeing num_container\n");
+	VSAFree(num_container);
+	printf("Get max: %ld\n\n", VSAMaxFreeBlock(vsa));
+	
+	sigal = VSAAlloc(vsa, sizeof(person_t));
+	(NULL != sigal) ? printf("Allocated sigal successfully\n") : printf("Could not allocate sigal\n");
+	printf("Get max: %ld\n\n", VSAMaxFreeBlock(vsa));
+	
+	/*num_container = VSAAlloc(vsa, sizeof(*num_container));
+	(NULL != num_container) ? printf("Allocated num_container successfully\n") : printf("Could not allocate num_container\n");
+	printf("Get max: %ld\n\n", VSAMaxFreeBlock(vsa));*/
+	
+	num_container2 = VSAAlloc(vsa, sizeof(*num_container));
+	(NULL != num_container) ? printf("Allocated num_container2 successfully\n") : printf("Could not allocate num_container2\n");
+	printf("Get max: %ld\n\n", VSAMaxFreeBlock(vsa));
 }
