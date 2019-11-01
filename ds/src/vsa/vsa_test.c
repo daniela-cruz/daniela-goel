@@ -58,5 +58,5 @@ static void AllocateTest()
 	sigal = VSAAlloc(vsa, sizeof(person_t));
 	(NULL != sigal) ? printf("Allocated sigal successfully\n") : printf("Could not allocate sigal\n");
 	
-	
+	printf("\nGet max: %ld\n", VSAMaxFreeBlock(vsa));
 }

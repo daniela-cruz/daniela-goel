@@ -59,13 +59,17 @@ void *VSAAlloc(vsa_t *vsa, size_t var_size)
 	{
 		element = FindRightSizeBlock(vsa, var_size);
 		next_header = (vsa_header_t *)((char *)element + var_size + header_size);
+		
 		if (buff_end != next_header->size)
 		{
 			next_header->size = element->size - var_size - header_size;
 			element->size = var_size + header_size + 1;
 			element = (vsa_header_t *)((char *)element + header_size);
 		}
-		
+	}
+	else
+	{
+		return NULL;
 	}
 	
 	return (void *)element;
@@ -103,14 +107,13 @@ size_t VSAMaxFreeBlock(const vsa_t *vsa)
 			
 			curr_header->size = curr_max;
 		}
-		
 		else
 		{
 			header = curr_header = (vsa_header_t *)(((char *)header)+ header->size - 1);
 		}
 	}
 	
-	return max_size;
+	return (header_size < max_size - header_size) ? max_size - header_size : 0;
 }
 
 /****************************
@@ -144,10 +147,8 @@ static vsa_header_t *FindRightSizeBlock(const vsa_t *vsa, size_t var_size)
 					return curr_header;
 				}
 			}
-			
 			curr_header->size = curr_max;
 		}
-		
 		else
 		{
 			header = curr_header = (vsa_header_t *)(((char *)header)+ header->size - 1);
