@@ -37,10 +37,12 @@ static void InitTest()
 static void AllocateTest()
 {
 	void *buffer = NULL;
-	size_t buff_size = 64;
+	size_t buff_size = 72;
 	vsa_t *vsa = NULL;
 	person_t *michal = NULL;
 	person_t *sigal = NULL;
+	int num1 = 1, num2 = 2;
+	int *num_container = NULL;
 	
 	printf("\nAllocate Test:\t");
 	buffer = malloc(buff_size);
@@ -49,9 +51,12 @@ static void AllocateTest()
 	(NULL != michal) ? printf("Allocated Michal successfully\n") : printf("Could not allocate Michal\n");
 	
 	printf("\nGet max: %ld\n", VSAMaxFreeBlock(vsa));
+	
+	num_container = VSAAlloc(vsa, sizeof(*num_container));
+	
+	printf("\nGet max: %ld\n", VSAMaxFreeBlock(vsa));
 	sigal = VSAAlloc(vsa, sizeof(person_t));
 	(NULL != sigal) ? printf("Allocated sigal successfully\n") : printf("Could not allocate sigal\n");
 	
-	printf("\nGet max: %ld\n", VSAMaxFreeBlock(vsa));
 	
 }

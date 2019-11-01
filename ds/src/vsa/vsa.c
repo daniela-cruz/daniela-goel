@@ -18,11 +18,10 @@ typedef struct
 
 static size_t AlignVarSize(size_t var_size);
 static size_t AlignToBlockSize(size_t buff_size);
+
 static int IsFree(vsa_header_t *header);
 
 static vsa_header_t *FindRightSizeBlock(const vsa_t *vsa, size_t var_size);
-
-static vsa_t *DefragFreeBlocks(const vsa_t *vsa);
 
 /*************************/
 
@@ -56,9 +55,7 @@ void *VSAAlloc(vsa_t *vsa, size_t var_size)
 	var_size += AlignVarSize(var_size);
 	element = (vsa_header_t *)vsa; 
 	
-	/*element = FindRightSizeBlock(vsa, var_size);*/
-	
-	if (var_size <= /*element->size - header_size*/ VSAMaxFreeBlock(vsa))
+	if (var_size <= VSAMaxFreeBlock(vsa))
 	{
 		element = FindRightSizeBlock(vsa, var_size);
 		next_header = (vsa_header_t *)((char *)element + var_size + header_size);
@@ -128,25 +125,32 @@ static size_t AlignVarSize(size_t var_size)
 
 static vsa_header_t *FindRightSizeBlock(const vsa_t *vsa, size_t var_size)
 {
+	size_t curr_max = 0;
 	vsa_header_t *header = NULL;
 	vsa_header_t *curr_header = NULL;
-	size_t curr_size = 0;
 	
 	assert(NULL != vsa);
 	for (header = curr_header = (vsa_header_t *)vsa; 
-		buff_end != header->size;
-		header = curr_header = (vsa_header_t *)((char *)header + header->size - 1))
+		buff_end != header->size; )
 	{
-		for (curr_size = 0; 1 == IsFree(header); 
-			header = (vsa_header_t *)((char *)header + header->size))
+		if (IsFree(header))
 		{
-			curr_size += header->size;
-			curr_header->size = curr_size;
-			
-			if (curr_size - header_size >= var_size)
+			for (curr_max = 0; (IsFree(header)) && buff_end != header->size; 
+				header = (vsa_header_t *)((char *)header + header->size))
 			{
-				return curr_header;
+				curr_max += header->size;
+				if (var_size <= curr_max - header_size)
+				{
+					return curr_header;
+				}
 			}
+			
+			curr_header->size = curr_max;
+		}
+		
+		else
+		{
+			header = curr_header = (vsa_header_t *)(((char *)header)+ header->size - 1);
 		}
 	}
 	
@@ -164,31 +168,4 @@ static int IsFree(vsa_header_t *header)
 	assert(NULL != header);
 	
 	return ((word_size <= header->size) && (0 == header->size % 2));
-}
-
-static vsa_t *DefragFreeBlocks(const vsa_t *vsa)
-{
-	vsa_t *vsa_cpy = NULL;
-	vsa_header_t *header = NULL;
-	vsa_header_t *curr_header = NULL;
-	
-	assert(NULL != vsa);
-	vsa_cpy = (vsa_t *)vsa;
-	
-	for (curr_header = header = (vsa_header_t *)vsa; 
-		buff_end != header->size; 
-		curr_header = header = (vsa_header_t *)((char *)header + header->size), 
-		curr_header->size = header->size)
-	{
-		for (; (buff_end != header->size) && (1 == IsFree(header)); 
-			header = (vsa_header_t *)((char *)header + header->size),
-			curr_header->size += header->size);
-		
-		if (1 != IsFree(header))
-		{
-			curr_header = header = (vsa_header_t *)((char *)header - 1);
-		}
-	}
-	
-	return vsa_cpy;
 }
