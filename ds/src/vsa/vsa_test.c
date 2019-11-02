@@ -60,7 +60,7 @@ static void AllocateTest()
 	num_container = VSAAlloc(vsa, sizeof(num_container));
 	(NULL != num_container) ? printf("Allocated num_container successfully\n") : printf("Could not allocate num_container\n");
 	*num_container = num1;
-	/*printf("Get max: %ld\n\n", VSAMaxFreeBlock(vsa));*/
+	printf("Get max: %ld\n\n", VSAMaxFreeBlock(vsa));
 	
 	num_container2 = VSAAlloc(vsa, sizeof(num_container));
 	(NULL != num_container2) ? printf("Allocated num_container2 successfully\n") : printf("Could not allocate num_container2\n");
