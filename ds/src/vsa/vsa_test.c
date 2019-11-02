@@ -51,6 +51,8 @@ static void AllocateTest()
 	
 	michal = VSAAlloc(vsa, sizeof(person_t));
 	(NULL != michal) ? printf("Allocated Michal successfully\n") : printf("Could not allocate Michal\n");
+	michal->name = "Michal"; michal->last_name = "Fain"; michal->age = 37;
+	printf("Data saved is: %s %s %d\n", michal->name, michal->last_name, michal->age);
 	printf("Get max: %ld\n\n", VSAMaxFreeBlock(vsa));
 	
 	num_container = VSAAlloc(vsa, sizeof(*num_container));
@@ -66,13 +68,15 @@ static void AllocateTest()
 	
 	sigal = VSAAlloc(vsa, sizeof(person_t));
 	(NULL != sigal) ? printf("Allocated sigal successfully\n") : printf("Could not allocate sigal\n");
+	sigal->name = "Sigal"; sigal->last_name = "Galker"; sigal->age = 31;
+	printf("Data saved is: %s %s %d\n", sigal->name, sigal->last_name, sigal->age);
 	printf("Get max: %ld\n\n", VSAMaxFreeBlock(vsa));
 	
-	/*num_container = VSAAlloc(vsa, sizeof(*num_container));
+	num_container = VSAAlloc(vsa, sizeof(*num_container));
 	(NULL != num_container) ? printf("Allocated num_container successfully\n") : printf("Could not allocate num_container\n");
-	printf("Get max: %ld\n\n", VSAMaxFreeBlock(vsa));*/
+	printf("Get max: %ld\n\n", VSAMaxFreeBlock(vsa));
 	
 	num_container2 = VSAAlloc(vsa, sizeof(*num_container));
-	(NULL != num_container) ? printf("Allocated num_container2 successfully\n") : printf("Could not allocate num_container2\n");
+	(NULL != num_container2) ? printf("Allocated num_container2 successfully\n") : printf("Could not allocate num_container2\n");
 	printf("Get max: %ld\n\n", VSAMaxFreeBlock(vsa));
 }

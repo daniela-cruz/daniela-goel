@@ -110,7 +110,7 @@ size_t VSAMaxFreeBlock(const vsa_t *vsa)
 		}
 	}
 	
-	return ((header_size < max_size - header_size) && (0 < max_size - header_size)) ? max_size - header_size : 0;
+	return (header_size < max_size) ? max_size - header_size : 0;
 }
 
 /****************************
