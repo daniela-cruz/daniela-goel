@@ -22,7 +22,7 @@ int main()
 static void AllocateTest()
 {
 	void *buffer = NULL;
-	size_t buff_size = 72;
+	size_t buff_size = 760;
 	vsa_t *vsa = NULL;
 	person_t *michal = NULL;
 	person_t *sigal = NULL;
@@ -57,11 +57,12 @@ static void AllocateTest()
 	printf("Data saved is: %s %s %d\n", sigal->name, sigal->last_name, sigal->age);
 	printf("Get max: %ld\n\n", VSAMaxFreeBlock(vsa));
 	
-	num_container = VSAAlloc(vsa, sizeof(*num_container));
+	num_container = VSAAlloc(vsa, sizeof(num_container));
 	(NULL != num_container) ? printf("Allocated num_container successfully\n") : printf("Could not allocate num_container\n");
-	printf("Get max: %ld\n\n", VSAMaxFreeBlock(vsa));
+	*num_container = num1;
+	/*printf("Get max: %ld\n\n", VSAMaxFreeBlock(vsa));*/
 	
-	num_container2 = VSAAlloc(vsa, sizeof(*num_container));
+	num_container2 = VSAAlloc(vsa, sizeof(num_container));
 	(NULL != num_container2) ? printf("Allocated num_container2 successfully\n") : printf("Could not allocate num_container2\n");
 	printf("Get max: %ld\n\n", VSAMaxFreeBlock(vsa));
 }

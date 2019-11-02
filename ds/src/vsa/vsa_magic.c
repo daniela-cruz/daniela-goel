@@ -39,14 +39,14 @@ vsa_t *VSAInit(void *buffer, size_t buff_size)
 	vsa_t *vsa = NULL;
 	vsa_header_t *first_header = NULL;
 	
-	CYAN, printf("Header size is: %ld\n", header_size), END_COLOR;
-	
 	assert(NULL != buffer);
 	buff_size = AlignToBlockSize(buff_size);
 	vsa = buffer;
 	first_header = (vsa_header_t *)vsa;
 	first_header->size = buff_size - sizeof(first_header);
-
+	#ifndef NDEBUG
+	first_header->mag_num = magic_number;
+	#endif
 	((vsa_header_t *)((char *)vsa + buff_size - header_size))->size = buff_end; 
 	
 	return vsa;
@@ -64,10 +64,12 @@ void *VSAAlloc(vsa_t *vsa, size_t var_size)
 	if (NULL != element)
 	{
 		next_header = (vsa_header_t *)((char *)element + var_size + header_size);
-		
 		if (buff_end != next_header->size)
 		{
 			next_header->size = element->size - var_size - header_size;
+			#ifndef NDEBUG
+			next_header->mag_num = magic_number;
+			#endif
 		}
 		
 		element->size = var_size + header_size + 1;
@@ -183,7 +185,8 @@ static int IsFree(vsa_header_t *header)
 static int IsMagic(vsa_header_t *header)
 {
 	int status = 1;
-	
+
+	assert(NULL != header);
 	#ifndef NDEBUG
 	status = (magic_number == header->mag_num);
 	#endif

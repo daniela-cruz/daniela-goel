@@ -4,7 +4,7 @@
 #include "vsa.h"
 
 #define ADD_RED printf("\033[1;31m")
-#define END_RED printf("\033[0m;")
+#define END_RED printf("\033[0m")
 
 const size_t wordsize = sizeof(size_t);
 
