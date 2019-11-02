@@ -11,27 +11,12 @@ typedef struct
 	int age;
 }person_t;
 
-static void InitTest();
 static void AllocateTest();
 
 int main()
 {
-	/*InitTest();*/
 	AllocateTest();
 	return 0;
-}
-
-static void InitTest()
-{
-	void *buffer = NULL;
-	size_t buff_size = 67;
-	vsa_t *vsa = NULL;
-	
-	printf("\nInit Test:\t");
-	buffer = malloc(buff_size);
-	vsa = VSAInit(buffer, buff_size);
-	(NULL != vsa) ? printf("Initiated vsa successfully\n") : printf("Could not initiate buffer\n");
-	(56 == VSAMaxFreeBlock(vsa)) ? printf("Correct buffer size\n") : printf("ERROR: buffer size is: %ld\n", VSAMaxFreeBlock(vsa));
 }
 
 static void AllocateTest()
