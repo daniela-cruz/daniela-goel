@@ -1,3 +1,4 @@
+#include <stdio.h>
 #include <assert.h> /* assert */
 
 #include "vsa.h"
@@ -10,22 +11,25 @@ struct vsa
 typedef struct
 {
 	size_t size;
+	#ifndef NDEBUG
+	size_t mag_num;
+	#endif
 } vsa_header_t;
 
-/*************************/
-
+/**********INTERNAL FUNCTIONS: *******/
 static size_t AlignVarSize(size_t var_size);
 static size_t AlignToBlockSize(size_t buff_size);
-
 static int IsFree(vsa_header_t *header);
-
 static vsa_header_t *FindRightSizeBlock(const vsa_t *vsa, size_t var_size);
+static int IsMagic(vsa_header_t *header);
 
-/*************************/
-
+/****************CONSTANTS: ***************/
 const size_t word_size = sizeof(size_t);
 const size_t header_size = sizeof(vsa_header_t);
 const size_t buff_end = 7;
+#ifndef NDEBUG
+static const size_t magic_number = 0xdeadfeed;
+#endif
 
 /**********IMPLEMENTATION:***************/
 vsa_t *VSAInit(void *buffer, size_t buff_size)
@@ -37,9 +41,9 @@ vsa_t *VSAInit(void *buffer, size_t buff_size)
 	buff_size = AlignToBlockSize(buff_size);
 	vsa = buffer;
 	first_header = (vsa_header_t *)vsa;
-	first_header->size = buff_size - sizeof(first_header);
+	first_header->size = buff_size - sizeof(*first_header);
 
-	*(size_t *)((char *)vsa + buff_size - word_size) = buff_end; 
+	((vsa_header_t *)((char *)vsa + buff_size - header_size))->size = buff_end; 
 	
 	return vsa;
 }
@@ -48,22 +52,34 @@ void *VSAAlloc(vsa_t *vsa, size_t var_size)
 {
 	vsa_header_t *element = NULL;
 	vsa_header_t *next_header = NULL;
+	size_t temp = 0;
 	
 	assert(NULL != vsa);
-	var_size += AlignVarSize(var_size);
+	var_size = AlignVarSize(var_size);
 	element = FindRightSizeBlock(vsa, var_size);
+	next_header = element;
 	
-	if (NULL != element)
+	if ((NULL != element)/* && (buff_end != next_header->size)*/)
 	{
-		next_header = (vsa_header_t *)((char *)element + var_size + header_size);
-		
-		if (buff_end != next_header->size)
+		if (var_size > (element->size - (2 * header_size)))
 		{
-			next_header->size = element->size - var_size - header_size;
+			element->size += 1;
+		}	
+		else
+		{
+			temp = element->size;
+			element->size = var_size + header_size + 1;
+			next_header = (vsa_header_t *)((char *)element + var_size + header_size);
+			next_header->size = temp - var_size - header_size;
 		}
+
+		#ifndef NDEBUG
+		element->mag_num = magic_number;
+		#endif
 		
-		element->size = var_size + header_size + 1;
+		
 		element = (vsa_header_t *)((char *)element + header_size);
+		
 		return (void *)element;
 	}
 	
@@ -75,8 +91,20 @@ void VSAFree(void *block)
 	vsa_header_t *header = NULL;
 	
 	assert(NULL != block);
+
 	header = (vsa_header_t *)((char *)block - header_size);
+
+#ifndef NDEBUG
+	if (IsMagic(header) == 0)
+	{
+		return;
+	}
+#endif	
+
 	header->size--;
+	#ifndef NDEBUG
+	header->mag_num = 0;
+	#endif
 }
 
 size_t VSAMaxFreeBlock(const vsa_t *vsa)
@@ -116,9 +144,7 @@ size_t VSAMaxFreeBlock(const vsa_t *vsa)
 ****************************/
 static size_t AlignVarSize(size_t var_size)
 {
-	for (; var_size > word_size; var_size -= word_size);
-	
-	return word_size % var_size;
+	return (var_size + word_size - 1) & ~(word_size - 1);
 }
 
 static vsa_header_t *FindRightSizeBlock(const vsa_t *vsa, size_t var_size)
@@ -154,13 +180,21 @@ static vsa_header_t *FindRightSizeBlock(const vsa_t *vsa, size_t var_size)
 
 static size_t AlignToBlockSize(size_t buff_size)
 {
-	return (0 != buff_size % word_size) ? 
-			(((buff_size + word_size - 1) & ~(word_size - 1)) - word_size) : buff_size;
+	return (0 != buff_size % header_size) ? 
+			(((buff_size + header_size - 1) & ~(header_size - 1)) - header_size) : buff_size;
 }
 
 static int IsFree(vsa_header_t *header)
 {
 	assert(NULL != header);
 	
-	return ((word_size <= header->size) && (0 == header->size % 2));
+	return ((header_size < header->size) && (0 == header->size % 2));
 }
+
+static int IsMagic(vsa_header_t *header)
+{
+	assert(NULL != header);
+
+	return (magic_number == header->mag_num);
+}
+
