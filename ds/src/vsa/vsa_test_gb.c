@@ -29,7 +29,7 @@ int main()
 	printf("stage 1: \n");
 	VSAInitTest(pool, 520, 480, 504);
 	printf("stage 2: \n");
-	VSAInitTest(pool, 535, 488, 512);	
+	VSAInitTest(pool, 535, 496, 512);	
 	printf("stage 3: \n");
 	vsa = VSAInitTest(pool, 523, 480, 504);
 	printf("\n");

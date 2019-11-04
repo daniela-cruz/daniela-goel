@@ -41,7 +41,7 @@ vsa_t *VSAInit(void *buffer, size_t buff_size)
 	buff_size = AlignToBlockSize(buff_size);
 	vsa = buffer;
 	first_header = (vsa_header_t *)vsa;
-	first_header->size = buff_size - sizeof(first_header);
+	first_header->size = buff_size - sizeof(*first_header);
 
 	((vsa_header_t *)((char *)vsa + buff_size - header_size))->size = buff_end; 
 	
@@ -52,31 +52,32 @@ void *VSAAlloc(vsa_t *vsa, size_t var_size)
 {
 	vsa_header_t *element = NULL;
 	vsa_header_t *next_header = NULL;
+	size_t temp = 0;
 	
 	assert(NULL != vsa);
 	var_size = AlignVarSize(var_size);
 	element = FindRightSizeBlock(vsa, var_size);
+	next_header = element;
 	
-	if ((NULL != element) && (buff_end != next_header->size))
+	if ((NULL != element)/* && (buff_end != next_header->size)*/)
 	{
-		next_header = (vsa_header_t *)((char *)element + var_size + header_size);
-		if (buff_end != next_header->size)
+		if (var_size > (element->size - (2 * header_size)))
 		{
-			next_header->size = element->size - var_size - header_size;
-			#ifndef NDEBUG
-			next_header->mag_num = magic_number;
-			#endif
-		}
-		
-		element->size = var_size + header_size + 1;
-		if (header_size > next_header->size)
+			element->size += 1;
+		}	
+		else
 		{
-			element->size += next_header->size;
-			next_header->size = 0;
+			temp = element->size;
+			element->size = var_size + header_size + 1;
+			next_header = (vsa_header_t *)((char *)element + var_size + header_size);
+			next_header->size = temp - var_size - header_size;
 		}
+
 		#ifndef NDEBUG
 		element->mag_num = magic_number;
 		#endif
+		
+		
 		element = (vsa_header_t *)((char *)element + header_size);
 		
 		return (void *)element;
@@ -179,10 +180,8 @@ static vsa_header_t *FindRightSizeBlock(const vsa_t *vsa, size_t var_size)
 
 static size_t AlignToBlockSize(size_t buff_size)
 {
-		
-
-/*return (0 != buff_size % header_size) ? 
-			(((buff_size + header_size - 1) & ~(header_size - 1)) - header_size) : buff_size;*/
+	return (0 != buff_size % header_size) ? 
+			(((buff_size + header_size - 1) & ~(header_size - 1)) - header_size) : buff_size;
 }
 
 static int IsFree(vsa_header_t *header)
