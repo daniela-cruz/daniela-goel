@@ -12,17 +12,25 @@ typedef struct
 }person_t;
 
 static void AllocateTest();
+static size_t TestAlignVarSize(size_t var_size);
 
 int main()
 {
+	printf("size is: %ld\n", TestAlignVarSize(20));
+	
 	AllocateTest();
 	return 0;
+}
+
+static size_t TestAlignVarSize(size_t var_size)
+{
+	return (var_size + 8 - 1) & ~(8 - 1);
 }
 
 static void AllocateTest()
 {
 	void *buffer = NULL;
-	size_t buff_size = 760;
+	size_t buff_size = 132;
 	vsa_t *vsa = NULL;
 	person_t *michal = NULL;
 	person_t *sigal = NULL;
