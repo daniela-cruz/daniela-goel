@@ -15,18 +15,22 @@ static void InsertionSortTest(int *arr, size_t size);
 static void SelectionSortTest(int *arr, size_t size);
 
 
-static int arr[100];
+/*static int arr[100];*/
+static int arr[8] = {2, 73, -6, 15, 6, 8, 120, -64};
 
 int main()
 {
-    int size = 100;
+    int size = 8;
     
     /*BubbleTest(arr, 5);*/
-    /*OptimizedBubbleTest(arr, 5);*/
+    /*OptimizedBubbleTest(arr, size);*/
+    OptimizedBubbleSort(arr, size);
+    PrintArr(arr, size);
+
     /*InsertionSortTest(arr, 5);*/
     /*SelectionSortTest(arr, size);*/
 
-    TimeTest();
+    /*TimeTest();*/
 
     return 0;
 }
@@ -35,7 +39,7 @@ static void TimeTest()
 {
     clock_t start, end;
     double exe_time = 0;
-    size_t size = 100;
+    size_t size = 8;
 
     RandArr(arr, size);
     PrintArr(arr, size);
