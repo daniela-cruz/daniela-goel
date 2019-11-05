@@ -3,8 +3,12 @@
 
 #include <stddef.h> /* size_t */
 
-int *BubbleSort(int *arr, size_t size);
+void BubbleSort(int *arr, size_t size);
 
-int *SelectionSort(int *arr, size_t size);
+void OptimizedBubbleSort(int *arr, size_t size);
+
+void InsertionSort(int *arr, size_t size);
+
+void SelectionSort(int *arr, size_t size);
 
 #endif /* __SORT_H__ */

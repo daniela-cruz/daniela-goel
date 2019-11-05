@@ -2,9 +2,33 @@
 #include <stddef.h> /* size_t */
 #include <assert.h> /* assert */
 
-int *BubbleSort(int *arr, size_t size)
+static void Swap(int *data1, int *data2);
+
+void OptimizedBubbleSort(int *arr, size_t size)
 {
-    int i = 0, j = 0, end = 0;
+    int i = 0, j = 0;
+    int temp = 0;
+    int flag = 0;
+
+    assert(NULL != arr);
+    for (i = 0; (i < size - 1), (0 == flag); i++)
+    {
+        flag = 1;
+
+        for (j = 0; j < size - i - 1; j++)
+        {
+            if (arr[j] > arr[j + 1])
+            {
+                Swap(&arr[j], &arr[j + 1]);
+                flag = 0;
+            }
+        }
+    }
+}
+
+void BubbleSort(int *arr, size_t size)
+{
+    int i = 0, j = 0;
     int temp = 0;
 
     assert(NULL != arr);
@@ -14,34 +38,60 @@ int *BubbleSort(int *arr, size_t size)
         {
             if (arr[j] > arr[j + 1])
             {
-                temp = arr[j + 1];
-                arr[j + 1] = arr[j];
-                arr[j] = temp;
+                Swap(&arr[j], &arr[j + 1]);
             }
         }
     }
-
-    return arr;
 }
 
-int *SelectionSort(int *arr, size_t size)
+void InsertionSort(int *arr, size_t size)
+{
+    int i = 0, j = 0;
+    int temp = 0; 
+
+    for (i = 1; i < size; i++)
+    {
+        for (j = 0; j < i; j++)
+        {
+            if (arr[i] < arr[j])
+            {
+                Swap(&arr[j], &arr[i]);
+            }
+        }
+    }
+}
+
+void SelectionSort(int *arr, size_t size)
 {
     int i = 0, j = 0;
     int temp = 0;
     int min = 0;
 
     assert(NULL != arr);
-    for (i = 0; i < size - 1; i++)
+    for (i = 0; i < size; i++)
     {
+        min = i;
+
         for (j = i + 1; j < size; j++)
         {
-            min = (arr[j] < arr[i]) ? j : min;
+            min = (arr[j] < arr[min]) ? j : min;
         }
-
-        temp = arr[i];
-        arr[i] = arr[min];
-        arr[min] = temp;
+        
+        Swap(&arr[i], &arr[min]);
     }
+}
 
-    return arr;
+/********************
+ * INTERNAL FUNCS:  *
+********************/
+static void Swap(int *data1, int *data2)
+{
+    int temp;
+    
+    assert(NULL != data1);
+    assert(NULL != data2);
+
+    temp = *data1;
+    *data1 = *data2;
+    *data2 = temp;
 }
