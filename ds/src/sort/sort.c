@@ -1,4 +1,4 @@
-
+#include <stdlib.h> /* calloc */
 #include <stddef.h> /* size_t */
 #include <assert.h> /* assert */
 
@@ -79,6 +79,76 @@ void SelectionSort(int *arr, size_t size)
         
         Swap(&arr[i], &arr[min]);
     }
+}
+
+int CountSort(const int *arr, size_t size, int lower_limit, int upper_limit, 
+    int *result)
+{
+    int i = 0;
+    /*int j = 0;*/
+    int *count_arr = NULL;
+    size_t range = upper_limit - lower_limit + 1;
+
+    assert(NULL != arr);
+    assert(NULL != result);
+    
+    count_arr = calloc(sizeof(*count_arr), range);
+    if (NULL == count_arr)
+    {
+        return 1;
+    }
+    
+    for (i = 0; i < size; i++)
+    {
+        count_arr[arr[i] - lower_limit]++;
+    }
+
+    for (i = 0; i < size; i++)
+    {
+        for (j = i; (j < size) && (0 < count_arr[i]); j++)
+        {
+            result[j] = i + lower_limit;
+        }
+    }
+
+    return 0;
+}
+
+int OptimizedCountSort(const int *arr, size_t size, int lower_limit, 
+    int upper_limit, int *result)
+{
+    int i = 0;
+    /*int j = 0;*/
+    int *count_arr = NULL;
+    size_t range = upper_limit - lower_limit + 1;
+
+    assert(NULL != arr);
+    assert(NULL != result);
+    
+    count_arr = calloc(sizeof(*count_arr), range);
+    if (NULL == count_arr)
+    {
+        return 1;
+    }
+    
+    for (i = 0; i < size; i++)
+    {
+       count_arr[arr[i] - lower_limit]++; 
+    }
+
+    for (i = 1; i < range; i++)
+    {
+        count_arr[i] += count_arr[i - 1];
+    }
+    
+
+    for (i = size - 1; 0 <= i; i--)
+    {
+        result[count_arr[arr[i] - lower_limit] - 1] = arr[i];
+        count_arr[arr[i] - lower_limit]--;
+    }
+    
+    return 0;
 }
 
 /********************

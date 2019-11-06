@@ -13,6 +13,7 @@ static void BubbleTest(int *arr, size_t size);
 static void OptimizedBubbleTest(int *arr, size_t size);
 static void InsertionSortTest(int *arr, size_t size);
 static void SelectionSortTest(int *arr, size_t size);
+static void CountSortTest();
 
 
 /*static int arr[100];*/
@@ -24,13 +25,12 @@ int main()
     
     /*BubbleTest(arr, 5);*/
     /*OptimizedBubbleTest(arr, size);*/
-    OptimizedBubbleSort(arr, size);
-    PrintArr(arr, size);
-
     /*InsertionSortTest(arr, 5);*/
     /*SelectionSortTest(arr, size);*/
+    CountSortTest();
 
     /*TimeTest();*/
+
 
     return 0;
 }
@@ -121,6 +121,21 @@ static void SelectionSortTest(int *arr, size_t size)
     printf("\nAfter:\n");
 
     PrintArr(arr, size);
+}
+
+static void CountSortTest()
+{
+    /*int non_sorted_arr[8] = {10, 8, 11, 14, 7, 8, 11, 11};*/
+    int non_sorted_arr[8] = {4, -3, 1, 0, -2, 2, 2, -1};
+    size_t size = 8;
+    int *result = NULL;
+
+    printf("\nCount sort test:\n");
+    result = malloc(sizeof(*result) * size);
+
+    CountSort(non_sorted_arr, size, -3, 4, result);
+
+    PrintArr(result, size);
 }
 
 /********************
