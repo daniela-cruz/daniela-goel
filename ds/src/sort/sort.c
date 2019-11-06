@@ -85,7 +85,7 @@ int CountSort(const int *arr, size_t size, int lower_limit, int upper_limit,
     int *result)
 {
     int i = 0;
-    /*int j = 0;*/
+    int j = 0;
     int *count_arr = NULL;
     size_t range = upper_limit - lower_limit + 1;
 
@@ -118,7 +118,6 @@ int OptimizedCountSort(const int *arr, size_t size, int lower_limit,
     int upper_limit, int *result)
 {
     int i = 0;
-    /*int j = 0;*/
     int *count_arr = NULL;
     size_t range = upper_limit - lower_limit + 1;
 
