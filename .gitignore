@@ -8,6 +8,8 @@
 !*.md
 !*.odt
 !*.mak
+!Makefile
+!makefile
 
 # to change global .gitignore file: 
 # git config --global core.excludesfile ~/.gitignore_global

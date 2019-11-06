@@ -7,7 +7,6 @@ static void Swap(int *data1, int *data2);
 void OptimizedBubbleSort(int *arr, size_t size)
 {
     int i = 0, j = 0;
-    int temp = 0;
     int flag = 0;
 
     assert(NULL != arr);
@@ -29,7 +28,6 @@ void OptimizedBubbleSort(int *arr, size_t size)
 void BubbleSort(int *arr, size_t size)
 {
     int i = 0, j = 0;
-    int temp = 0;
 
     assert(NULL != arr);
     for (i = 0; i < size - 1; i++)
@@ -47,9 +45,10 @@ void BubbleSort(int *arr, size_t size)
 void InsertionSort(int *arr, size_t size)
 {
     int i = 0, j = 0;
-    int temp = 0; 
+    int key = 0;
 
-    for (i = 1; i < size; i++)
+    assert(NULL != arr);
+    /*for (i = 1; i < size; i++)
     {
         for (j = 0; j < i; j++)
         {
@@ -58,13 +57,24 @@ void InsertionSort(int *arr, size_t size)
                 Swap(&arr[j], &arr[i]);
             }
         }
+    }*/
+    for ( i = 1; i < size; i++)
+    {
+        key = arr[i];
+
+        if (j = i - 1; (j > 0) && (arr[i] < arr[j]); j--)
+        {
+            /* rotate */
+
+        }
+       
     }
+    
 }
 
 void SelectionSort(int *arr, size_t size)
 {
     int i = 0, j = 0;
-    int temp = 0;
     int min = 0;
 
     assert(NULL != arr);
