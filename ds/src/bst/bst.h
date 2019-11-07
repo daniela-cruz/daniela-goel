@@ -7,7 +7,7 @@ typedef int (*bst_action_func_t)(void *data, void *param);
 
 typedef struct bst_node bst_node_t;
 
-typedef struct tree bst_t;
+typedef struct bst bst_t;
 
 typedef struct bst_iter bst_iter_t;
 

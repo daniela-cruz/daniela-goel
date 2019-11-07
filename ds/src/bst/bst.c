@@ -1,28 +1,31 @@
+#include <stdlib.h> /* malloc, free */
+
 #include "bst.h"
 
-struct
+struct bst_node
 {
     bst_node_t *parent;
-    bst_node_t *before, *after;
+    bst_node_t *child_before, *child_after;
     void *data;
-} bst_node;
+};
 
-struct 
+struct bst
 {
     bst_node_t *root;
-    bst_node_t *first; /* dummy */
-    bst_node_t *last; /* dummy */
     bst_is_before_func_t func;
     void *param;
-} bst;
+};
 
 /**********************
  *  FUNCTIONS         *
 **********************/
 bst_t *BSTCreate(bst_is_before_func_t func, void *param)
 {
-    
+    bst_t *tree = NULL;
 
+
+
+    return tree;
 }
  
 void BSTDestroy(bst_t *tree);
@@ -52,3 +55,24 @@ bst_iter_t BSTIterNext(bst_iter_t iterator);
 bst_iter_t BSTIterPrev(bst_iter_t iterator);
 
 bst_iter_t BSTIterIsSame(bst_iter_t iterator1, bst_iter_t iterator2);
+
+/**********************
+ *  INTERNAL FUNCS    *
+**********************/
+static bst_node_t *NodeCreate(void *data)
+{
+    bst_node_t *node = NULL;
+
+    node = malloc(sizeof(* node));
+    if (NULL == node)
+    {
+        return NULL;
+    }
+
+    node->data = data;
+    node->child_before = NULL;
+    node->child_after = NULL;
+    node->parent = NULL;
+
+    return node; 
+}
