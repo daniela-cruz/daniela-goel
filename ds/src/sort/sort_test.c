@@ -17,6 +17,7 @@ static void OptimizedBubbleTest(int *arr, size_t size);
 static void InsertionSortTest(int *arr, size_t size);
 static void SelectionSortTest(int *arr, size_t size);
 static void CountSortTest();
+static void RadixTest();
 
 
 static int arr[10000];
@@ -31,8 +32,9 @@ int main()
     /*InsertionSortTest(arr, 5);*/
     /*SelectionSortTest(arr, size);*/
     /*CountSortTest();*/
-
-    TimeTest();
+	RadixTest();
+	
+    /*TimeTest();*/
 
 
     return 0;
@@ -164,6 +166,16 @@ static void CountSortTest()
     CountSort(non_sorted_arr, size, -3, 4, result);
 
     PrintArr(result, size);
+}
+
+static void RadixTest()
+{
+	unsigned int non_sorted_arr[8] = {105, 78, 121, 14, 7, 8, 211, 211};
+	size_t size = 8;
+	
+	RadixSort(non_sorted_arr, size, 3);
+	
+	PrintArr((int *)non_sorted_arr, size);
 }
 
 /********************

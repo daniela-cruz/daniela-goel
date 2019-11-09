@@ -1,14 +1,17 @@
 #include <stdlib.h> /* calloc */
 #include <stddef.h> /* size_t */
+#include <string.h> /* memset */
 #include <assert.h> /* assert */
 
-/**********INTERNAL:************/
+/*************INTERNAL:**************/
 static void Swap(int *data1, int *data2);
 
-static void InsertResults(int *arr, size_t size, int lower_limit, 
-    int upper_limit, int denominator, int *result, int *count_arr);
+static void RadixCountingSort(unsigned int *arr, size_t size, int *histogram, size_t n_bits, 
+	size_t iteration, unsigned int *dest);
+/*static void InsertResults(int *arr, size_t size, int lower_limit, 
+    int upper_limit, int denominator, int *result, int *count_arr);*/
 
-/**********CONSTANTS:************/
+/************CONSTANTS:*************/
 static const size_t bits_num = sizeof(size_t) * __CHAR_BIT__;
 
 /********IMPLEMENTATION:*********/
@@ -165,53 +168,42 @@ int OptimizedCountSort(const int *arr, size_t size, int lower_limit,
     
     return 0;
 }
-/*
-void RadixSort(int *arr, size_t size, int lower_limit, int upper_limit, 
-    int* result)
+
+int RadixSort(unsigned int *arr, size_t size, size_t n_bits)
 {
-    int denominator = 1;
+    int *histogram = NULL;
+    unsigned int *result = NULL;
+    unsigned int i = 0;
+    size_t range = 1 << n_bits;
 
-    assert(NULL != arr);
-    assert(NULL != result);
-
-    for (; upper_limit; )
-    {
-        RadixCountSort(arr, size, lower_limit, upper_limit, denominator, result);
-        denominator *= base;
-        upper_limit /= base;
-    }
-}*/
-
-int RadixSort(size_t *arr, size_t size, size_t n_bits)
-{
-    size_t *histogram = NULL;
-    int i = 0, j = 0;
-
-    assert(NULL != arr);
-    
-    histogram = calloc(sizeof(*histogram), bits_num );
-    if (NULL == histogram)
+    result = malloc(sizeof(arr[0]) * size);
+    if (NULL == result)
     {
         return 1;
     }
-    
-    for ( i = 0; i < bits_num; i += __CHAR_BIT__)
-    {
-        size_t *result = calloc(sizeof(*result), size);
 
-        if (NULL == result)
-        {
-            return 1;
-        }
-        InsertResults(arr, size, 0, ~0, 1 << n_bits, *result, *histogram);
+    histogram = malloc(sizeof(*histogram) * range);
+    if (NULL == histogram)
+    {
+        free(result);
+        return 1;
     }
+
+    for (i = 0; i < sizeof(int) * __CHAR_BIT__ / n_bits; i++)
+    {
+        memset(histogram, 0, range * sizeof(arr[0]));
+        RadixCountingSort(arr, size, histogram, n_bits, i, result);
+    }
+
+    free(result);
+    free(histogram);
 
     return 0;
 }
 
-/********************
+/****************************
  * INTERNAL FUNCS:  *
-********************/
+****************************/
 static void Swap(int *data1, int *data2)
 {
     int temp;
@@ -224,26 +216,31 @@ static void Swap(int *data1, int *data2)
     *data2 = temp;
 }
 
-static void InsertResults(int *arr, size_t size, int lower_limit, 
-    int upper_limit, int base, int *result, int *count_arr)
+static void RadixCountingSort(unsigned int *arr, size_t size, int *histogram, size_t n_bits, 
+	size_t iteration, unsigned int *dest)
 {
-    int i = 0;
-    int range = upper_limit - lower_limit + 1;
+    ptrdiff_t i = 0;
+    size_t range = 1 << n_bits; 
+    size_t mask = (1 << n_bits) - 1;
 
-    for (i = 0; i < size; i++)
+    for(i = 0; i < size; i++)
     {
-       count_arr[arr[i] - lower_limit]++; 
+        histogram[(arr[i] >> (iteration * n_bits)) & mask]++;
     }
 
-    for (i = 1; i < range; i++)
+    for(i = 1; i < range; i++)
     {
-        count_arr[i] += count_arr[i - 1];
+        histogram[i] = histogram[i] + histogram[i - 1];
     }
-    
-    for (i = size - 1; 0 <= i; i--)
+
+    for(i = (ptrdiff_t)size - 1; 0 <= i; i--)
     {
-        result[count_arr[arr[i] - lower_limit] - 1] = arr[i];
-        count_arr[arr[i] - lower_limit]--;
+        size_t curr_idx = 0;
+
+        histogram[(arr[i] >> (iteration * n_bits)) & mask]--;
+        curr_idx =  histogram[(arr[i] >> (iteration * n_bits)) & mask];
+        dest[curr_idx] = arr[i];
     }
+
+    memcpy(arr, dest, size * sizeof(int));
 }
-

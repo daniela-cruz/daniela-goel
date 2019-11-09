@@ -19,4 +19,6 @@ int CountSort(const int *arr, size_t size, int lower_limit, int upper_limit,
 int OptimizedCountSort(const int *arr, size_t size, int lower_limit, 
     int upper_limit, int *result);
 
+int RadixSort(const unsigned int *arr, size_t size, size_t n_bits);
+
 #endif /* __SORT_H__ */
