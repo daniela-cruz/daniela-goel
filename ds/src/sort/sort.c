@@ -59,26 +59,17 @@ void InsertionSort(int *arr, size_t size)
     int key = 0;
 
     assert(NULL != arr);
-    /*for (i = 1; i < size; i++)
-    {
-        for (j = 0; j < i; j++)
-        {
-            if (arr[i] < arr[j])
-            {
-                Swap(&arr[j], &arr[i]);
-            }
-        }
-    }*/
     for ( i = 1; i < size; i++)
     {
-        key = arr[i];
-
-       /* if (j = i - 1; (j > 0) && (arr[i] < arr[j]); j--)
-        {
-            
-
-        }*/
-    }
+		key = arr[i];
+		
+		for (j = i - 1; (0 < j) && (key < arr[j]); j--)
+		{
+			arr[j + 1] = arr[j]; 
+		}
+		
+		arr[j + 1] = key;
+	}
 }
 
 void SelectionSort(int *arr, size_t size)
@@ -195,8 +186,8 @@ int RadixSort(unsigned int *arr, size_t size, size_t n_bits)
         RadixCountingSort(arr, size, histogram, n_bits, i, result);
     }
 
-    free(result);
-    free(histogram);
+    free(result); result = NULL;
+    free(histogram); histogram = NULL;
 
     return 0;
 }
@@ -219,21 +210,21 @@ static void Swap(int *data1, int *data2)
 static void RadixCountingSort(unsigned int *arr, size_t size, int *histogram, size_t n_bits, 
 	size_t iteration, unsigned int *dest)
 {
-    ptrdiff_t i = 0;
+    int i = 0;
     size_t range = 1 << n_bits; 
     size_t mask = (1 << n_bits) - 1;
 
-    for(i = 0; i < size; i++)
+    for (i = 0; i < size; i++)
     {
         histogram[(arr[i] >> (iteration * n_bits)) & mask]++;
     }
 
-    for(i = 1; i < range; i++)
+    for (i = 1; i < range; i++)
     {
         histogram[i] = histogram[i] + histogram[i - 1];
     }
 
-    for(i = (ptrdiff_t)size - 1; 0 <= i; i--)
+    for (i = size - 1; 0 <= i; i--)
     {
         size_t curr_idx = 0;
 
