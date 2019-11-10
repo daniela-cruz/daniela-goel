@@ -95,6 +95,7 @@ bst_iter_t BSTInsert(bst_iter_t iterator, void *data)
     {
         iterator.tree->root = curr_node;
 
+        iterator.curr = iterator.tree->root;
         return iterator;
     }
     
@@ -108,9 +109,6 @@ bst_iter_t BSTInsert(bst_iter_t iterator, void *data)
         iterator.curr = curr_node->child_before;
         BSTInsert(iterator, data);
     }
-    
-    
-    
 
     return iterator;
 }
