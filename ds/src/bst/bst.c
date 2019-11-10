@@ -32,11 +32,17 @@ bst_t *BSTCreate(bst_is_before_func_t func, void *param)
         return NULL;
     }
     tree->func = func;
-    tree->param = param;
-
+    tree->param = malloc(sizeof(param));
+    if (NULL == tree->param)
+    {
+        free(tree); tree = NULL;
+        return NULL;
+    }
+    
     tree->root = NodeCreate(NULL);
     if (NULL == tree->root)
     {
+        free(tree->param); tree->param = NULL;
         free(tree); tree = NULL;
         return NULL;
     }
@@ -63,13 +69,59 @@ void BSTDestroy(bst_t *tree)
 
 bst_iter_t BSTInsert(bst_iter_t iterator, void *data)
 {
+    bst_node_t *curr_node = NULL;
+
     assert(NULL != data);
+    curr_node = NodeCreate(data);
+    /*for (iterator = iterator.tree->root; 
+        !BSTIterIsSame(iterator, BSTEnd(iterator.tree)) && (NULL != iterator.curr); 
+        parent_it = iterator)
+    {
+        if (iterator.tree->func(iterator.curr->data, data, iterator.tree->param))
+        {
+            iterator.curr = iterator.curr->child_before;
+        }
+        else
+        {
+            iterator.curr = iterator.curr->child_after;
+        }
+    }
+
+    
+    iterator.curr->parent = parent_it.curr;*/
+
+    /* if data value is lower than curr's */
+    if (NULL == iterator.tree->root->data)
+    {
+        iterator.tree->root = curr_node;
+
+        return iterator;
+    }
+    
+    if ((iterator.tree->func(data, iterator.curr->data, iterator.tree->param)))
+    {
+        iterator.curr = curr_node->child_before;
+        BSTInsert(iterator, data);
+    }
+    else if ((iterator.tree->func(iterator.curr->data, data, iterator.tree->param)))
+    {
+        iterator.curr = curr_node->child_before;
+        BSTInsert(iterator, data);
+    }
+    
+    
     
 
     return iterator;
 }
 
-bst_iter_t BSTRemove(bst_iter_t iterator);
+bst_iter_t BSTRemove(bst_iter_t iterator)
+{
+    iterator.curr = NULL;
+    /* there's a lot more to this function*/
+
+    return BSTIterNext(iterator);
+}
 
 bst_iter_t BSTFind(const bst_t *tree, void *key)
 {
@@ -107,10 +159,11 @@ bst_iter_t BSTBegin(const bst_t *tree)
     bst_iter_t begin_iter = {NULL, NULL};
 
     assert(NULL != tree);
-    begin_iter.tree = tree;
+    begin_iter.tree = (bst_t *)tree;
+    begin_iter.curr = tree->root;
     
     for (begin_iter.curr = tree->root->child_before; 
-        NULL != begin_iter.curr->child_before; 
+        NULL != begin_iter.curr; 
         begin_iter.curr = begin_iter.curr->child_before);
 
     return begin_iter; 
@@ -121,10 +174,10 @@ bst_iter_t BSTEnd(const bst_t *tree)
     bst_iter_t end_iter = {NULL, NULL};
 
     assert(NULL != tree);
-    end_iter.tree = tree;
+    end_iter.tree = (bst_t *)tree;
     
     for (end_iter.curr = tree->root->child_after; 
-        NULL != end_iter.curr->child_after; 
+        NULL != end_iter.curr; 
         end_iter.curr = end_iter.curr->child_after);
 
     return end_iter; 
