@@ -21,6 +21,8 @@ static bst_node_t *NodeCreate(void *data);
 
 static bst_node_t *NodeCompare(bst_iter_t iter, void *data);
 
+static bst_iter_t RootIter(bst_iter_t iter);
+
 /**********************
  *  FUNCTIONS         *
 **********************/
@@ -72,9 +74,20 @@ void BSTDestroy(bst_t *tree)
 bst_iter_t BSTInsert(bst_iter_t iterator, void *data)
 {
     bst_iter_t parent_iter = {NULL, NULL};
+    bst_node_t *new_node = NULL;
+    int is_smaller = 0;
 
     assert(NULL != data);
-    for (iterator.curr = iterator.tree->root; 
+    parent_iter.tree = iterator.tree;
+    parent_iter.curr = iterator.tree->root->parent;
+
+    new_node = NodeCreate(data);
+    if (NULL == new_node)
+    {
+        return BSTEnd(iterator.tree);
+    }
+    
+    for (iterator =  RootIter(iterator); 
         NULL != iterator.curr->data;)
     {
         parent_iter.curr->parent;
@@ -82,15 +95,27 @@ bst_iter_t BSTInsert(bst_iter_t iterator, void *data)
         if (iterator.tree->func(data, iterator.curr->data, iterator.tree->param))
         {
             iterator.curr = iterator.curr->child_before;
+            parent_iter.curr->child_before = iterator.curr;
+            is_smaller = 1;
         }
         else
         {
             iterator.curr = iterator.curr->child_after;
+            parent_iter.curr->child_after = iterator.curr;
+            is_smaller = 0;
         }
     }
     
-    iterator.curr = NodeCreate(data);
-    iterator.curr->parent = parent_iter.curr;
+    /*iterator.curr = new_node;*/
+    new_node->parent = parent_iter.curr;
+    if (is_smaller)
+    {
+        parent_iter.curr->child_before = new_node;
+    }
+    else if (!is_smaller && (iterator.curr != iterator.tree->root))
+    {
+       parent_iter.curr->child_after = new_node; 
+    }
 
     return iterator;
 }
@@ -228,6 +253,7 @@ static bst_node_t *NodeCreate(void *data)
 
 static bst_node_t *NodeCompare(bst_iter_t iter, void *data)
 {
+    
     if (iter.tree->func(data, iter.curr->data, iter.tree->param))
     {
         iter.curr = iter.curr->child_before;
@@ -239,4 +265,11 @@ static bst_node_t *NodeCompare(bst_iter_t iter, void *data)
     
     
     return iter.curr;
+}
+
+static bst_iter_t RootIter(bst_iter_t iter)
+{
+    iter.curr = iter.tree->root;
+
+    return iter;
 }
