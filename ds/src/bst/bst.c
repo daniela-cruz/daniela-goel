@@ -150,7 +150,14 @@ bst_iter_t BSTBegin(const bst_t *tree)
     
     for (begin_iter.curr = tree->root->child_before; 
         NULL != begin_iter.curr; 
-        begin_iter.curr = begin_iter.curr->child_before);
+        begin_iter.curr = begin_iter.curr->child_before)
+        {
+            if (NULL == begin_iter.curr->data)
+            {
+                break;
+            }
+            
+        }
 
     return begin_iter; 
 }

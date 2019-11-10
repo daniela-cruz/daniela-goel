@@ -8,6 +8,7 @@
 
 static void CreateTest();
 static void InsertTest();
+static void IterTest(bst_t *tree);
 
 int IsBefore(void *data1, void *data2, void *param);
 
@@ -43,6 +44,7 @@ static void InsertTest()
     int num1 = 1, num2 = 2, num3 = 3;
     bst_iter_t it; 
 
+    printf("\nBST Insert test:\n");
     tree = BSTCreate(IsBefore, NULL);
     it = BSTBegin(tree);
     it = BSTInsert(it, (void *)&num2);
@@ -69,13 +71,22 @@ static void InsertTest()
     it = BSTInsert(it, (void *)&num3);
     if (num3 == *(int *)BSTGetData(it)) 
     {
-        printf("Data in new node stored correctly\n");
+        printf("Data in 3rd new node stored correctly\n");
     }
     else
     {
         ADD_RED; printf("ERROR: data is: %d\n", *(int *)BSTGetData(it)); END_RED;
     }
 
+    IterTest(tree);
+}
+
+static void IterTest(bst_t *tree)
+{
+    bst_iter_t it = BSTBegin(tree);
+
+    printf("\nBST Iterators test:\n");
+    printf("Bedin iterator's data is: %d\n", *(int *)BSTGetData(it));
 }
 
 /**********************
