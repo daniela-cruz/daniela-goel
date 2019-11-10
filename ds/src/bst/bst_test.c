@@ -46,19 +46,30 @@ static void InsertTest()
 
     printf("\nBST Insert test:\n");
     tree = BSTCreate(IsBefore, NULL);
-    it = BSTBegin(tree);
-    it = BSTInsert(it, (void *)&num2);
+
+    it = BSTInsert(tree, (void *)&num2);
     
+    printf("\nInserting to root. . .\n");
     if (num2 == *(int *)BSTGetData(it)) 
     {
         printf("Data in root stored correctly\n");
+        it = BSTBegin(tree);
+        if (num2 == *(int *)BSTGetData(it)) 
+        {
+            printf("Data from iterator in root stored correctly\n"); 
+        }
+        else
+        {
+            ADD_RED; printf("ERROR: data is: %d\n", *(int *)BSTGetData(it)); END_RED;
+        }
     }
     else
     {
         ADD_RED; printf("ERROR: data is: %d\n", *(int *)BSTGetData(it)); END_RED;
     }
 
-    it = BSTInsert(it, (void *)&num1);
+    printf("\nInserting to left node. . .\n");
+    it = BSTInsert(tree, (void *)&num1);
     if (num1 == *(int *)BSTGetData(it)) 
     {
         printf("Data in new node stored correctly\n");
@@ -68,7 +79,8 @@ static void InsertTest()
         ADD_RED; printf("ERROR: data is: %d\n", *(int *)BSTGetData(it)); END_RED;
     }
 
-    it = BSTInsert(it, (void *)&num3);
+    printf("\nInserting to right node. . .\n");
+    it = BSTInsert(tree, (void *)&num3);
     if (num3 == *(int *)BSTGetData(it)) 
     {
         printf("Data in 3rd new node stored correctly\n");
@@ -86,7 +98,7 @@ static void IterTest(bst_t *tree)
     bst_iter_t it = BSTBegin(tree);
 
     printf("\nBST Iterators test:\n");
-    printf("Bedin iterator's data is: %d\n", *(int *)BSTGetData(it));
+    printf("Begin iterator's data is: %d\n", *(int *)BSTGetData(it));
 }
 
 /**********************

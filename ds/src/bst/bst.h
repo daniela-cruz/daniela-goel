@@ -18,7 +18,7 @@ bst_t *BSTCreate(bst_is_before_func_t func, void *param);
  
 void BSTDestroy(bst_t *tree);
 
-bst_iter_t BSTInsert(bst_iter_t iterator, void *data);
+bst_iter_t BSTInsert(bst_t *tree, void *data);
 
 /*      returns iterator to next node       */
 bst_iter_t BSTRemove(bst_iter_t iterator);
