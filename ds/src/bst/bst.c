@@ -69,45 +69,31 @@ void BSTDestroy(bst_t *tree)
 
 bst_iter_t BSTInsert(bst_iter_t iterator, void *data)
 {
-    bst_node_t *curr_node = NULL;
+    bst_iter_t parent_iter;
 
     assert(NULL != data);
-    curr_node = NodeCreate(data);
-    /*for (iterator = iterator.tree->root; 
-        !BSTIterIsSame(iterator, BSTEnd(iterator.tree)) && (NULL != iterator.curr); 
-        parent_it = iterator)
+
+    if (NULL == iterator.tree->root->data)
     {
-        if (iterator.tree->func(iterator.curr->data, data, iterator.tree->param))
+        iterator.tree->root = NodeCreate(data);
+        iterator.curr = iterator.tree->root;
+    }
+    else
+    {
+        parent_iter = iterator;
+
+        if ((iterator.tree->func(data, iterator.curr->data, iterator.tree->param)))
         {
             iterator.curr = iterator.curr->child_before;
+            
         }
-        else
+        else if ((iterator.tree->func(iterator.curr->data, data, iterator.tree->param)))
         {
             iterator.curr = iterator.curr->child_after;
         }
-    }
-
-    
-    iterator.curr->parent = parent_it.curr;*/
-
-    /* if data value is lower than curr's */
-    if (NULL == iterator.tree->root->data)
-    {
-        iterator.tree->root = curr_node;
-
-        iterator.curr = iterator.tree->root;
-        return iterator;
-    }
-    
-    if ((iterator.tree->func(data, iterator.curr->data, iterator.tree->param)))
-    {
-        iterator.curr = curr_node->child_before;
-        BSTInsert(iterator, data);
-    }
-    else if ((iterator.tree->func(iterator.curr->data, data, iterator.tree->param)))
-    {
-        iterator.curr = curr_node->child_before;
-        BSTInsert(iterator, data);
+        
+        iterator.curr = NodeCreate(data);
+        iterator.curr->parent = parent_iter.curr;
     }
 
     return iterator;
@@ -126,7 +112,9 @@ bst_iter_t BSTFind(const bst_t *tree, void *key)
     bst_iter_t iterator = {NULL, NULL};
 
     assert(NULL != tree);
-    for (iterator = BSTBegin(tree); !BSTIterIsSame(iterator, BSTEnd(tree)); iterator = BSTIterNext(iterator))
+    for (iterator = BSTBegin(tree); 
+        !BSTIterIsSame(iterator, BSTEnd(tree)); 
+        iterator = BSTIterNext(iterator))
     {
         if (iterator.curr->data == key)
         {
