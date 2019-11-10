@@ -19,6 +19,8 @@ struct bst
 
 static bst_node_t *NodeCreate(void *data);
 
+static bst_node_t *NodeCompare(bst_iter_t iter, void *data);
+
 /**********************
  *  FUNCTIONS         *
 **********************/
@@ -69,32 +71,26 @@ void BSTDestroy(bst_t *tree)
 
 bst_iter_t BSTInsert(bst_iter_t iterator, void *data)
 {
-    bst_iter_t parent_iter;
+    bst_iter_t parent_iter = {NULL, NULL};
 
     assert(NULL != data);
-
-    if (NULL == iterator.tree->root->data)
+    for (iterator.curr = iterator.tree->root; 
+        NULL != iterator.curr->data;)
     {
-        iterator.tree->root = NodeCreate(data);
-        iterator.curr = iterator.tree->root;
-    }
-    else
-    {
-        parent_iter = iterator;
+        parent_iter.curr->parent;
 
-        if ((iterator.tree->func(data, iterator.curr->data, iterator.tree->param)))
+        if (iterator.tree->func(data, iterator.curr->data, iterator.tree->param))
         {
             iterator.curr = iterator.curr->child_before;
-            
         }
-        else if ((iterator.tree->func(iterator.curr->data, data, iterator.tree->param)))
+        else
         {
             iterator.curr = iterator.curr->child_after;
         }
-        
-        iterator.curr = NodeCreate(data);
-        iterator.curr->parent = parent_iter.curr;
     }
+    
+    iterator.curr = NodeCreate(data);
+    iterator.curr->parent = parent_iter.curr;
 
     return iterator;
 }
@@ -228,4 +224,19 @@ static bst_node_t *NodeCreate(void *data)
     node->parent = NULL;
 
     return node; 
+}
+
+static bst_node_t *NodeCompare(bst_iter_t iter, void *data)
+{
+    if (iter.tree->func(data, iter.curr->data, iter.tree->param))
+    {
+        iter.curr = iter.curr->child_before;
+    }
+    else
+    {
+        iter.curr = iter.curr->child_before;
+    }
+    
+    
+    return iter.curr;
 }
