@@ -82,7 +82,7 @@ static void MultipleInsertTest()
     it = BSTFind(tree, &arr[4]);
     printf("Element is: %d\n", *(int*)BSTGetData(it));
 
-    BSTforEach(BSTBegin(tree), BSTEnd(tree), Add10, NULL);
+    BSTForEach(BSTBegin(tree), BSTEnd(tree), Add10, NULL);
     
     printf("\nForEach test\n");
     for ( it = BSTBegin(tree); 

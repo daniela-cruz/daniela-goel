@@ -61,8 +61,8 @@ bst_t *BSTCreate(bst_is_before_func_t func, void *param)
         return NULL;
     }
 
-    tree->root->parent->child_before = tree->root;
-    tree->root->parent->child_after = tree->root;
+    /*tree->root->parent->child_before = tree->root;
+    tree->root->parent->child_after = tree->root;*/
 
     return tree;
 }
@@ -209,7 +209,6 @@ bst_iter_t BSTRemove(bst_iter_t iterator)
         }
     }
     
-    free(removable->data); removable->data = NULL;
     free(removable); removable = NULL;
     
     return iterator;
@@ -233,7 +232,7 @@ bst_iter_t BSTFind(const bst_t *tree, void *key)
     return BSTEnd(tree);
 }
 
-int BSTforEach(bst_iter_t from, bst_iter_t to, bst_action_func_t func, void *param)
+int BSTForEach(bst_iter_t from, bst_iter_t to, bst_action_func_t func, void *param)
 {
     bst_iter_t it = {NULL, NULL};
 
