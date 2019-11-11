@@ -131,15 +131,19 @@ bst_iter_t BSTRemove(bst_iter_t iterator)
     bst_iter_t parent_iter = {NULL, NULL};
     bst_node_t *removable = NULL;
 
-    if ((NULL == iterator.curr->child_after) && (NULL == iterator.curr->child_after))
-    {
-        free(iterator.curr->data); iterator.curr->data = NULL;
-        free(iterator.curr); iterator.curr = NULL;
-    }
-    
+    removable = iterator.curr;
     parent_iter.tree = iterator.tree;
     parent_iter.curr = iterator.curr->parent;
-    removable = iterator.curr;
+
+    if ((NULL == iterator.curr->child_after) && (NULL == iterator.curr->child_after))
+    {
+        iterator = BSTIterNext(iterator);
+        free(removable->data); removable->data = NULL;
+        free(removable); removable = NULL;
+
+        return iterator;
+    }
+    
 
     if (removable == parent_iter.curr->child_after)
     {
@@ -148,14 +152,14 @@ bst_iter_t BSTRemove(bst_iter_t iterator)
          * tie removable's children to left most node */
         iterator.curr = iterator.curr->child_after;
         parent_iter.curr->child_after = iterator.curr;
+        iterator.curr->parent = parent_iter.curr;
         iterator = GetMinimalChildInBranch(iterator);
         
         if (NULL != removable->child_before)
         {
             iterator.curr->child_before = removable->child_before;
+            removable->child_before->parent = iterator.curr;
         }
-        
-        
     }
 
     else /* if removable is a child_before */
@@ -165,6 +169,7 @@ bst_iter_t BSTRemove(bst_iter_t iterator)
          * tie removable's right child to right most node */
         iterator.curr = iterator.curr->child_before;
         parent_iter.curr->child_before = iterator.curr;
+        iterator.curr->parent = parent_iter.curr;
         iterator = GetMaximalChildInBranch(iterator);
 
         if (NULL != removable->child_after)
@@ -174,8 +179,10 @@ bst_iter_t BSTRemove(bst_iter_t iterator)
         }
     }
     
+    free(removable->data); removable->data = NULL;
+    free(removable); removable = NULL;
     
-    return BSTIterNext(iterator);
+    return iterator;
 }
 
 bst_iter_t BSTFind(const bst_t *tree, void *key)
@@ -244,38 +251,22 @@ bst_iter_t BSTEnd(const bst_t *tree)
 }
 
 bst_iter_t BSTIterNext(bst_iter_t iterator)
-{
-    bst_iter_t iter_parent = iterator;
-
-    iter_parent.curr = iterator.curr->parent;
-    iter_parent.tree = iterator.tree;
-    /*
-    if (iterator.tree->func(iter_parent.curr->data, iter_parent.curr->data, iterator.tree->param))
+{   
+    if (NULL != iterator.curr->child_after)
     {
-        if (NULL != iterator.curr->child_after)
-        {
-            iterator.curr = iterator.curr->child_after;
-        }
-        else
-        {
-            iterator.curr = iter_parent.curr;
-        }
+        iterator.curr = iterator.curr->child_after;
     }
     else
     {
-        if (NULL != iterator.curr->child_after)
+        for (; iterator.curr != iterator.tree->root; 
+            iterator.curr = iterator.curr->parent)
         {
-            iterator.curr = iterator.curr->child_after;
+            if (iterator.curr == iterator.curr->parent->child_before)
+            {
+                break;
+            }
+            
         }
-        else
-        {
-            iterator = BSTEnd(iterator.tree);
-        }
-    }*/
-
-    if (NULL != iterator.curr->child_after)
-    {
-        return GetMinimalChildInBranch(iterator);
     }
 
     return iterator;
