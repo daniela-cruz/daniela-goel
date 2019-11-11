@@ -7,11 +7,12 @@
 #define END_RED printf("\033[0m")
 
 static void CreateTest();
-static void InsertTest();
 static void MultipleInsertTest();
 static void IterTest(bst_t *tree);
 
 int IsBefore(void *data1, void *data2, void *param);
+
+int Add10(void *data, void *param);
 
 static int arr[10];
 const size_t arr_size = 10;
@@ -46,7 +47,7 @@ static void CreateTest()
 static void MultipleInsertTest()
 {
     bst_t *tree = NULL;
-    int i = 0, num1 = 1, num2 = 2, num3 = 3;
+    int i = 0, j = 0, num1 = 1, num2 = 2, num3 = 3;
     bst_iter_t it;
 
     printf("\nMultiple insert test\n");
@@ -57,118 +58,46 @@ static void MultipleInsertTest()
         arr[i] = i;
     }
     
-    for ( i = 0; i < arr_size; i++)
+    for ( i = arr_size / 2; i < arr_size; i++)
+    {
+        it = BSTInsert(tree, &arr[i]);
+    }
+
+    for ( i = 0; i < arr_size / 2; i++)
     {
         it = BSTInsert(tree, &arr[i]);
     }
     
-    it = BSTBegin(tree);
+    
 
     printf("\nNext Iteration test\n");
-    for ( i = arr_size / 2; i < arr_size; i++)
+    for ( it = BSTBegin(tree); 
+        !BSTIterIsSame(it, BSTEnd(tree)); 
+        it = BSTIterNext(it))
     {
         printf("Element is: %d\n", *(int*)BSTGetData(it));
-        it = BSTIterNext(it);
     }
-
-    for ( i = arr_size - 1; (arr_size / 2) - 1 < i ; i--)
-    {
-        printf("Element is: %d\n", *(int*)BSTGetData(it));
-        it = BSTIterNext(it);
-    }
-
-    it = BSTEnd(tree);
-    it = BSTIterPrev(it);
-    printf("\nPrev Iteration test\n");
+    
+    printf("\nFind test\n");
+    it = BSTFind(tree, &arr[4]);
     printf("Element is: %d\n", *(int*)BSTGetData(it));
-    /*for ( i = 0; i < arr_size; i++)
-    {
-        printf("Element is: %d\n", *(int*)BSTGetData(it));
-        it = BSTIterPrev(it);
-    }*/
 
-    /*printf("\nRemove test\n");
-    it = BSTIterNext(BSTBegin(tree));
-    printf("Removing element: %d\n", *(int*)BSTGetData(it));
-    it = BSTRemove(it);*/
-
-    /*printf("Iterator now points to: %d\n", *(int*)BSTGetData(it));*/
-    /*it = BSTBegin(tree);
-    for ( i = 0; i < arr_size - 1; i++)
-    {
-        printf("Element is: %d\n", *(int*)BSTGetData(it));
-        it = BSTIterNext(it);
-    }*/
+    BSTforEach(BSTBegin(tree), BSTEnd(tree), Add10, NULL);
     
-
-    /*printf("\nPrev Iteration test\n");
-    for ( i = arr_size - 1; 0 <= i; i--)
+    printf("\nForEach test\n");
+    for ( it = BSTIterPrev(BSTEnd(tree)); 
+        !BSTIterIsSame(it, BSTEnd(tree));
+        it = BSTIterPrev(it))
     {
         printf("Element is: %d\n", *(int*)BSTGetData(it));
-        it = BSTIterPrev(it);
-    }*/
-}
-static void InsertTest()
-{
-    bst_t *tree = NULL;
-    int num1 = 1, num2 = 2, num3 = 3;
-    bst_iter_t it; 
-
-    printf("\nBST Insert test:\n");
-    tree = BSTCreate(IsBefore, NULL);
-
-    it = BSTInsert(tree, (void *)&num2);
-    
-    printf("\nInserting to root. . .\n");
-    if (num2 == *(int *)BSTGetData(it)) 
-    {
-        printf("Data in root stored correctly\n");
-        it = BSTBegin(tree);
-        if (num2 == *(int *)BSTGetData(it)) 
-        {
-            printf("Data from iterator in root stored correctly\n"); 
-        }
-        else
-        {
-            ADD_RED; printf("ERROR: data is: %d\n", *(int *)BSTGetData(it)); END_RED;
-        }
-    }
-    else
-    {
-        ADD_RED; printf("ERROR: data is: %d\n", *(int *)BSTGetData(it)); END_RED;
     }
 
-    printf("\nInserting to left node. . .\n");
-    it = BSTInsert(tree, (void *)&num1);
-    if (num1 == *(int *)BSTGetData(it)) 
-    {
-        printf("Data in new node stored correctly\n");
-    }
-    else
-    {
-        ADD_RED; printf("ERROR: data is: %d\n", *(int *)BSTGetData(it)); END_RED;
-    }
 
-    printf("\nInserting to right node. . .\n");
-    it = BSTInsert(tree, (void *)&num3);
-    if (num3 == *(int *)BSTGetData(it)) 
-    {
-        printf("Data in 3rd new node stored correctly\n");
-    }
-    else
-    {
-        ADD_RED; printf("ERROR: data is: %d\n", *(int *)BSTGetData(it)); END_RED;
-    }
-
-    IterTest(tree);
-}
-
-static void IterTest(bst_t *tree)
-{
-    bst_iter_t it = BSTBegin(tree);
-
-    printf("\nBST Iterators test:\n");
-    printf("Begin iterator's data is: %d\n", *(int *)BSTGetData(it));
+    printf("\nRemoval test\n");
+    it = BSTIterNext(BSTIterNext(BSTBegin(tree)));
+    printf("Element to be removed is: %d\n", *(int*)BSTGetData(it));
+    it = BSTRemove(it);
+    printf("Element after previous was removed is: %d\n", *(int*)BSTGetData(it));
 }
 
 /**********************
@@ -179,4 +108,11 @@ int IsBefore(void *data1, void *data2, void *param)
     (void) param;
 
     return *(int *)data1 < *(int *)data2;
+}
+
+int Add10(void *data, void *param)
+{
+    *(int *)data += 10;
+
+    return 0;
 }
