@@ -63,12 +63,50 @@ static void MultipleInsertTest()
     }
     
     it = BSTBegin(tree);
-    for ( i = 0; i < arr_size; i++)
+
+    printf("\nNext Iteration test\n");
+    for ( i = arr_size / 2; i < arr_size; i++)
     {
         printf("Element is: %d\n", *(int*)BSTGetData(it));
         it = BSTIterNext(it);
     }
+
+    for ( i = arr_size - 1; (arr_size / 2) - 1 < i ; i--)
+    {
+        printf("Element is: %d\n", *(int*)BSTGetData(it));
+        it = BSTIterNext(it);
+    }
+
+    it = BSTEnd(tree);
+    it = BSTIterPrev(it);
+    printf("\nPrev Iteration test\n");
+    printf("Element is: %d\n", *(int*)BSTGetData(it));
+    /*for ( i = 0; i < arr_size; i++)
+    {
+        printf("Element is: %d\n", *(int*)BSTGetData(it));
+        it = BSTIterPrev(it);
+    }*/
+
+    /*printf("\nRemove test\n");
+    it = BSTIterNext(BSTBegin(tree));
+    printf("Removing element: %d\n", *(int*)BSTGetData(it));
+    it = BSTRemove(it);*/
+
+    /*printf("Iterator now points to: %d\n", *(int*)BSTGetData(it));*/
+    /*it = BSTBegin(tree);
+    for ( i = 0; i < arr_size - 1; i++)
+    {
+        printf("Element is: %d\n", *(int*)BSTGetData(it));
+        it = BSTIterNext(it);
+    }*/
     
+
+    /*printf("\nPrev Iteration test\n");
+    for ( i = arr_size - 1; 0 <= i; i--)
+    {
+        printf("Element is: %d\n", *(int*)BSTGetData(it));
+        it = BSTIterPrev(it);
+    }*/
 }
 static void InsertTest()
 {

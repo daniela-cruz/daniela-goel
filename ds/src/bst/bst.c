@@ -274,25 +274,34 @@ bst_iter_t BSTIterNext(bst_iter_t iterator)
 
 bst_iter_t BSTIterPrev(bst_iter_t iterator)
 {
-	bst_node_t *parent = NULL;
-    bst_iter_t parent_iter = {NULL, NULL};
-
-    if (NULL == iterator.curr)
+    if (BSTIterIsSame(iterator, BSTEnd(iterator.tree)))
     {
-        return BSTEnd(iterator.tree);
-    }
-    
-    if (NULL != iterator.curr->child_before)
-    {
+        iterator.curr = iterator.tree->root;
         return GetMaximalChildInBranch(iterator);
     }
 
-    parent = iterator.curr->parent;
-    
-    for (; parent != NULL && iterator.curr == parent->child_before; 
-    	iterator.curr = parent, parent = parent->parent);
-
-    iterator.curr = parent;
+    if (NULL != iterator.curr->child_before)
+    {
+        iterator.curr = iterator.curr->child_before;
+    }
+    else
+    {
+        if (iterator.curr == iterator.curr->parent->child_before)
+        {
+            for (; iterator.curr != iterator.tree->root; 
+                iterator.curr = iterator.curr->parent)
+            {
+                if (iterator.curr == iterator.curr->parent->child_after)
+                {
+                    break;
+                }
+            }
+            
+        }
+        
+        iterator.curr = iterator.curr->parent;
+       
+    }
 
     return iterator;
 }
@@ -325,14 +334,21 @@ static bst_node_t *NodeCreate(void *data)
 
 static bst_iter_t GetMinimalChildInBranch(bst_iter_t it)
 {
-    for (; NULL != it.curr; it.curr = it.curr->child_before);
+    if (NULL != it.curr->child_before)
+    {
+        for (; NULL != it.curr; it.curr = it.curr->child_before);
+    }
     
     return it;
 }
 
 static bst_iter_t GetMaximalChildInBranch(bst_iter_t it)
 {
-    for (; NULL != it.curr; it.curr = it.curr->child_after);
+    if (NULL != it.curr->child_after)
+    {
+        for (; NULL != it.curr; it.curr = it.curr->child_after);
+    }
+    
     
     return it;
 }
