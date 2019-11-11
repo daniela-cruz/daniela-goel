@@ -77,7 +77,7 @@ static void MultipleInsertTest()
     {
         printf("Element is: %d\n", *(int*)BSTGetData(it));
     }
-    
+
     printf("\nFind test\n");
     it = BSTFind(tree, &arr[4]);
     printf("Element is: %d\n", *(int*)BSTGetData(it));
@@ -85,9 +85,9 @@ static void MultipleInsertTest()
     BSTforEach(BSTBegin(tree), BSTEnd(tree), Add10, NULL);
     
     printf("\nForEach test\n");
-    for ( it = BSTIterPrev(BSTEnd(tree)); 
+    for ( it = BSTBegin(tree); 
         !BSTIterIsSame(it, BSTEnd(tree));
-        it = BSTIterPrev(it))
+        it = BSTIterNext(it))
     {
         printf("Element is: %d\n", *(int*)BSTGetData(it));
     }

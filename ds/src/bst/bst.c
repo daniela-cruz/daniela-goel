@@ -147,22 +147,25 @@ bst_iter_t BSTRemove(bst_iter_t iterator)
     bst_iter_t parent_iter = {NULL, NULL};
     bst_node_t *removable = NULL;
 
-    if (iterator.tree->root == iterator.curr)
-    {
-        if ((NULL == iterator.curr->child_before) && 
-            (NULL == iterator.curr->child_after))
-        {
-            free(iterator.curr->data); iterator.curr->data = NULL;
-        }
-        
-        return iterator;
-    }
-
     removable = iterator.curr;
     if ((NULL == removable->child_after) && (NULL == removable->child_after))
     {
-        iterator = BSTIterNext(iterator);
-        /*free(removable->data); removable->data = NULL;*/
+        if (iterator.tree->root == iterator.curr)
+        {
+            iterator.curr->data = NULL;
+            return iterator;
+        }
+        
+        iterator.curr = removable->parent;
+        if (removable->parent->child_after == removable)
+        {
+            iterator.curr->child_after = NULL;
+        }
+        else
+        {
+           iterator.curr->child_before = NULL; 
+        }
+        
         free(removable); removable = NULL;
 
         return iterator;
