@@ -128,9 +128,53 @@ bst_iter_t BSTInsert(bst_t *tree, void *data)
 
 bst_iter_t BSTRemove(bst_iter_t iterator)
 {
-    iterator.curr = NULL;
-    /* there's a lot more to this function*/
+    bst_iter_t parent_iter = {NULL, NULL};
+    bst_node_t *removable = NULL;
 
+    if ((NULL == iterator.curr->child_after) && (NULL == iterator.curr->child_after))
+    {
+        free(iterator.curr->data); iterator.curr->data = NULL;
+        free(iterator.curr); iterator.curr = NULL;
+    }
+    
+    parent_iter.tree = iterator.tree;
+    parent_iter.curr = iterator.curr->parent;
+    removable = iterator.curr;
+
+    if (removable == parent_iter.curr->child_after)
+    {
+        /* tie parent to one child to the right 
+         * then go all the way to left 
+         * tie removable's children to left most node */
+        iterator.curr = iterator.curr->child_after;
+        parent_iter.curr->child_after = iterator.curr;
+        iterator = GetMinimalChildInBranch(iterator);
+        
+        if (NULL != removable->child_before)
+        {
+            iterator.curr->child_before = removable->child_before;
+        }
+        
+        
+    }
+
+    else /* if removable is a child_before */
+    {
+        /* tie parent to one child to left
+         * then go all the way to right most node 
+         * tie removable's right child to right most node */
+        iterator.curr = iterator.curr->child_before;
+        parent_iter.curr->child_before = iterator.curr;
+        iterator = GetMaximalChildInBranch(iterator);
+
+        if (NULL != removable->child_after)
+        {
+            iterator.curr->child_after = removable->child_after;
+            removable->child_after->parent = iterator.curr;
+        }
+    }
+    
+    
     return BSTIterNext(iterator);
 }
 
@@ -301,4 +345,3 @@ static bst_iter_t GetMaximalChildInBranch(bst_iter_t it)
     
     return it;
 }
-
