@@ -8,14 +8,19 @@
 
 static void CreateTest();
 static void InsertTest();
+static void MultipleInsertTest();
 static void IterTest(bst_t *tree);
 
 int IsBefore(void *data1, void *data2, void *param);
 
+static int arr[10];
+const size_t arr_size = 10;
+
 int main()
 {
     /*CreateTest();*/
-    InsertTest();
+    /*InsertTest();*/
+    MultipleInsertTest();
 
     return 0;
 }
@@ -38,6 +43,33 @@ static void CreateTest()
     }
 }
 
+static void MultipleInsertTest()
+{
+    bst_t *tree = NULL;
+    int i = 0, num1 = 1, num2 = 2, num3 = 3;
+    bst_iter_t it;
+
+    printf("\nMultiple insert test\n");
+
+    tree = BSTCreate(IsBefore, NULL);
+    for ( i = 0; i < arr_size; i++)
+    {
+        arr[i] = i;
+    }
+    
+    for ( i = 0; i < arr_size; i++)
+    {
+        it = BSTInsert(tree, &arr[i]);
+    }
+    
+    it = BSTBegin(tree);
+    for ( i = 0; i < arr_size; i++)
+    {
+        printf("Element is: %d\n", *(int*)BSTGetData(it));
+        it = BSTIterNext(it);
+    }
+    
+}
 static void InsertTest()
 {
     bst_t *tree = NULL;
