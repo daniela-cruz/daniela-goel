@@ -52,8 +52,18 @@ static void InsertTest()
     printf("\nInserting to root. . .\n");
     if (num2 == *(int *)BSTGetData(it)) 
     {
+<<<<<<< HEAD
         it = BSTBegin(tree);
         if (!(num2 == *(int *)BSTGetData(it)) )
+=======
+        printf("Data in root stored correctly\n");
+        it = BSTBegin(tree);
+        if (num2 == *(int *)BSTGetData(it)) 
+        {
+            printf("Data from iterator in root stored correctly\n"); 
+        }
+        else
+>>>>>>> 434b963ced2597cdbdf56dc6f36e5ebff39bc8ff
         {
             ADD_RED; printf("ERROR: data is: %d\n", *(int *)BSTGetData(it)); END_RED;
         }
@@ -65,14 +75,30 @@ static void InsertTest()
 
     printf("\nInserting to left node. . .\n");
     it = BSTInsert(tree, (void *)&num1);
+<<<<<<< HEAD
     if (!(num1 == *(int *)BSTGetData(it)) )
+=======
+    if (num1 == *(int *)BSTGetData(it)) 
+    {
+        printf("Data in new node stored correctly\n");
+    }
+    else
+>>>>>>> 434b963ced2597cdbdf56dc6f36e5ebff39bc8ff
     {
         ADD_RED; printf("ERROR: data is: %d\n", *(int *)BSTGetData(it)); END_RED;
     }
 
     printf("\nInserting to right node. . .\n");
     it = BSTInsert(tree, (void *)&num3);
+<<<<<<< HEAD
     if (!(num3 == *(int *)BSTGetData(it))) 
+=======
+    if (num3 == *(int *)BSTGetData(it)) 
+    {
+        printf("Data in 3rd new node stored correctly\n");
+    }
+    else
+>>>>>>> 434b963ced2597cdbdf56dc6f36e5ebff39bc8ff
     {
         ADD_RED; printf("ERROR: data is: %d\n", *(int *)BSTGetData(it)); END_RED;
     }
@@ -86,7 +112,10 @@ static void IterTest(bst_t *tree)
 
     printf("\nBST Iterators test:\n");
     printf("Begin iterator's data is: %d\n", *(int *)BSTGetData(it));
+<<<<<<< HEAD
     printf("Prev iterator's data is: %d\n", *(int *)BSTGetData(BSTIterPrev(it)));
+=======
+>>>>>>> 434b963ced2597cdbdf56dc6f36e5ebff39bc8ff
 }
 
 /**********************
@@ -97,5 +126,9 @@ int IsBefore(void *data1, void *data2, void *param)
     (void) param;
 
     return *(int *)data1 < *(int *)data2;
+<<<<<<< HEAD
 }
 
+=======
+}
+>>>>>>> 434b963ced2597cdbdf56dc6f36e5ebff39bc8ff

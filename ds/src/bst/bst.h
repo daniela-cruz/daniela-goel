@@ -30,7 +30,7 @@ int BSTIsEmpty(bst_t *tree);
 /**********************
  *  EXTRA FUNCS       *
 **********************/
-int BSTForEach(bst_t *tree, bst_action_func_t func, void *param);
+int BSTForEach(bst_iter_t from, bst_iter_t to, bst_action_func_t func, void *param);
 
 bst_iter_t BSTFind(const bst_t *tree, void *key);
 
@@ -57,5 +57,4 @@ struct bst_iter
 };
 
 #endif /* __BST_H__ */
-
 
