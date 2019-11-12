@@ -136,6 +136,7 @@ bst_iter_t BSTRemove(bst_iter_t iterator)
 {
     bst_iter_t parent_iter = {NULL, NULL};
     bst_node_t *removable = NULL;
+    bst_node_t *child_after = NULL;
 
     if ((iterator.tree->root == iterator.curr))
     {
@@ -144,67 +145,84 @@ bst_iter_t BSTRemove(bst_iter_t iterator)
     }
 
     removable = iterator.curr;
-    if ((NULL == removable->child_after) && (NULL == removable->child_after))
+    if (NULL == removable->child_before)
     {
-        
         iterator.curr = removable->parent;
-        if (NULL != removable->parent)
+        if (NULL != removable->child_after)
         {
             if (removable->parent->child_after == removable)
             {
-                iterator.curr->child_after = NULL;
+                iterator.curr->child_after = removable->child_after;
             }
             else
             {
-            iterator.curr->child_before = NULL; 
+                iterator.curr->child_before = removable->child_after;
             }
         }
         
+        removable->child_after->parent = iterator.curr;
         free(removable); removable = NULL;
 
         return iterator;
     }
-    
-    parent_iter.tree = iterator.tree;
-    parent_iter.curr = iterator.curr->parent;
-
-    if (removable == parent_iter.curr->child_after)
+    else if (NULL == removable->child_after)
     {
-        /* tie parent to one child to the right 
-         * then go all the way to left 
-         * tie removable's children to left most node */
-        iterator.curr = iterator.curr->child_after;
-        parent_iter.curr->child_after = iterator.curr;
-        iterator.curr->parent = parent_iter.curr;
-        
-        iterator = GetMinimalChildInBranch(iterator);
-        
-        if (NULL != removable->child_before)
+        iterator.curr = removable->child_before;
+        if (NULL == removable->child_after)
         {
-            iterator.curr->child_before = removable->child_before;
-            removable->child_before->parent = iterator.curr;
+            if (removable->parent->child_after == removable)
+            {
+                parent_iter.curr->child_after = iterator.curr;
+            }
+            else
+            {
+                parent_iter.curr->child_before = iterator.curr;
+                iterator.curr = parent_iter.curr;
+            }
+            
+            free(removable); removable = NULL;
+
+            return iterator;
         }
     }
-
-    else /* if removable is a child_before */
+    else /* node has both children */
     {
-        /* tie parent to one child to left
-         * then go all the way to right most node 
-         * tie removable's right child to right most node */
-        iterator.curr = iterator.curr->child_before;
-        parent_iter.curr->child_before = iterator.curr;
-        iterator.curr->parent = parent_iter.curr;
-        
-        iterator = GetMaximalChildInBranch(iterator);
-
-        if (NULL != removable->child_after)
+        if (removable == removable->parent->child_after)
         {
-            iterator.curr = removable->child_after;
-            removable->child_after->parent = iterator.curr->parent;
+            parent_iter.curr = removable->parent;
+            if (NULL == parent_iter.curr->child_before)
+            {
+                parent_iter.curr->child_after = removable->child_before;
+                child_after = removable->child_after;
+                iterator.curr = removable->child_before;
+                
+                iterator = GetMaximalChildInBranch(iterator);
+                iterator.curr->child_after = child_after;
+                child_after->parent = iterator.curr;
+            }
+            else /* parent has a child_before */
+            {
+                iterator.curr = parent_iter.curr->child_before;
+                iterator = GetMaximalChildInBranch(iterator);
+                iterator.curr->child_after = removable->child_before;
+                removable->child_before->parent = iterator.curr;
+                
+                /*parent_iter.curr = iterator.curr;*/
+                iterator.curr = removable->child_before;
+                iterator = GetMaximalChildInBranch(iterator);
+                child_after = removable->child_after;
+                
+                iterator.curr->child_after = child_after;
+                child_after->parent = iterator.curr;
+                iterator.curr = child_after;
+            }
+            
+            free(removable); removable = NULL;
+
+            return iterator;
         }
+        
     }
-    
-    free(removable); removable = NULL;
     
     return iterator;
 }
