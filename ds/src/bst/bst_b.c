@@ -161,9 +161,6 @@ bst_iter_t BSTRemove(bst_iter_t iterator)
         }
         
         removable->child_after->parent = iterator.curr;
-        free(removable); removable = NULL;
-
-        return iterator;
     }
     else if (NULL == removable->child_after)
     {
@@ -179,10 +176,6 @@ bst_iter_t BSTRemove(bst_iter_t iterator)
                 parent_iter.curr->child_before = iterator.curr;
                 iterator.curr = parent_iter.curr;
             }
-            
-            free(removable); removable = NULL;
-
-            return iterator;
         }
     }
     else /* node has both children */
@@ -216,14 +209,10 @@ bst_iter_t BSTRemove(bst_iter_t iterator)
                 child_after->parent = iterator.curr;
                 iterator.curr = child_after;
             }
-            
-            free(removable); removable = NULL;
-
-            return iterator;
         }
-        
     }
     
+    free(removable); removable = NULL;
     return iterator;
 }
 
