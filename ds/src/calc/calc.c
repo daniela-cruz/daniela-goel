@@ -4,114 +4,249 @@
 
 #include "vector.h"     /* vector_t */
 
-double (*Operator_LUT_t)(float, float, int);
-double (*Precedence_LUT_t)(char operator, float operand, int is_operator);
+typedef double (*Operator_LUT_t)(char *, int);
+typedef double (*Precedence_LUT_t)(char operator);
+typedef void (*precedence_exe_func_t)(char *);
 
-typedef struct calc_stack1
+typedef struct calc_nums
 {
-    vector_t *stack1;
-} calc_stack1_t;
+    vector_t *stack;
+} calc_stack_t;
 
-typedef struct calc_stack2
+typedef struct calc_operators
 {
-    vector_t *stack2;
-} calc_stack2_t;
+    vector_t *op_stack;
+} calc_operators_t;
 
 /************************/
 double Calculator(char *expression, int *err);
-vector_t *FillStack1(char *expression);
 void InitOperators();
+calc_stack_t *FillNumsStack(char *expression);
+calc_operators_t *FillOperatorsStack(char *expression, calc_stack_t *nums_stack);
 
 /************************/
-static double OpDecrement(float f1, float f2, int is_operator);
-static double OpIncrement(float f1, float f2, int is_operator);
-static double OpMultiply(float f1, float f2, int is_operator);
-static double OpDivide(float f1, float f2, int is_operator);
-static double EmptyOperator(float f1, float f2, int is_operator);
+static double OpParatheses(calc_stack_t *nums, calc_operators_t *operators);
 
 /************************/
-double Operator_LUT[UCHAR_MAX + 1];
+static Operator_LUT_t NumberFunc(char *exp, int is_operator);
+static Operator_LUT_t EmptyOperator(char *exp, int is_operator);
+static Operator_LUT_t ParenthesisOpen(char *exp, int is_operator);
+static Operator_LUT_t ParenthesisClose(char *exp, int is_operator);
+static Operator_LUT_t OpDecrement(char *exp, int is_operator);
+static Operator_LUT_t OpIncrement(char *exp, int is_operator);
+static Operator_LUT_t OpMultiply(char *exp, int is_operator);
+static Operator_LUT_t OpDivide(char *exp, int is_operator);
 
+/************************/
+static Operator_LUT_t Operator_LUT[UCHAR_MAX + 1];
+static Precedence_LUT_t PrecedenceLUT[UCHAR_MAX + 1];
+static calc_stack_t *nums_stack = NULL;
+static calc_stack_t *operators_stack = NULL;
 
 /*************************
- *      CALCULATOR:      *
+ *     INITIALIZERS:     *
 *************************/
 void InitOperators()
 {
     int i = 0;
 
-    for ( i = 0; i < UCHAR_MAX + 1; i++)
+    for ( i = '0'; i <= '9' + 1; i++)
     {
-        Operator_LUT[i] = EmptyOperator(0,0,0);
+        Operator_LUT[i] = NumberFunc(NULL, 0);
+    }
+
+    Operator_LUT['39'] = EmptyOperator(NULL, 0);
+    Operator_LUT['('] = EmptyOperator(NULL, 0);
+    Operator_LUT[')'] = EmptyOperator(NULL, 0);
+    Operator_LUT['-'] = OpDecrement(NULL, 0);
+    Operator_LUT['+'] = OpIncrement(NULL, 0);
+    Operator_LUT['*'] = OpMultiply(NULL, 0);
+    Operator_LUT['/'] = OpDivide(NULL, 0);
+}
+
+void InitPrecedenceLut()
+{
+    int i = 0;
+
+    for ( i = 0; i <= UCHAR_MAX + 1; i++)
+    {
+        PrecedenceLUT[i] = -1;
+    }
+
+    PrecedenceLUT['39'] = 10;
+    PrecedenceLUT['('] = 0;
+    PrecedenceLUT['-'] = 1;
+    PrecedenceLUT['+'] = 1;
+    PrecedenceLUT['*'] = 2;
+    PrecedenceLUT['/'] = 2;
+    PrecedenceLUT[')'] = 3;
+}
+
+calc_operators_t *InitNewStack()
+{
+    calc_operators_t *stack = NULL;
+
+    stack = malloc(sizeof(*stack));
+    if (NULL == stack)
+    {
+        return NULL;
     }
     
-    Operator_LUT['`'] = EmptyOperator(0,0,0);
-    Operator_LUT['-'] = OpDecrement(0,0,0);
-    Operator_LUT['+'] = OpIncrement(0,0,0);
-    Operator_LUT['*'] = OpMultiply(0,0,0);
-    Operator_LUT['/'] = OpDivide(0,0,0);
+    stack->op_stack = VectorCreate(sizeof(double), 3);
+    if (NULL == stack->op_stack)
+    {
+        free(stack);
+        return NULL;
+    }
+
+    VectorPushBack(stack->op_stack, EmptyOperator);
+    InitOperators();
+
+    return stack;
 }
 
+/*************************
+ *      CALCULATOR:      *
+*************************/
 double Calculator(char *expression, int *err)
 {
-    double op1 = 0;
-    vector_t *stack1 = NULL;
+    int is_operator = 0; /* when 1 a function would calculate and then add to stack*/
+    char *str_end = NULL;
+    double sum = 0;
 
-    stack1 = FillStack1(expression);
-
-    op1 = VectorSize(stack1);
-    
-    return op1;
-}
-
-/* separate between operands and operators using both stacks */
-vector_t *FillStack1(char *expression)
-{
-    vector_t *stack1 = NULL;
-    char *arr = NULL;
-
-    arr = malloc(sizeof(*arr) * 4);
-    stack1 = VectorCreate(sizeof(double), 4);
+    nums_stack = InitNewStack();
+    operators_stack = InitNewStack();
 
     while ('\0' != *expression)
     {
-        double operand = 0;
-
-        operand = strtod(arr, &expression);
-        VectorPushBack(stack1, &operand);
+        Operator_LUT[*expression](expression, is_operator);
+        strtod(expression, str_end);
+        is_operator = !is_operator;
     }
 
-    return stack1;
+    while (1 < VectorSize(nums_stack->stack))
+    {
+        /* sum = empty stack somehow */
+    }
+    
+    return sum;
 }
+
+/*************************
+ *       HANDLERS:       *
+*************************/
+static precedence_exe_func_t ReadOpFromString(char *exp)
+{
+    size_t curr_idx = 0;
+    size_t num_idx;
+    double op1 = 0, op2 = 0;
+
+    curr_idx = VectorSize(operators_stack->stack);
+
+    while (PrecedenceLUT[*(int *)VectorGetItemAddress(operators_stack->stack, 
+        curr_idx)] > PrecedenceLUT[*exp] && (1 < curr_idx))
+    {
+        num_idx = VectorSize(nums_stack->stack);
+        op2 = *(double *)VectorGetItemAddress(nums_stack->stack, num_idx);
+        VectorPopBack(nums_stack->stack); num_idx--;
+        op1 = *(double *)VectorGetItemAddress(nums_stack->stack, num_idx);
+        VectorPopBack(nums_stack->stack); num_idx--;
+        
+        /* adding the new result to numbers_stack */
+        VectorPushBack(nums_stack->stack, 
+        Operator_LUT[*(int *)VectorGetItemAddress(operators_stack->stack, 
+        curr_idx)]);
+        
+        curr_idx--;
+    }
+    
+
+}
+
+static Operator_LUT_t NumberFunc(char **exp, int is_operator)
+{
+    double num = strtod(*exp, exp);
+    VectorPushBack(nums_stack->stack, &num);
+    
+    return 0;
+}
+
+static Operator_LUT_t EmptyOperator(char *exp, int is_operator)
+{
+    return 0;
+}
+
+static Operator_LUT_t ParenthesisOpen(char *exp, int is_operator)
+{
+    return 0;
+}
+
+static Operator_LUT_t ParenthesisClose(char *exp, int is_operator)
+{
+    /* calculate all the way to  ( */
+}
+
+static Operator_LUT_t OpDecrement(char *exp, int is_operator)
+{
+    double op1 = 0, op2 = 0;
+    double sum = 0;
+    size_t index = 0;
+
+    if (is_operator)
+    {
+        VectorPushBack(operators_stack->stack, exp);
+    }
+    else
+    {
+        index = VectorSize(nums_stack);
+        op2 = *(double *)VectorGetItemAddress(nums_stack->stack, index);
+        VectorPopBack(nums_stack->stack);
+        op1 = *(double *)VectorGetItemAddress(nums_stack->stack, index - 1);
+        VectorPopBack(nums_stack->stack);
+        sum = CalcDecrement(op1, op2);
+        
+        return sum; 
+        
+    }
+
+}
+static Operator_LUT_t OpIncrement(char *exp, int is_operator)
+{
+    
+}
+static Operator_LUT_t OpMultiply(char *exp, int is_operator);
+static Operator_LUT_t OpDivide(char *exp, int is_operator);
 
 /*************************
  *      OPERATORS:       *
 *************************/
-static double OpDecrement(float f1, float f2, int is_operator)
+static double CalcDecrement(float f1, float f2)
 {
     return f1 - f2;
 }
 
-static double OpIncrement(float f1, float f2, int is_operator)
+static double CalcIncrement(float f1, float f2)
 {
     return f1 + f2;
 }
 
-static double OpMultiply(float f1, float f2, int is_operator)
+static double CalcMultiply(float f1, float f2)
 {
     return f1 * f2;
 }
 
-static double OpDivide(float f1, float f2, int is_operator)
+static double CalcDivide(float f1, float f2)
 {
     return f1 / f2;
 }
 
-static double EmptyOperator(float f1, float f2, int is_operator)
+static double CalcEmptyOperator(float f1, float f2)
 {
-    /* first in operators fifo stack
-     * should call operand and perform 
-     * last calculation and provide a sum */
 
     return /**/0;
+}
+
+static double CalcNumberFunc(float f1, float f2)
+{
+    return 0;
 }

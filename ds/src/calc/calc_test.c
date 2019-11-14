@@ -2,13 +2,14 @@
 
 #include "calc.h"
 
-char *expression = "1+2-3*4/4=";
 
 int main()
 {
+    char *expression = "1";
+    /* double expected = 6; */
     double op = Calculator(expression, 0);
 
-    /*printf("Number of numbers is: %f\n", op);*/
+    printf("Number of numbers is: %f\n", op);
 
     return 0;
 }
