@@ -1,12 +1,12 @@
 #include <stdio.h> /* printf*/
 #include <stdlib.h> /* malloc free */
 
-char *str = "hello";
 
 static size_t RecStrLen(char *str);
 
 int main()
 {
+    char str[] = "hello";
     size_t  len = 0;
 
     len = RecStrLen(str);
