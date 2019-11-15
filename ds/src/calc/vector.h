@@ -30,7 +30,7 @@ int VectorPushBack(vector_t *element,const void *data);
 	*Amortized complexity O(1)					*/
 int VectorPopBack(vector_t *element);
 
-/*   	*return how much elements currently are in
+/*   	*return how many elements currently are in
 		dynamic array						*/
 size_t VectorSize(const vector_t *element);
 
