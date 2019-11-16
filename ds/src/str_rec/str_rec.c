@@ -39,6 +39,7 @@ int RecFibonacci(int num)
     
     return RecFibonacci(num - 1) + RecFibonacci(num - 2);
 }
+
 size_t RecStrLen(char *str)
 {
     if ('\0' == *str)
@@ -63,5 +64,49 @@ void RecStrCpy(char *dest, char *src)
 	}
 	
 	RecStrCpy(src + 1, dest + 1);
+}
+
+int RecStrCmp(const char* s1, const char* s2)
+{
+	char* str1 = (char*) s1;
+	char* str2 = (char*) s2;
+
+	if (('\0' == *str1) && ('\0' == *str2))
+	{
+		return 0; 
+	}
+
+	if (*str1 != *str2)
+	{
+		return 1;
+	}
+
+	str1++; str2++;
+
+	return RecStrCmp(str1, str2);
+}
+
+char* StrCatRec(char* dest, const char* src)
+{
+	char* d = NULL, * s = NULL;
+	
+	d = dest;
+	s = (char*)src;
+
+	if (d + StrLen(dest) == d)
+	{
+		*d = *s;
+
+		if ('\0' == *s)
+		{
+			return d;
+		}
+
+		return StrCatRec(++d, ++s) - 1;
+	}
+
+	d++;
+
+	return StrCatRec(d, s) - 1;
 }
 

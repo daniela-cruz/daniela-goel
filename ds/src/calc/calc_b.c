@@ -39,6 +39,11 @@ static operator_handler_t handlersLUT[UCHAR_MAX + 1];
 static precedence_LUT_t precedenceLUT[UCHAR_MAX + 1];
 static calc_func_t calc_funcLUT[UCHAR_MAX + 1];
 
+/********Other***********/
+/*  determines if following expression is 
+ *  pushed to num_stk or operator_stk       */
+static int is_number = 1; 
+
 /*************************
  *      CALC FUNCS:      *
 *************************/
@@ -174,7 +179,13 @@ operator_handler_t EmptyOperator(char *exp)
 
 operator_handler_t NumberFunc(char *exp)
 {
-    return NULL;
+    double number = 0;
+   
+    number = strtod(exp, &exp); VectorPushBack(num_stk, &number);
+
+    is_number = !is_number;
+
+    return (char *)exp;
 }
 
 operator_handler_t OpDecrement(char *exp)
