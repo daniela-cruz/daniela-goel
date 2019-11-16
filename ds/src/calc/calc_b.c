@@ -1,4 +1,3 @@
-#include <stdio.h>		/* sscanf */
 #include <stdlib.h>    /* stdtod, malloc, free */
 #include <string.h>  	/* strcspn */
 #include <limits.h>    /* uchar_max */
@@ -18,12 +17,13 @@ void InicCalcFuncsLUT();
 void InitOperatorsPrecedenceLUT();
 void InitOperatorsHandlersLUT();
 
-operator_handler_t EmptyOperator(char *exp);
-operator_handler_t NumberFunc(char *exp);
-operator_handler_t OpDecrement(char *exp);
-operator_handler_t OpIncrement(char *exp);
-operator_handler_t OpMultiply(char *exp);
-operator_handler_t OpDivide(char *exp);
+char *DummyOpFunc(char *exp);
+char *GetNumFromExp(char *exp);
+char *ExecuteOperators(char *exp);
+char *OpDecrement(char *exp);
+char *OpIncrement(char *exp);
+char *ParanthesesOpen(char *exp);
+char *ParanthesesClosed(char *exp);
 
 static double CalcDecrement(double f1, double f2);
 static double CalcIncrement(double f1, double f2);
@@ -88,6 +88,23 @@ void CalcExecute()
     result = calc_funcLUT[(int)operator](operand1, operand2);
     VectorPushBack(num_stk, &result);
 }
+
+void PushOpenParantheses()
+{
+    VectorPushBack(operators_stk, &precedenceLUT[(int)'(']);
+}
+
+void CalcPopClosedParntheses()
+{
+    while ('(' != (*(char *)VectorGetItemAddress(operators_stk, 
+        VectorSize(operators_stk) - 1)))
+    {
+        CalcExecute(num_stk, operators_stk);
+    }
+
+    VectorPopBack(operators_stk);
+}
+
 
 /*************************
  *     INITIALIZERS:     *
@@ -157,27 +174,27 @@ void InitOperatorsHandlersLUT()
 
     for ( i = '0'; i <= '9' + 1; i++)
     {
-        handlersLUT[i] = NumberFunc(NULL);
+        handlersLUT[i] = GetNumFromExp;
     }
 
-    handlersLUT[39] = EmptyOperator(NULL);
-    handlersLUT['('] = EmptyOperator(NULL);
-    handlersLUT[')'] = EmptyOperator(NULL);
-    handlersLUT['-'] = OpDecrement(NULL);
-    handlersLUT['+'] = OpIncrement(NULL);
-    handlersLUT['*'] = OpMultiply(NULL);
-    handlersLUT['/'] = OpDivide(NULL);
+    handlersLUT[39] = DummyOpFunc;
+    handlersLUT['('] = ParanthesesOpen;
+    handlersLUT[')'] = ParanthesesClosed;
+    handlersLUT['-'] = ExecuteOperators;
+    handlersLUT['+'] = ExecuteOperators;
+    handlersLUT['*'] = ExecuteOperators;
+    handlersLUT['/'] = ExecuteOperators;
 }
 
 /*************************
  *   Handlers Funcs:     *
 *************************/
-operator_handler_t EmptyOperator(char *exp)
+char *DummyOpFunc(char *exp)
 {
     return NULL;
 }
 
-operator_handler_t NumberFunc(char *exp)
+char *GetNumFromExp(char *exp)
 {
     double number = 0;
    
@@ -185,25 +202,35 @@ operator_handler_t NumberFunc(char *exp)
 
     is_number = !is_number;
 
-    return (char *)exp;
+    return exp;
 }
 
-operator_handler_t OpDecrement(char *exp)
+char *ExecuteOperators(char *exp)
+{
+    char precedence = 0;
+    char last_operator = 0;
+
+    last_operator = *(char *)VectorGetItemAddress(operators_stk, VectorSize(operators_stk)-1);
+    precedence = precedenceLUT[(int)*exp];
+
+    while (precedence <= precedenceLUT[(int)last_operator])
+    {
+        CalcExecute(num_stk, operators_stk);
+        last_operator = *(char *)VectorGetItemAddress(operators_stk, VectorSize(operators_stk)-1);
+    }
+
+    VectorPushBack(operators_stk, &calc_funcLUT[(int)*exp]);
+    is_number = 1;
+
+    return (char *)exp + 1;
+}
+
+char *ParanthesesOpen(char *exp)
 {
     return NULL;
 }
 
-operator_handler_t OpIncrement(char *exp)
-{
-    return NULL;
-}
-
-operator_handler_t OpMultiply(char *exp)
-{
-    return NULL;
-}
-
-operator_handler_t OpDivide(char *exp)
+char *ParanthesesClosed(char *exp)
 {
     return NULL;
 }
