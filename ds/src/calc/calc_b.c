@@ -52,6 +52,7 @@ double Calculator(char *exp, int *err)
     double result = 0;
 
     *err = InitCalculator();
+    is_number = 1;
     
     while ('\0' != *exp)
     {
@@ -197,11 +198,14 @@ char *DummyOpFunc(char *exp)
 char *GetNumFromExp(char *exp)
 {
     double number = 0;
-   
-    number = strtod(exp, &exp); VectorPushBack(num_stk, &number);
 
-    is_number = !is_number;
-
+    if (is_number)
+    {
+        number = strtod(exp, &exp); 
+        VectorPushBack(num_stk, &number);
+        is_number = 0;
+    }
+    
     return exp;
 }
 
@@ -213,7 +217,7 @@ char *ExecuteOperators(char *exp)
     last_operator = *(char *)VectorGetItemAddress(operators_stk, VectorSize(operators_stk)-1);
     precedence = precedenceLUT[(int)*exp];
 
-    while (precedence <= precedenceLUT[(int)last_operator])
+    while (precedence <= precedenceLUT[(int)last_operator] && (!is_number))
     {
         CalcExecute(num_stk, operators_stk);
         last_operator = *(char *)VectorGetItemAddress(operators_stk, VectorSize(operators_stk)-1);
@@ -223,16 +227,6 @@ char *ExecuteOperators(char *exp)
     is_number = 1;
 
     return (char *)exp + 1;
-}
-
-char *ParanthesesOpen(char *exp)
-{
-    return NULL;
-}
-
-char *ParanthesesClosed(char *exp)
-{
-    return NULL;
 }
 
 /*************************
