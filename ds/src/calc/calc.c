@@ -1,11 +1,12 @@
-#include <stdio.h>
-#include <stdlib.h>     /* stdtod, malloc, free */
-#include <limits.h>     /* uchar_max */
+#include <stdio.h>		/* sscanf */
+#include <stdlib.h>    /* stdtod, malloc, free */
+#include <string.h>  	/* strcspn */
+#include <limits.h>    /* uchar_max */
 
-#include "vector.h"     /* vector_t */
+#include "vector.h"    /* vector_t */
 
-typedef double (*Operator_LUT_t)(char *, int);
-typedef double (*Precedence_LUT_t)(char operator);
+typedef double (*operator_LUT_t)(char *, int);
+typedef double (*precedence_LUT_t)(char operator);
 typedef void (*precedence_exe_func_t)(char *);
 
 typedef struct calc_nums
@@ -28,18 +29,18 @@ calc_operators_t *FillOperatorsStack(char *expression, calc_stack_t *nums_stack)
 static double OpParatheses(calc_stack_t *nums, calc_operators_t *operators);
 
 /************************/
-static Operator_LUT_t NumberFunc(char *exp, int is_operator);
-static Operator_LUT_t EmptyOperator(char *exp, int is_operator);
-static Operator_LUT_t ParenthesisOpen(char *exp, int is_operator);
-static Operator_LUT_t ParenthesisClose(char *exp, int is_operator);
-static Operator_LUT_t OpDecrement(char *exp, int is_operator);
-static Operator_LUT_t OpIncrement(char *exp, int is_operator);
-static Operator_LUT_t OpMultiply(char *exp, int is_operator);
-static Operator_LUT_t OpDivide(char *exp, int is_operator);
+static operator_LUT_t NumberFunc(char *exp, int is_operator);
+static operator_LUT_t EmptyOperator(char *exp, int is_operator);
+static operator_LUT_t ParenthesisOpen(char *exp, int is_operator);
+static operator_LUT_t ParenthesisClose(char *exp, int is_operator);
+static operator_LUT_t OpDecrement(char *exp, int is_operator);
+static operator_LUT_t OpIncrement(char *exp, int is_operator);
+static operator_LUT_t OpMultiply(char *exp, int is_operator);
+static operator_LUT_t OpDivide(char *exp, int is_operator);
 
 /************************/
-static Operator_LUT_t Operator_LUT[UCHAR_MAX + 1];
-static Precedence_LUT_t PrecedenceLUT[UCHAR_MAX + 1];
+static operator_LUT_t Operator_LUT[UCHAR_MAX + 1];
+static precedence_LUT_t PrecedenceLUT[UCHAR_MAX + 1];
 static calc_stack_t *nums_stack = NULL;
 static calc_stack_t *operators_stack = NULL;
 
@@ -163,7 +164,7 @@ static precedence_exe_func_t ReadOpFromString(char *exp)
 
 }
 
-static Operator_LUT_t NumberFunc(char **exp, int is_operator)
+static operator_LUT_t NumberFunc(char **exp, int is_operator)
 {
     double num = strtod(*exp, exp);
     VectorPushBack(nums_stack->stack, &num);
@@ -171,22 +172,22 @@ static Operator_LUT_t NumberFunc(char **exp, int is_operator)
     return 0;
 }
 
-static Operator_LUT_t EmptyOperator(char *exp, int is_operator)
+static operator_LUT_t EmptyOperator(char *exp, int is_operator)
 {
     return 0;
 }
 
-static Operator_LUT_t ParenthesisOpen(char *exp, int is_operator)
+static operator_LUT_t ParenthesisOpen(char *exp, int is_operator)
 {
     return 0;
 }
 
-static Operator_LUT_t ParenthesisClose(char *exp, int is_operator)
+static operator_LUT_t ParenthesisClose(char *exp, int is_operator)
 {
     /* calculate all the way to  ( */
 }
 
-static Operator_LUT_t OpDecrement(char *exp, int is_operator)
+static operator_LUT_t OpDecrement(char *exp, int is_operator)
 {
     double op1 = 0, op2 = 0;
     double sum = 0;
@@ -210,12 +211,12 @@ static Operator_LUT_t OpDecrement(char *exp, int is_operator)
     }
 
 }
-static Operator_LUT_t OpIncrement(char *exp, int is_operator)
+static operator_LUT_t OpIncrement(char *exp, int is_operator)
 {
     
 }
-static Operator_LUT_t OpMultiply(char *exp, int is_operator);
-static Operator_LUT_t OpDivide(char *exp, int is_operator);
+static operator_LUT_t OpMultiply(char *exp, int is_operator);
+static operator_LUT_t OpDivide(char *exp, int is_operator);
 
 /*************************
  *      OPERATORS:       *
