@@ -20,7 +20,7 @@ void *VectorGetItemAddress(vector_t *element, size_t index);
 
 /* 	*Add element to the end of the dynamic array
 	*If we reached array capacity, then 
-		allocate capacity * 2 to expand the array							 
+		allocate capacity * 1.5 to expand the array							 
 	*return 1 for failure
 		   0 for success	
 	*Amortized complexity O(1)					*/
