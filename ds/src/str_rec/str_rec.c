@@ -8,7 +8,7 @@ static size_t RecStrLen(char *str);
 void RecStrCpy(char *dest, char *src);
 stack_t *RecStackSort(stack_t *stk);
 
-void RecStkSortTest();
+void RecStkSortTest(size_t size);
 void PrintArr(int *array, size_t size);
 
 char dest[] = "hello, blah";
@@ -28,7 +28,7 @@ int main()
     /*RecStrCpy(dest, src);
     printf("new string is: %s\n", dest);*/
 
-    RecStkSortTest();
+    RecStkSortTest(5);
 
     return 0;
 }
@@ -147,36 +147,39 @@ sll_node_t* RecReverse(sll_node_t* node)
 
   stack_t *RecStackSort(stack_t *stk)
   {
-    int temp;
     int num1, num2;
-    int arr[5] = {73, 12, -7, 2, 0};
 
-    if (!StkIsEmpty(stk))
+    if (1 == StkCount(stk))
     {
-        num1 = *(int *)StkPeek(stk); StkPop(stk);
-        num2 = *(int *)StkPeek(stk); StkPop(stk); 
-
-        if (num1 > num2)
-        {
-            temp = num1;
-            num1 = num2;
-            num2 = temp;
-        }
-
-        StkPush(stk, &num2);
-        RecStackSort(stk);
+        return stk;
     }
-      
-    StkPush(stk, &num1);
+    
+    num1 = *(int *)StkPeek(stk); StkPop(stk);
+    RecStackSort(stk);
+    num2 = *(int *)StkPeek(stk);  
+
+    if (num1 > num2)
+    {
+        StkPop(stk);
+        StkPush(stk, &num1);
+        StkPush(stk, &num2);
+    }
+    else
+    {
+        StkPush(stk, &num1);
+    }
+
+    return stk;
   }  
 
 /********************
  *  Internal funcs *
 ********************/ 
-void RecStkSortTest(int *arr, size_t size)
+void RecStkSortTest(size_t size)
 {
     stack_t *stk = NULL;
     int i = 0;
+    int arr[5] = {73, 1, -7, 2, 0};
 
     stk = StkCreate(size, sizeof(int));
 
@@ -185,6 +188,7 @@ void RecStkSortTest(int *arr, size_t size)
         StkPush(stk, &arr[i]);
     }
 
+    printf("Peek shows: %d\n", *(int*)StkPeek(stk));
     /*PrintArr(arr, size);*/
     printf("Printing array:\n");
 
