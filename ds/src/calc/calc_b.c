@@ -263,3 +263,8 @@ static double CalcDivide(double f1, double f2)
 {
     return f1 / f2;
 }
+
+static double CalcOpenParantheses(double f1, double f2)
+{
+    return f1 / f2;
+}

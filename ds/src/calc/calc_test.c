@@ -5,7 +5,7 @@
 
 int main()
 {
-    char *expression = "6*2/2+1";
+    char *expression = "1+2*3";
     /* double expected = 6; */
     double op = Calculator(expression, 0);
     
