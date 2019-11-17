@@ -18,7 +18,7 @@ void StkPop(stack_t *element_ptr);
 
 /* 		Push the requested value into the stack.
    		push when stack is full is undefined. Complexity: O(1)	 		   */
-void  StkPush(stack_t *element_ptr, void *data);
+void  StkPush(stack_t *element_ptr, const void *data);
 
 /* 		Peeks at the last inserted member in the stack
    		returns it to the user. If stack is empty behavior is undefined		*/

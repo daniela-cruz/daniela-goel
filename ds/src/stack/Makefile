@@ -5,13 +5,13 @@
 ROOT_DIR = ../../..
 
 #PROJ_SRCS = $(shell xmlstarlet select -t -v //Unit/@filename xx.cbp | grep -e '\.c')
-PROJ_SRCS = stack_test.c stack.c
+PROJ_SRCS = stack_test.c stack_fixed.c
 
 # list of directories containing header files
 PROJ_INC_DIR = 
 
 # the executable file
-PROJ_OUT = stack.out
+PROJ_OUT = stack_fixed.out
 
 # list of compiler flags (prepended with "-" sign)
 PROJ_CFLAGS = -Wunused-but-set-variable

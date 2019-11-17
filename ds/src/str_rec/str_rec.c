@@ -145,8 +145,8 @@ sll_node_t* RecReverse(sll_node_t* node)
         return node;
     }*/
 
-  stack_t *RecStackSort(stack_t *stk)
-  {
+stack_t *RecStackSort(stack_t *stk)
+{
     int num1, num2;
 
     if (1 == StkCount(stk))
@@ -170,7 +170,8 @@ sll_node_t* RecReverse(sll_node_t* node)
     }
 
     return stk;
-  }  
+    
+}  
 
 /********************
  *  Internal funcs *
