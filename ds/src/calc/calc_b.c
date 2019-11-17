@@ -51,7 +51,7 @@ double Calculator(char *exp, int *err)
 {
     double result = 0;
 
-    *err = InitCalculator();
+    /**err = */InitCalculator();
     is_number = 1;
     
     while ('\0' != *exp)
@@ -59,7 +59,7 @@ double Calculator(char *exp, int *err)
         exp = handlersLUT[(int)*exp](exp);
     }
 
-    while (1 < VectorSize(operators_stk))
+    while (2 < VectorSize(operators_stk))
     {
         CalcExecute();
     }
@@ -78,13 +78,12 @@ void CalcExecute()
     double result = 0;
 
     operator = *(char *)VectorGetItemAddress(operators_stk, VectorSize(operators_stk) - 1);
-    VectorPopBack(VectorGetItemAddress(operators_stk, VectorSize(operators_stk) - 1));
-
     operand2 = *(double *)VectorGetItemAddress(num_stk, VectorSize(num_stk) - 1);
-    VectorPopBack(VectorGetItemAddress(num_stk, VectorSize(num_stk) - 1));
-
-    operand1 = *(double *)VectorGetItemAddress(num_stk, VectorSize(num_stk) - 1);
-    VectorPopBack(VectorGetItemAddress(num_stk, VectorSize(num_stk) - 1));
+    operand1 = *(double *)VectorGetItemAddress(num_stk, VectorSize(num_stk) - 2);
+    
+    VectorPopBack(operators_stk);
+    VectorPopBack(num_stk);
+    VectorPopBack(num_stk);
 
     result = calc_funcLUT[(int)operator](operand1, operand2);
     VectorPushBack(num_stk, &result);
@@ -113,6 +112,7 @@ void CalcPopClosedParntheses()
 int InitCalculator()
 {
     int is_failure = 0;
+    char least_precedence = ',';
 
     do
     {
@@ -127,12 +127,14 @@ int InitCalculator()
             break;
         }
         
-        operators_stk = VectorCreate(sizeof(double), 3);
+        operators_stk = VectorCreate(sizeof(double), 1);
         if (NULL == operators_stk)
         {
             is_failure = 1;
             break;
         }
+
+        VectorPushBack(operators_stk, &least_precedence);
         
     } while (0);
     
@@ -178,7 +180,7 @@ void InitOperatorsHandlersLUT()
         handlersLUT[i] = GetNumFromExp;
     }
 
-    handlersLUT[39] = DummyOpFunc;
+    handlersLUT[44] = DummyOpFunc;
     handlersLUT['('] = ParanthesesOpen;
     handlersLUT[')'] = ParanthesesClosed;
     handlersLUT['-'] = ExecuteOperators;
@@ -223,10 +225,20 @@ char *ExecuteOperators(char *exp)
         last_operator = *(char *)VectorGetItemAddress(operators_stk, VectorSize(operators_stk)-1);
     }
 
-    VectorPushBack(operators_stk, &calc_funcLUT[(int)*exp]);
+    VectorPushBack(operators_stk, exp);
     is_number = 1;
 
     return (char *)exp + 1;
+}
+
+char *ParanthesesOpen(char *exp)
+{
+    return NULL;
+}
+
+char *ParanthesesClosed(char *exp)
+{
+    return NULL;
 }
 
 /*************************
