@@ -3,11 +3,17 @@
 #include <string.h> /* memset */
 #include <assert.h> /* assert */
 
+typedef int (*cmp_func_t)(void *ele1, void *ele2, void *param);
+
 /*************INTERNAL:**************/
 static void Swap(int *data1, int *data2);
 
 static void RadixCountingSort(unsigned int *arr, size_t size, int *histogram, size_t n_bits, 
 	size_t iteration, unsigned int *dest);
+
+void *MergeDown(void *arr, size_t element_size, size_t arr_size, 
+    cmp_func_t func, void *param);
+
 /*static void InsertResults(int *arr, size_t size, int lower_limit, 
     int upper_limit, int denominator, int *result, int *count_arr);*/
 
@@ -15,6 +21,59 @@ static void RadixCountingSort(unsigned int *arr, size_t size, int *histogram, si
 static const size_t bits_num = sizeof(size_t) * __CHAR_BIT__;
 
 /********IMPLEMENTATION:*********/
+void *MergeSort(void *arr, size_t element_size, size_t arr_size, 
+    cmp_func_t func, void *param)
+{
+    int left = 0, mid = 0, right = 0;
+    
+    mid = (0 < arr_size % 2) ? arr_size / 2 + 1 : arr_size / 2;
+    right = arr_size - 1;
+
+    if (left < right)
+    {
+        MergeSort(arr, element_size, mid, func, param);
+        MergeSort((char *)arr + (mid * element_size), element_size, right - mid + 1, func, param);
+    }
+
+    MergeDown(arr, element_size, mid + 1, func, param);
+    MergeDown((char *)arr + (mid * element_size), element_size, mid, func, param);
+
+    return arr;
+}
+
+void *MergeDown(void *arr, size_t element_size, size_t arr_size, 
+    cmp_func_t func, void *param)
+{
+    int *arr_l = NULL, *arr_r = NULL;
+    int left = 0, mid = 0, right = arr_size - 1;
+    int i = 0, j = 0, k = 0;
+
+    mid = (0 < arr_size % 2) ? arr_size / 2 + 1 : arr_size / 2;
+    
+    arr_l = malloc(element_size * (mid));
+    memcpy(arr_l, arr, element_size * mid);
+    
+    arr_r = malloc(element_size * (arr_size - mid));
+    memcpy(arr_r, (char *)arr + mid + 1, element_size * (arr_size - mid));
+
+    for (i = 0, j = 0, k = 0; (left < mid) && (mid + 1 < right); k++)
+    {
+        if (1 == func((char *)arr_l + (i * element_size), (char *)arr_r + 
+            ((mid + 1 + j) * element_size), param))
+        {
+            memcpy((char *)arr + (k * element_size), arr_l + (i * element_size), 
+                element_size);
+            i++;
+        }
+        else
+        {
+            memcpy((char *)arr + (k * element_size), arr_r + (j * element_size), 
+                element_size);
+            j++;
+        }
+    } 
+}
+
 void OptimizedBubbleSort(int *arr, size_t size)
 {
     int i = 0, j = 0;

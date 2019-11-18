@@ -40,6 +40,11 @@ int main()
     return 0;
 }
 
+static void Mergetest()
+{
+    
+}
+
 static void TimeTest()
 {
     clock_t start, end;
