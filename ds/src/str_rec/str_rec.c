@@ -149,25 +149,25 @@ stack_t *RecStackSort(stack_t *stk)
 {
     int num1, num2;
 
+    num1 = *(int *)StkPeek(stk); StkPop(stk);
     if (1 == StkCount(stk))
     {
+        StkPush(stk, &num1);
         return stk;
     }
     
-    num1 = *(int *)StkPeek(stk); StkPop(stk);
     RecStackSort(stk);
     num2 = *(int *)StkPeek(stk);  
 
-    if (num1 > num2)
+    if (num1 < num2)
     {
         StkPop(stk);
         StkPush(stk, &num1);
-        StkPush(stk, &num2);
+        num1 = num2;
+        RecStackSort(stk);
     }
-    else
-    {
-        StkPush(stk, &num1);
-    }
+    
+    StkPush(stk, &num1);
 
     return stk;
     
