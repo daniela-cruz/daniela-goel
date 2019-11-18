@@ -1,9 +1,12 @@
 #include <stdio.h>          /* printf */
 #include <stdlib.h>         /* rand */
 #include <time.h>           /* clock */
+#include <string.h>         /* strcmp */
 
 #include "sort.h"
 
+static int IsIntBefore(void *num1, void *num2, void *param);
+int IsNameBefore(void *human1, void *human2, void *param);
 static int *RandArr(int *arr, size_t size);
 static void PrintArr(int *arr, size_t size);
 static void CopyArr(int *dest_arr, const int *source_arr, size_t size);
@@ -18,10 +21,17 @@ static void InsertionSortTest(int *arr, size_t size);
 static void SelectionSortTest(int *arr, size_t size);
 static void CountSortTest();
 static void RadixTest();
+static int MergeTest();
 
 
 static int arr[10000];
 /*static int arr[8] = {2, 73, -6, 15, 6, 8, 120, -64};*/
+
+typedef struct 
+{
+    char *name;
+    int age;
+} person_t;
 
 int main()
 {
@@ -32,17 +42,90 @@ int main()
     /*InsertionSortTest(arr, 5);*/
     /*SelectionSortTest(arr, size);*/
     /*CountSortTest();*/
-	RadixTest();
-	
+	/* RadixTest(); */
+	MergeTest();
     /*TimeTest();*/
 
 
     return 0;
 }
 
-static void Mergetest()
+/* static void Mergetest()
 {
+    int i = 0;
+    int size = 5;
+    person_t *hu = NULL;
+    static person_t human[5] = {{"Michal", 37},
+                                {"Shahar", 33},
+                                {"Amit", 23},
+                                {"Harel", 31},
+                                {"Sigal", 30}};
     
+    printf("\nMerge sort test:\n");
+    hu = malloc(sizeof(*hu) * size);
+    memcpy(hu, human, sizeof(*hu) * size);
+    
+    printf("\nBefore sort:\n\n");
+    for ( i = 0; i < size; i++)
+    {
+        printf("%s\n", hu[i].name);
+    }
+    
+    MergeSort(hu, sizeof(person_t), size, IsNameBefore, NULL);
+
+    printf("\nAfter sort:\n\n");
+    for ( i = 0; i < size; i++)
+    {
+        printf("%s\n", hu[i].name);
+    }
+} */
+
+int MergeTest()
+{
+	int *arr = (int *)malloc(40);
+	int num_arr[10] = {36, 75, 89, 23, 12, 45, 34, 56, 34, 23};
+	size_t i = 0;
+    size_t size = 10;
+
+    printf("\nMerge sort test:\n");
+	for (i = 0; i < size; ++i)
+	{
+		*(arr + i) = *(num_arr + i);
+	}
+
+    printf("\nBefore sort:\n\n");
+	for (i = 0; i < size; ++i)
+	{
+		printf("%d\n", *(arr + i));
+	}
+
+	MergeSort(arr, sizeof(int), size, IsIntBefore, NULL);
+    printf("\nAfter sort:\n\n");
+	for (i = 0; i < size; ++i)
+	{
+		printf("%d\n", *(arr + i));
+	}
+
+	free(arr);
+
+	return 0;
+}
+
+static int IsIntBefore(void *num1, void *num2, void *param)
+{
+	(void)param;
+
+    return (*(int *)num1 <= *(int *)num2);
+}
+
+int IsNameBefore(void *human1, void *human2, void *param)
+{
+    person_t *hu1 = NULL, *hu2 = NULL;
+    (void)param;
+
+    hu1 = (person_t *)human1; hu2 = (person_t *)human2;
+
+    return 0 == (strcmp(hu1->name, hu2->name));
 }
 
 static void TimeTest()
