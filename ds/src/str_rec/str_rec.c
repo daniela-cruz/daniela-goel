@@ -147,15 +147,14 @@ sll_node_t* RecReverse(sll_node_t* node)
 
 stack_t *RecStackSort(stack_t *stk)
 {
-    int num1, num2;
+    int num1 = 0, num2 = 0;
 
-    num1 = *(int *)StkPeek(stk); StkPop(stk);
     if (1 == StkCount(stk))
     {
-        StkPush(stk, &num1);
         return stk;
     }
     
+    num1 = *(int *)StkPeek(stk); StkPop(stk);
     RecStackSort(stk);
     num2 = *(int *)StkPeek(stk);  
 
