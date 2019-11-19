@@ -4,10 +4,8 @@
 #include <stddef.h> /* size_t */
 
 /*  the user should provide a comparisson function
- *  which returns a zero if data is equal, 0< if 
- * data1 contains a higher value than data2 and 
- * 0> vice versa                                  */
-typedef int (*avl_cmp_func_t)(const void *data1, const void *data2, void *param);
+ *  which returns 1 if data is equal 0 otherwise    */
+typedef int (*avl_is_before_t)(const void *data1, const void *data2, void *param);
 
 /*  returns a boolean value, 0 upon success and
  *  1 upon failure                                  */
@@ -18,7 +16,7 @@ typedef struct avl avl_t;
 /**********************
  *  FUNCTIONS         *
 **********************/
-avl_t *AVLCreate(avl_cmp_func_t func, void *param);
+avl_t *AVLCreate(avl_is_before_t func, void *param);
  
 void AVLDestroy(avl_t *tree);
 

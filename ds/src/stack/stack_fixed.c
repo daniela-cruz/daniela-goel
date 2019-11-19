@@ -57,7 +57,7 @@ int StkIsEmpty(const stack_t *stk)
 	return stk->top == 0;
 }
 
-/*void StkSort(stack_t *stk)
+void StkSort(stack_t *stk)
 {
 	int holder = 0;
 	
@@ -82,7 +82,7 @@ int StkIsEmpty(const stack_t *stk)
 	}
 	
 	StkPush(stk, &holder);
-}*/
+}
 
 void StkDestroy(stack_t *stk)
 {

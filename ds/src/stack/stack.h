@@ -31,6 +31,8 @@ size_t StkCount(const stack_t *element_ptr);
 /* 		Returns 1 if stack is empty, 0 if not.									   */
 int StkIsEmpty(const stack_t *element_ptr);
 
+void StkSort(stack_t *stk);
+
 /* 		destroys the stack 															   */
 void StkDestroy(stack_t *element_ptr);
 

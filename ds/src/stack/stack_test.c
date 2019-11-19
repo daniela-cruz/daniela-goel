@@ -6,9 +6,11 @@
 
 static void StkCreateTest();
 
+int arr[5] = {7, -22, 73, 15, 6};
+
 int main()
 {
-	struct students
+	/*struct students
 	{
 		char* name;
 		int class;
@@ -44,7 +46,26 @@ int main()
 	printf("name of the top student %s\n" ,a->name);
 	printf("class of the top student %d\n" ,a->class);
 	
-	StkDestroy(my_stack);
+	StkDestroy(my_stack);*/
+	stack_t *stk = NULL;
+	size_t i = 0, size = 5;
+
+	stk = StkCreate(5, sizeof(int));
+
+	printf("Before sort:\n");
+	for ( i = 0; i < size; i++)
+	{
+		printf("%d\n", arr[i]);
+		StkPush(stk, &arr[i]);
+	}
+	
+	StkSort(stk);
+	printf("After sort:\n");
+	for ( i = 0; i < size; i++)
+	{
+		printf("%d\n", arr[i]);
+		StkPop(stk);
+	}
 
 	return 0;
 }

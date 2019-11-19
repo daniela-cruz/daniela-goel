@@ -6,13 +6,14 @@
 int RecFibonacci(int num);
 static size_t RecStrLen(char *str);
 void RecStrCpy(char *dest, char *src);
-stack_t *RecStackSort(stack_t *stk);
+stack_t* RecStackSort(stack_t *stk);
 
 void RecStkSortTest(size_t size);
 void PrintArr(int *array, size_t size);
 
 char dest[] = "hello, blah";
 char src[] = "Hey";
+int arr[5] = {73, 1, -7, 2, 5};
 
 int main()
 {
@@ -146,19 +147,20 @@ sll_node_t* RecReverse(sll_node_t* node)
     }*/
 
 stack_t *RecStackSort(stack_t *stk)
-{
-    int num1 = 0, num2 = 0;
+  {
+    int num1, num2;
 
+    num1 = *(int *)StkPeek(stk); 
     if (1 == StkCount(stk))
     {
         return stk;
     }
     
-    num1 = *(int *)StkPeek(stk); StkPop(stk);
+    StkPop(stk);
     RecStackSort(stk);
     num2 = *(int *)StkPeek(stk);  
 
-    if (num1 < num2)
+    if (num1 > num2)
     {
         StkPop(stk);
         StkPush(stk, &num1);
@@ -169,8 +171,30 @@ stack_t *RecStackSort(stack_t *stk)
     StkPush(stk, &num1);
 
     return stk;
-    
-}  
+  }
+/* void RecStackSort(stack_t *stack)
+{
+    int peeked_num = *(int *)StkPeek(stack);
+
+    if (1 == StkCount(stack))
+    {
+    return;
+    }
+
+    StkPop(stack);
+    RecStackSort(stack);
+
+    if (peeked_num > *(int *)StkPeek(stack))
+    {
+    int temp = *(int *)StkPeek(stack);
+    StkPop(stack);
+    StkPush(stack, &peeked_num);
+    peeked_num = temp;
+    RecStackSort(stack);
+    }
+
+    StkPush(stack, &peeked_num);
+}  */
 
 /********************
  *  Internal funcs *
@@ -179,31 +203,27 @@ void RecStkSortTest(size_t size)
 {
     stack_t *stk = NULL;
     int i = 0;
-    int arr[5] = {73, 1, -7, 2, 0};
+    
 
     stk = StkCreate(size, sizeof(int));
 
+    printf("Printing array before:\n");
     for ( i = 0; i < size; i++)
     {
         StkPush(stk, &arr[i]);
+        printf("Peek shows: %d\n", *(int*)StkPeek(stk));
     }
 
-    printf("Peek shows: %d\n", *(int*)StkPeek(stk));
     /*PrintArr(arr, size);*/
-    printf("Printing array:\n");
-
-    for ( i = 0; i < size; i++)
-    {
-        printf("%d\n", *(arr + i));
-    }
 
     RecStackSort(stk);
     /*PrintArr(arr, size);*/
-     printf("Printing array:\n");
+     printf("\nPrinting array after sort:\n");
 
     for ( i = 0; i < size; i++)
     {
-        printf("%d\n", *(arr + i));
+        printf("%d\n", *(int*)StkPeek(stk));
+        StkPop(stk);
     }
 
 }

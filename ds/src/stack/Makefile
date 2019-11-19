@@ -11,7 +11,7 @@ PROJ_SRCS = stack_test.c stack_fixed.c
 PROJ_INC_DIR = 
 
 # the executable file
-PROJ_OUT = stack_fixed.out
+PROJ_OUT = stack_test.out
 
 # list of compiler flags (prepended with "-" sign)
 PROJ_CFLAGS = -Wunused-but-set-variable
