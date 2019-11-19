@@ -63,21 +63,36 @@ void MergeDown(void *arr, size_t element_size, size_t arr_size,
     arr_l = malloc(element_size * mid);
     if (NULL == arr_l)
     {
+<<<<<<< HEAD
         return;
     }
     
     /* memcpy(arr_l, arr, element_size * mid); */
     memcpy(arr_l, GetAddr(arr, 0, element_size), mid * element_size);
+=======
+        return NULL;
+    }
+    
+    /* memcpy(arr_l, arr, element_size * mid); */
+    memcpy(arr_l, GetAddr(arr, mid, element_size), mid * element_size);
+>>>>>>> 8775a961cebe605abd532bcc97a11cf3ba574632
     
     arr_r = malloc(element_size * (arr_size - mid));
     if (NULL == arr_r)
     {
         free(arr_l);
+<<<<<<< HEAD
         return;
     }
     /* memcpy(arr_r, ((char *)arr + mid), element_size * (arr_size - mid)); */
     memcpy(arr_r, GetAddr(arr, right - mid, element_size), 
         (right - mid) * element_size);
+=======
+        return NULL;
+    }
+    /* memcpy(arr_r, ((char *)arr + mid), element_size * (arr_size - mid)); */
+    memcpy(arr_r, GetAddr(arr, right - mid, element_size), (right - mid) * element_size);
+>>>>>>> 8775a961cebe605abd532bcc97a11cf3ba574632
 
     for (i = 0, j = 0, k = 0; (i < mid) && (j < right - mid); k++)
     {
@@ -86,8 +101,12 @@ void MergeDown(void *arr, size_t element_size, size_t arr_size,
         {
             /* memcpy(((char *)arr + (k * element_size)), ((char *)arr_l + (i * element_size)), 
                 element_size); */
+<<<<<<< HEAD
             memcpy(GetAddr(arr, k, element_size), GetAddr(arr_l, i, element_size), 
                 element_size);
+=======
+            memcpy(GetAddr(arr, k, element_size), GetAddr(arr_l, i, element_size), element_size);
+>>>>>>> 8775a961cebe605abd532bcc97a11cf3ba574632
             i++;
         }
         else
@@ -121,6 +140,14 @@ static void *GetAddr(void *arr, size_t idx, size_t element_size)
     return ((char *)arr + idx * element_size);
 }
 
+<<<<<<< HEAD
+=======
+static void *GetAddr(void *arr, size_t idx, size_t element_size)
+{
+    return ((char *)arr + idx * element_size);
+}
+
+>>>>>>> 8775a961cebe605abd532bcc97a11cf3ba574632
 
 void OptimizedBubbleSort(int *arr, size_t size)
 {
