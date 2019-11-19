@@ -23,6 +23,7 @@ struct avl
 /*****UTILITIES******/
 static avl_node_t *NodeCreate(void *data);
 int InsertRec(avl_node_t *head, avl_is_before_t func, void *data);
+size_t HeightBalance(avl_node_t *head);
 size_t Counter(avl_node_t *head, size_t counter);
 int ForEachRecursive(avl_node_t *head, avl_action_func_t func, void *param);
 avl_node_t *FindData(avl_node_t *head, avl_is_before_t func, const void *data);
@@ -38,6 +39,7 @@ avl_node_t *RotateLeftRight(avl_node_t *head);
 avl_node_t *RotateRightLeft(avl_node_t *head);
 avl_node_t *RotateRightRight(avl_node_t *head);
 
+/*-------------------------------AVL functions--------------------------------*/
 /**********************
  *  FUNCTIONS         *
 **********************/
@@ -74,18 +76,13 @@ void AVLDestroy(avl_t *tree)
 
 int AVLInsert(avl_t *tree, void *data)
 {
-    int status = 0;
-
     if (AVLIsEmpty(tree))
     {
         tree->root = NodeCreate(data);
         return (NULL == tree->root);
     }
     
-    status = InsertRec(tree->root, tree->is_before, data);
-    /* update height */
-    
-    return status;
+    return InsertRec(tree->root, tree->is_before, data);
 }
 
 void AVLRemove(avl_t *tree, const void *data);
@@ -133,23 +130,33 @@ void *GetLOCALMinNode(avl_node_t *head);
 
 int InsertRec(avl_node_t *head, avl_is_before_t func, void *data)
 {
-    if (NULL == head)
-    {
-        head = NodeCreate(data);
+    int status = 0;
+    int idx = 0;
 
-        return 0;
+    idx = func(head->data, data, NULL);
+    
+    if (NULL == head->child[idx])
+    {
+        head->child[idx] = NodeCreate(data);
+        head->height = HeightBalance(head);
+
+        return (NULL == head->child[idx]);
     }
     
-    if (func(head->data, data, NULL))
-    {
-        InsertRec(head->child[AFTER], func, data);
-    }
-    else
-    {
-        InsertRec(head->child[BEFORE], func, data);
-    }
-    
-    return 1;
+    status = InsertRec(head->child[idx], func, data);
+    head->height = HeightBalance(head);
+
+    return status;
+}
+
+size_t HeightBalance(avl_node_t *head)
+{
+    size_t before = 0, after = 0;
+
+    before = (NULL != head->child[BEFORE]) ? head->child[BEFORE]->height : 0;
+    after = (NULL != head->child[AFTER]) ? head->child[AFTER]->height : 0;
+
+    return before + after + 1;
 }
 
 size_t Counter(avl_node_t *head, size_t counter)
