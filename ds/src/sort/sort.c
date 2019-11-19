@@ -11,8 +11,10 @@ static void Swap(int *data1, int *data2);
 static void RadixCountingSort(unsigned int *arr, size_t size, int *histogram, size_t n_bits, 
 	size_t iteration, unsigned int *dest);
 
-void *MergeDown(void *arr, size_t element_size, size_t arr_size, 
+void MergeDown(void *arr, size_t element_size, size_t arr_size, 
     cmp_func_t func, void *param);
+
+static void *GetAddr(void *arr, size_t idx, size_t element_size);
 
 /*static void InsertResults(int *arr, size_t size, int lower_limit, 
     int upper_limit, int denominator, int *result, int *count_arr);*/
@@ -21,63 +23,104 @@ void *MergeDown(void *arr, size_t element_size, size_t arr_size,
 static const size_t bits_num = sizeof(size_t) * __CHAR_BIT__;
 
 /********IMPLEMENTATION:*********/
-void *MergeSort(void *arr, size_t element_size, size_t arr_size, 
+void MergeSort(void *arr, size_t element_size, size_t arr_size, 
     cmp_func_t func, void *param)
 {
     int left = 0, mid = 0, right = 0;
-    
+    void *arr_start = NULL, *arr_end = NULL;
+
     mid = arr_size / 2;
     right = arr_size;
 
-    if (arr_size != 1)
+    arr_start = arr;
+    arr_end = (char *)arr + ((arr_size - 1) * element_size);
+    
+
+    if (arr_start == arr_end)
     {
+        return;
+    }
+
         MergeSort(arr, element_size, mid, func, param);
         MergeSort((char *)arr + (mid * element_size), element_size, 
             right - mid, func, param);
-    MergeDown(arr, element_size, mid, func, param);
-    MergeDown((char *)arr + (mid * element_size), element_size, right - mid, func, param);
-    }
-
-
-    return arr;
+        MergeDown(arr, element_size, arr_size, func, param);
+        /* MergeDown((char *)arr + (mid * element_size), element_size, right - mid, func, param); */
 }
 
-void *MergeDown(void *arr, size_t element_size, size_t arr_size, 
+void MergeDown(void *arr, size_t element_size, size_t arr_size, 
     cmp_func_t func, void *param)
 {
     void *arr_l = NULL, *arr_r = NULL;
     int left = 0, mid = 0, right = arr_size;
     int i = 0, j = 0, k = 0;
+    void *arr_end = NULL;
+
+    arr_end = (char *)arr + ((arr_size - 1) * element_size);
 
     mid = arr_size / 2;
     
     arr_l = malloc(element_size * mid);
-    memcpy(arr_l, arr, element_size * mid);
+    if (NULL == arr_l)
+    {
+        return;
+    }
+    
+    /* memcpy(arr_l, arr, element_size * mid); */
+    memcpy(arr_l, GetAddr(arr, 0, element_size), mid * element_size);
     
     arr_r = malloc(element_size * (arr_size - mid));
-    memcpy(arr_r, ((char *)arr + mid), element_size * (arr_size - mid));
+    if (NULL == arr_r)
+    {
+        free(arr_l);
+        return;
+    }
+    /* memcpy(arr_r, ((char *)arr + mid), element_size * (arr_size - mid)); */
+    memcpy(arr_r, GetAddr(arr, right - mid, element_size), 
+        (right - mid) * element_size);
 
     for (i = 0, j = 0, k = 0; (i < mid) && (j < right - mid); k++)
     {
         if (0 < func(((char *)arr_l + (i * element_size)), ((char *)arr_r + 
-            ((mid + j) * element_size)), param))
+            (j * element_size)), param))
         {
-            memcpy(((char *)arr + (k * element_size)), ((char *)arr_l + (i * element_size)), 
+            /* memcpy(((char *)arr + (k * element_size)), ((char *)arr_l + (i * element_size)), 
+                element_size); */
+            memcpy(GetAddr(arr, k, element_size), GetAddr(arr_l, i, element_size), 
                 element_size);
             i++;
         }
         else
         {
-            memcpy((char *)arr + (k * element_size), 
-                ((char *)arr_r + ((mid + j) * element_size)), element_size);
+            /* memcpy((char *)arr + (k * element_size), 
+                ((char *)arr_r + ((mid + j) * element_size)), element_size); */
+            memcpy(GetAddr(arr, k, element_size), GetAddr(arr_r, j, element_size), element_size);
             j++;
         }
     }
 
+    if(i < mid)
+    {
+        memcpy(GetAddr(arr, k, element_size), GetAddr(arr_l, i, element_size), 
+            (mid - i) * element_size);
+    }
+    else
+    {
+        memcpy(GetAddr(arr, k, element_size), GetAddr(arr_r, j, element_size), 
+            (arr_size - mid - j) * element_size);
+    }
+
+
     free(arr_l); free(arr_r); 
 
-    return arr;
+    return;
 }
+
+static void *GetAddr(void *arr, size_t idx, size_t element_size)
+{
+    return ((char *)arr + idx * element_size);
+}
+
 
 void OptimizedBubbleSort(int *arr, size_t size)
 {

@@ -23,7 +23,7 @@ int OptimizedCountSort(const int *arr, size_t size, int lower_limit,
 
 int RadixSort(unsigned int *arr, size_t size, size_t n_bits);
 
-void *MergeSort(void *arr, size_t element_size, size_t arr_size, 
+void MergeSort(void *arr, size_t element_size, size_t arr_size, 
     cmp_func_t func, void *param);
 
 #endif /* __SORT_H__ */

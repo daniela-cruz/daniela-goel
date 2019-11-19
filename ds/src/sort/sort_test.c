@@ -83,9 +83,9 @@ int main()
 int MergeTest()
 {
 	int *arr = (int *)malloc(40);
-	int num_arr[10] = {36, 75, 89, 23, 12, 45, 34, 56, 34, 23};
+	int num_arr[4] = {3,2,4,1};
 	size_t i = 0;
-    size_t size = 10;
+    size_t size = 4;
 
     printf("\nMerge sort test:\n");
 	for (i = 0; i < size; ++i)
