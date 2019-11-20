@@ -40,8 +40,6 @@ avl_node_t *RotateLeftRight(avl_node_t *head);
 avl_node_t *RotateRightLeft(avl_node_t *head);
 avl_node_t *RotateRightRight(avl_node_t *head);
 
-size_t GetHeight(avl_node_t *node);
-
 /*-------------------------------AVL functions--------------------------------*/
 /**********************
  *  FUNCTIONS         *
@@ -119,59 +117,9 @@ void *AVLFind(const avl_t *tree, const void *data)
  *  ROTATORS          *
 **********************/
 avl_node_t *RotateLeftLeft(avl_node_t *head);
-
+avl_node_t *RotateLeftRight(avl_node_t *head);
 avl_node_t *RotateRightLeft(avl_node_t *head);
 avl_node_t *RotateRightRight(avl_node_t *head);
-
-avl_node_t *RotateLeftRight(avl_node_t *head)
-{
-    avl_node_t *new_head;
-
-    new_head = head->child[BEFORE];
-    head->child[BEFORE] = new_head->child[AFTER];
-    new_head->child[AFTER] = head;
-    head->height = GetHeight(head);
-    new_head->height = GetHeight(new_head);
-    
-    return new_head;
-}
- 
-node * rotateleft(node *x)
-{
-node *y;
-y=x->right;
-x->right=y->left;
-y->left=x;
-x->ht=height(x);
-y->ht=height(y);
-return(y);
-}
- 
-node * RR(node *T)
-{
-T=rotateleft(T);
-return(T);
-}
- 
-node * LL(node *T)
-{
-T=rotateright(T);
-return(T);
-}
- 
-node * LR(node *T)
-{
-T->left=rotateleft(T->left);
-T=rotateright(T);
-return(T);
-}
- 
-node * RL(node *T)
-{
-T->right=rotateright(T->right);
-T=rotateleft(T);
-return(T);
-}
 
 /**********************
  *  Utilities         *
@@ -180,41 +128,6 @@ void *GetMaxNode(avl_node_t *head);
 void *GetMinNode(avl_node_t *head);
 void *GetLOCALMaxNode(avl_node_t *head);
 void *GetLOCALMinNode(avl_node_t *head);
-
-size_t GetHeight(avl_node_t *node)
-{
-    size_t left_height,right_height;
-    
-    if (NULL == node)
-    {
-        return 0;
-    }
-
-    if (NULL == node->child[BEFORE])
-    {
-        left_height = 0;
-    }
-    else
-    {
-        left_height = 1 + node->child[BEFORE]->height;
-
-        if(NULL == node->child[AFTER])
-        {
-            right_height = 0;
-        }
-        else
-        {
-            right_height = 1 + node->child[AFTER]->height;
-        }
-    }
-
-    if(left_height > right_height)
-    {
-        return left_height;
-    }
-
-    return right_height;
-}
 
 int InsertRec(avl_node_t *head, avl_is_before_t func, void *data)
 {
