@@ -297,7 +297,6 @@ avl_node_t *FindElement(avl_node_t *head, avl_is_before_t func, const void *data
     {
         FindElement(head->child[AFTER], func, data);
     }
-    
     else if (1 == func(head->data, data, NULL))
     {
         FindElement(head->child[BEFORE], func, data);
