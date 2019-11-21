@@ -22,11 +22,14 @@ struct avl
 
 /*****UTILITIES******/
 static avl_node_t *NodeCreate(void *data);
-static int InsertRec(avl_node_t *head, avl_is_before_t func, void *data);
+static avl_node_t *InsertRec(avl_node_t *head, avl_is_before_t func, void *data);
 static avl_node_t *NodeCreate(void *data);
 static void NodeFree(avl_node_t *head);
 static avl_node_t *NodeParentFinder(avl_t *tree, avl_node_t *head, void *data);
+
+static void UpdateHeight(avl_node_t *head);
 static size_t HeightBalance(avl_node_t *head);
+
 static size_t Counter(avl_node_t *head, size_t counter);
 static int ForEachRecursive(avl_node_t *head, avl_action_func_t func, void *param);
 static avl_node_t *FindElement(avl_node_t *head, avl_is_before_t func, const void *data);
@@ -213,7 +216,7 @@ avl_node_t *GetLOCALMinNode(avl_node_t *head)
     return right_height;
 }*/
 
-int InsertRec(avl_node_t *head, avl_is_before_t func, void *data)
+avl_node_t *InsertRec(avl_node_t *head, avl_is_before_t func, void *data)
 {
     int status = 0;
     int idx = 0;
@@ -223,7 +226,8 @@ int InsertRec(avl_node_t *head, avl_is_before_t func, void *data)
     if (NULL == head->child[idx])
     {
         head->child[idx] = NodeCreate(data);
-        head->height = HeightBalance(head);
+        UpdateHeight(head);
+        /* head->height = HeightBalance(head); */
 
         return (NULL == head->child[idx]);
     }
@@ -232,6 +236,16 @@ int InsertRec(avl_node_t *head, avl_is_before_t func, void *data)
     head->height = HeightBalance(head);
 
     return status;
+}
+
+static void UpdateHeight(avl_node_t *head)
+{
+    size_t bef_ht = 0, aft_height = 0;
+
+    bef_ht = (NULL != head->child[BEFORE]) ? head->child[BEFORE]->height : 0;
+    aft_height = (NULL != head->child[AFTER]) ? head->child[AFTER]->height : 0;
+    
+    head->height = (bef_ht < aft_height) ? 1 + aft_height : 1 + bef_ht;
 }
 
 void RemoveNode(avl_t *tree, void *data)
