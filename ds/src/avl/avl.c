@@ -30,6 +30,7 @@ static avl_node_t *NodeCreate(void *data);
 static void NodeFree(avl_node_t *head);
 static avl_node_t *NodeParentFinder(avl_t *tree, avl_node_t *head, void *data);
 
+avl_node_t *FindAndFixRotation(avl_node_t *head, avl_t *tree);
 static void UpdateHeight(avl_node_t *head);
 static size_t Counter(avl_node_t *head, size_t counter);
 static int ForEachRecursive(avl_node_t *head, avl_action_func_t func, void *param);
@@ -77,11 +78,11 @@ void AVLDestroy(avl_t *tree)
 
 int AVLInsert(avl_t *tree, void *data)
 {
-    if (AVLIsEmpty(tree))
+    /* if (AVLIsEmpty(tree))
     {
         tree->root = NodeCreate(data);
         return (NULL == tree->root);
-    }
+    } */
     
     return (NULL == InsertRec(tree->root, tree, data));
 }
@@ -158,35 +159,53 @@ static size_t GetHeight(avl_node_t *node)
 avl_node_t *InsertRec(avl_node_t *head, avl_t *tree, void *data)
 {
     int idx = 0;
-    int balance_factor = 0;
 
     idx = tree->is_before(head->data, data, NULL);
     
     if (NULL == head->child[idx])
     {
         head->child[idx] = NodeCreate(data);
-        /* UpdateHeight(head);
-        balance_factor = GetBalanceFactor(tree->root); */
-        /* 
-        if (-1 > balance_factor) 
-        {
-            if (head->child[BEFORE]->child[BEFORE]) 
-            {
-                
-                RotateLeftLeft(head);
-            }
-            
-        }
-        else if (1 < balance_factor)
-        {
-            
-        } */
-
+       
         return head;
     }
 
     head->child[idx] = InsertRec(head->child[idx], tree, data);
+    UpdateHeight(head);
+    FindAndFixRotation(head,tree);
 
+    return head;
+}
+
+avl_node_t *FindAndFixRotation(avl_node_t *head, avl_t *tree)
+{
+    int balance_factor = GetBalanceFactor(head);
+
+    if (1 < GetBalanceFactor(head))
+    {
+        if (0 > GetBalanceFactor(head->child[BEFORE]))
+        {
+            head->child[BEFORE]->height -= 1;
+            head->child[BEFORE]->child[AFTER] += 1;
+            head->child[BEFORE] = RotateRightRight(head->child[BEFORE]);
+        }
+
+        head->height -= 2;
+        
+        return RotateRightRight(head);
+    }
+    else if (-1 > GetBalanceFactor(head))
+    {
+        if (0 < GetBalanceFactor(head->child[AFTER]))
+        {
+           head->child[AFTER]->height -= 1;
+            head->child[AFTER]->child[BEFORE] += 1;
+            head->child[AFTER] = RotateRightRight(head->child[AFTER]); 
+        }
+        head->height -= 2;
+
+        return RotateRightRight(head);
+    }
+    
     return head;
 }
 
