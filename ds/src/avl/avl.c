@@ -3,7 +3,7 @@
 
 #include "avl.h" /* avl_node_t, avl_t */
 
-typedef enum child_t {BEFORE, AFTER};
+typedef enum child_t {BEFORE, AFTER} child_t;
 
 typedef struct avl_node
 {
@@ -20,7 +20,6 @@ struct avl
 };
 
 /*---------------------------Forward declarations-----------------------------*/
-
 /*****UTILITIES******/
 avl_node_t *TraverseTreeInOrder(avl_node_t *head, avl_t *tree);
 
@@ -32,7 +31,6 @@ static void NodeFree(avl_node_t *head);
 static avl_node_t *NodeParentFinder(avl_t *tree, avl_node_t *head, void *data);
 
 static void UpdateHeight(avl_node_t *head);
-static size_t HeightBalance(avl_node_t *head);
 static size_t Counter(avl_node_t *head, size_t counter);
 static int ForEachRecursive(avl_node_t *head, avl_action_func_t func, void *param);
 static void *FindElement(avl_node_t *head, avl_is_before_t func, const void *data);
@@ -166,13 +164,14 @@ avl_node_t *InsertRec(avl_node_t *head, avl_is_before_t func, void *data)
     if (NULL == head->child[idx])
     {
         head->child[idx] = NodeCreate(data);
+
+        /* balance tree */
         UpdateHeight(head);
 
-        return head->child[idx];
+        return head;
     }
-    
-    head = InsertRec(head->child[idx], func, data);
-    UpdateHeight(head);
+
+    head->child[idx] = InsertRec(head->child[idx], func, data);
 
     return head;
 }
@@ -239,7 +238,7 @@ int ForEachRecursive(avl_node_t *head, avl_action_func_t func, void *param)
     }
     
     status = ForEachRecursive(head->child[BEFORE], func, param);
-    status += func(head, param);
+    status += func(head->data, param);
     status += ForEachRecursive(head->child[AFTER], func, param);
 
     return status;
@@ -278,16 +277,6 @@ int GetBalanceFactor(avl_node_t *root)
 
     return before_height - after_height;
 }
-
-/* size_t HeightBalance(avl_node_t *head)
-{
-    size_t before = 0, after = 0;
-
-    before = (NULL != head->child[BEFORE]) ? head->child[BEFORE]->height : 0;
-    after = (NULL != head->child[AFTER]) ? head->child[AFTER]->height : 0;
-
-    return before + after + 1;
-} */
 
 static void UpdateHeight(avl_node_t *head)
 {
@@ -352,25 +341,77 @@ avl_node_t *GetLOCALMinNode(avl_node_t *head)
 /**********************
  *  ROTATORS          *
 **********************/
-avl_node_t *RotateLeftLeft(avl_node_t *head);
+/*------------------------------------
+    *
+     \
+      * <- will be parent
+       \
+        *
+-------------------------------------*/
+avl_node_t *RotateLeftLeft(avl_node_t *head)
+{
+   avl_node_t *parent = NULL;
 
+   parent = head->child[AFTER];
+   parent->child[BEFORE] = head;
+
+   return parent;
+}
+
+/*------------------------------------
+       * <- will be parent
+        \
+         * 
+        /
+       *
+-------------------------------------*/
 avl_node_t *RotateRightLeft(avl_node_t *head)
 {
+    void *data = NULL;
 
+    head->child[BEFORE] = head->child[AFTER]->child[BEFORE];
+    data = head->data;
+    head->data = head->child[BEFORE]->data;
+    head->child[BEFORE]->data = data;
+
+    return head;
 }
-avl_node_t *RotateRightRight(avl_node_t *head);
 
+/*------------------------------------
+    * 
+   /
+  * <- will be parent
+ /
+*
+-------------------------------------*/
+avl_node_t *RotateRightRight(avl_node_t *head)
+{
+    avl_node_t *parent = NULL;
+
+    parent = head->child[BEFORE];
+    parent->child[AFTER] = head;
+
+    return parent;
+}
+
+/*------------------------------------
+   * <- will be parent
+  /
+ * 
+  \
+   *
+-------------------------------------*/
 avl_node_t *RotateLeftRight(avl_node_t *head)
 {
-    avl_node_t *new_head;
+    avl_node_t *parent = NULL;
+    avl_node_t *temp_nd = NULL;
 
-    new_head = head->child[BEFORE];
-    head->child[BEFORE] = new_head->child[AFTER];
-    new_head->child[AFTER] = head;
-    head->height = GetHeight(head);
-    new_head->height = GetHeight(new_head);
-    
-    return new_head;
+    parent = head->child[BEFORE];
+    temp_nd = parent->child[AFTER];
+    parent->child[AFTER] = head;
+    parent->child[BEFORE] = temp_nd;
+
+    return parent;
 }
 
 /*--------------------------------Node module---------------------------------*/
