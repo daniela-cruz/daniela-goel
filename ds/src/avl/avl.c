@@ -24,8 +24,8 @@ struct avl
 avl_node_t *TraverseTreeInOrder(avl_node_t *head, avl_t *tree);
 
 static avl_node_t *NodeCreate(void *data);
-static avl_node_t *InsertRec(avl_node_t *head, avl_is_before_t func, void *data);
-static void RemoveNode(avl_t *tree, void *data);
+static avl_node_t *InsertRec(avl_node_t *head, avl_t *tree, void *data);
+static avl_node_t *RemoveNode(avl_node_t *head, avl_t *tree, void *data);
 static avl_node_t *NodeCreate(void *data);
 static void NodeFree(avl_node_t *head);
 static avl_node_t *NodeParentFinder(avl_t *tree, avl_node_t *head, void *data);
@@ -83,12 +83,12 @@ int AVLInsert(avl_t *tree, void *data)
         return (NULL == tree->root);
     }
     
-    return (NULL == InsertRec(tree->root, tree->is_before, data));
+    return (NULL == InsertRec(tree->root, tree, data));
 }
 
 void AVLRemove(avl_t *tree, const void *data)
 {
-    RemoveNode(tree, (void *)data);
+    RemoveNode(tree->root, tree, (void *)data);
 }
 
 int AVLIsEmpty(const avl_t *tree)
@@ -155,66 +155,90 @@ static size_t GetHeight(avl_node_t *node)
     return right_height;
 }
 
-avl_node_t *InsertRec(avl_node_t *head, avl_is_before_t func, void *data)
+avl_node_t *InsertRec(avl_node_t *head, avl_t *tree, void *data)
 {
     int idx = 0;
+    int balance_factor = 0;
 
-    idx = func(head->data, data, NULL);
+    idx = tree->is_before(head->data, data, NULL);
     
     if (NULL == head->child[idx])
     {
         head->child[idx] = NodeCreate(data);
-
-        /* balance tree */
-        UpdateHeight(head);
+        /* UpdateHeight(head);
+        balance_factor = GetBalanceFactor(tree->root); */
+        /* 
+        if (-1 > balance_factor) 
+        {
+            if (head->child[BEFORE]->child[BEFORE]) 
+            {
+                
+                RotateLeftLeft(head);
+            }
+            
+        }
+        else if (1 < balance_factor)
+        {
+            
+        } */
 
         return head;
     }
 
-    head->child[idx] = InsertRec(head->child[idx], func, data);
+    head->child[idx] = InsertRec(head->child[idx], tree, data);
 
     return head;
 }
 
-static void RemoveNode(avl_t *tree, void *data)
+static avl_node_t *RemoveNode(avl_node_t *head, avl_t *tree, void *data)
 {
     int idx = 0;
-    avl_node_t *head = NULL;
     avl_node_t *removable = NULL;
 
-    head = NodeParentFinder(tree, tree->root, data);
     idx = tree->is_before(data, head->data, tree->param);
     removable = head->child[idx];
 
-    if ((NULL == removable->child[AFTER]) && (NULL == removable->child[BEFORE]))
+    if ((tree->is_before(data, removable->data, tree->param)) &&
+        (tree->is_before(removable->data, data, tree->param)))
     {
-        removable->data = NULL; 
-    }
-    else if (NULL != removable->child[AFTER])
-    {
-        if (NULL == removable->child[AFTER]->child[BEFORE])
+        if ((NULL == removable->child[AFTER]) && 
+            (NULL == removable->child[BEFORE]))
         {
-            head->child[idx] = removable->child[AFTER];
-            removable->child[AFTER]->child[BEFORE] = removable->child[BEFORE];
+            return NULL;
         }
-        else
+        else if (NULL != removable->child[AFTER])
         {
-            avl_node_t *max_node = NULL;
+            if (NULL == removable->child[AFTER]->child[BEFORE])
+            {
+                head->child[idx] = removable->child[AFTER];
+                removable->child[AFTER]->child[BEFORE] = removable->child[BEFORE];
+                head = head->child[AFTER];
+            }
+            else
+            {
+                avl_node_t *max_node = NULL;
+                void *temp_data = NULL;
 
-            head->child[idx] = GetLOCALMinNode(removable);
-            head->child[idx]->child[BEFORE] = removable->child[BEFORE];
-            max_node = GetLOCALMaxNode(head->child[idx]);
-            max_node->child[AFTER] = removable->child[AFTER];
+                max_node = GetLOCALMaxNode(head->child[idx]);
+                temp_data = max_node->data;
+                removable->data = temp_data;
+                
+                removable = max_node;
+            }
         }
-    }
-    else /* removable has only a before node */
-    {
-        head->child[idx] = removable->child[BEFORE];
+        else /* removable has only a before node */
+        {
+            head->child[idx] = removable->child[BEFORE];
+            head = head->child[AFTER];
+            
+        }
+        
+        removable->data = NULL; free(removable);
+
+        return head;
     }
     
-    removable->data = NULL; free(removable);
-
-    return;
+    return RemoveNode(head->child[idx], tree, data);
 }
 
 static size_t Counter(avl_node_t *head, size_t counter)
@@ -282,6 +306,11 @@ static void UpdateHeight(avl_node_t *head)
 {
     size_t bef_ht = 0, aft_height = 0;
 
+    if (NULL == head)
+    {
+        return;
+    }
+    
     bef_ht = (NULL != head->child[BEFORE]) ? head->child[BEFORE]->height : 0;
     aft_height = (NULL != head->child[AFTER]) ? head->child[AFTER]->height : 0;
     

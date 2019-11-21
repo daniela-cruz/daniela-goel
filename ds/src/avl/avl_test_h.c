@@ -36,9 +36,9 @@ int main()
 
 int InsertForEachTest()
 {
-/*	int arr[20] = {23, 4, 67, 32, 21, 100, 42, 27, 88, 16, 18, 3, 55, 22, 77, 99, 33, 44, 30, 60};
-*/	
-	int arr[4] = {300, 200, 400, 100};
+	int arr[20] = {23, 4, 67, 32, 21, 100, 42, 27, 88, 16, 18, 3, 55, 22, 77, 99, 33, 44, 30, 60};
+	
+	/* int arr[4] = {300, 200, 400, 100}; */
 	int z = 65;
 	int *find = NULL;
 	int result = 0;
@@ -56,7 +56,7 @@ int InsertForEachTest()
 	AVLIsEmpty(avl) == 1 ? puts("IsEmpty works") : puts("Error in IsEmpty");
 	AVLSize(avl) == 0 ?  puts("Size Works") : puts("Error in Size");
 
-	for (i = 0; i < 4; ++i)
+	for (i = 0; i < 20; ++i)
 	{
 		AVLInsert(avl, &arr[i]);
 	}
