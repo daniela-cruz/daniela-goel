@@ -34,9 +34,16 @@ static void Create()
     (1 == AVLSize(tree)) ? printf("") : printf("Error: size counted is %ld\n", AVLSize(tree));
 
     (AVLInsert(tree, &arr[1])) ? printf("Problem with insertion %d\n", __LINE__) : printf("Inserted data\n");
+    (2 == AVLSize(tree)) ? printf("") : printf("Error: size counted is %ld\n", AVLSize(tree));
+
     (AVLInsert(tree, &arr[2])) ? printf("Problem with insertion %d\n", __LINE__) : printf("Inserted data\n");
+    (3 == AVLSize(tree)) ? printf("") : printf("Error: size counted is %ld\n", AVLSize(tree));
+
     (AVLInsert(tree, &arr[3])) ? printf("Problem with insertion %d\n", __LINE__) : printf("Inserted data\n");
+    (4 == AVLSize(tree)) ? printf("") : printf("Error: size counted is %ld\n", AVLSize(tree));
+
     (AVLInsert(tree, &arr[4])) ? printf("Problem with insertion %d\n", __LINE__) : printf("Inserted data\n");
+    (5 == AVLSize(tree)) ? printf("") : printf("Error: size counted is %ld\n", AVLSize(tree));
 }
 
 int IsBefore(void *data1, void* data2, void *param)

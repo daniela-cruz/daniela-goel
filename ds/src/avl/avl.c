@@ -23,10 +23,11 @@ struct avl
 /*****UTILITIES******/
 static avl_node_t *NodeCreate(void *data);
 int InsertRec(avl_node_t *head, avl_is_before_t func, void *data);
+void NodeFree(avl_node_t *head);
 size_t HeightBalance(avl_node_t *head);
 size_t Counter(avl_node_t *head, size_t counter);
 int ForEachRecursive(avl_node_t *head, avl_action_func_t func, void *param);
-avl_node_t *FindData(avl_node_t *head, avl_is_before_t func, const void *data);
+avl_node_t *FindElement(avl_node_t *head, avl_is_before_t func, const void *data);
 
 void *GetMaxNode(avl_node_t *head);
 void *GetMinNode(avl_node_t *head);
@@ -70,7 +71,7 @@ avl_t *AVLCreate(avl_is_before_t func, void *param)
  
 void AVLDestroy(avl_t *tree)
 {
-    /* recursive remove if not empty */
+    NodeFree(tree->root);
     free(tree); tree = NULL;
 }
 
@@ -109,7 +110,7 @@ int AVLForEach(avl_t *tree, avl_action_func_t func, void *param)
 
 void *AVLFind(const avl_t *tree, const void *data)
 {
-   return FindData(tree->root, tree->is_before, data)->data;
+   return FindElement(tree->root, tree->is_before, data)->data;
 }
 
 /**********************
@@ -166,14 +167,8 @@ size_t Counter(avl_node_t *head, size_t counter)
         return 0;
     }
 
-    if (NULL != head->data)
-    {
-        Counter(head->child[BEFORE], counter);
-        Counter(head->child[AFTER], counter);
-
-        return 1;
-    }
-    
+    return Counter(head->child[BEFORE], counter) + 
+        Counter(head->child[AFTER], counter) + 1; 
 }
 
 ForEachRecursive(avl_node_t *head, avl_action_func_t func, void *param)
@@ -192,20 +187,26 @@ ForEachRecursive(avl_node_t *head, avl_action_func_t func, void *param)
     return status;
 }
 
-avl_node_t *FindData(avl_node_t *head, avl_is_before_t func, const void *data)
+avl_node_t *FindElement(avl_node_t *head, avl_is_before_t func, const void *data)
 {
     if (NULL == head)
     {
         return NULL;
     }
     
-    if (1 == func(head->data, data, NULL))
+    if (1 == func(data, head->data, NULL))
+    {
+        FindElement(head->child[AFTER], func, data);
+    }
+    
+    else if (1 == func(head->data, data, NULL))
+    {
+        FindElement(head->child[BEFORE], func, data);
+    }
+    else
     {
         return head;
     }
-    
-    FindData(head->child[BEFORE], func, data);
-    FindData(head->child[AFTER], func, data);
 }
 
 static avl_node_t *NodeCreate(void *data)
@@ -224,4 +225,16 @@ static avl_node_t *NodeCreate(void *data)
     node->height = 1;
 
     return node; 
+}
+
+void NodeFree(avl_node_t *head)
+{
+    if(NULL == head)
+    {
+        return;
+    }
+
+    FreeAll(head->child[BEFORE]);
+    FreeAll(head->child[AFTER]);
+    free(head);
 }
