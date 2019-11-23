@@ -22,19 +22,6 @@ struct avl
 
 /*****UTILITIES******/
 static avl_node_t *NodeCreate(void *data);
-<<<<<<< HEAD
-int InsertRec(avl_node_t *head, avl_is_before_t func, void *data);
-void NodeFree(avl_node_t *head);
-size_t HeightBalance(avl_node_t *head);
-size_t Counter(avl_node_t *head, size_t counter);
-int ForEachRecursive(avl_node_t *head, avl_action_func_t func, void *param);
-avl_node_t *FindElement(avl_node_t *head, avl_is_before_t func, const void *data);
-
-void *GetMaxNode(avl_node_t *head);
-void *GetMinNode(avl_node_t *head);
-void *GetLOCALMaxNode(avl_node_t *head);
-void *GetLOCALMinNode(avl_node_t *head);
-=======
 static int InsertRec(avl_node_t *head, avl_is_before_t func, void *data);
 static avl_node_t *NodeCreate(void *data);
 static void NodeFree(avl_node_t *head);
@@ -48,7 +35,6 @@ static avl_node_t *GetMaxNode(avl_node_t *head);
 static avl_node_t *GetMinNode(avl_node_t *head);
 static avl_node_t *GetLOCALMaxNode(avl_node_t *head);
 static avl_node_t *GetLOCALMinNode(avl_node_t *head);
->>>>>>> 707caa2f5e8b620e20afedd3aba109ceea6fea24
 
 /*****ROTATORS******/
 static avl_node_t *RotateLeftLeft(avl_node_t *head);
@@ -358,22 +344,9 @@ avl_node_t *FindElement(avl_node_t *head, avl_is_before_t func, const void *data
     }
     
     if (1 == func(data, head->data, NULL))
-<<<<<<< HEAD
-=======
     {
         FindElement(head->child[AFTER], func, data);
     }
-    else if (1 == func(head->data, data, NULL))
-    {
-        FindElement(head->child[BEFORE], func, data);
-    }
-    else
->>>>>>> 707caa2f5e8b620e20afedd3aba109ceea6fea24
-    {
-        FindElement(head->child[AFTER], func, data);
-    }
-<<<<<<< HEAD
-    
     else if (1 == func(head->data, data, NULL))
     {
         FindElement(head->child[BEFORE], func, data);
@@ -382,8 +355,6 @@ avl_node_t *FindElement(avl_node_t *head, avl_is_before_t func, const void *data
     {
         return head;
     }
-=======
->>>>>>> 707caa2f5e8b620e20afedd3aba109ceea6fea24
 }
 
 static avl_node_t *NodeCreate(void *data)
@@ -414,8 +385,4 @@ void NodeFree(avl_node_t *head)
     FreeAll(head->child[BEFORE]);
     FreeAll(head->child[AFTER]);
     free(head);
-<<<<<<< HEAD
 }
-=======
-}
->>>>>>> 707caa2f5e8b620e20afedd3aba109ceea6fea24
