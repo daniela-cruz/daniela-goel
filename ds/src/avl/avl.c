@@ -196,6 +196,11 @@ static avl_node_t *RemoveNode(avl_node_t *head, avl_t *tree, void *data)
     avl_node_t *found_node = NULL;
     int idx = 0;
 
+    if (NULL == head)
+    {
+        return NULL;
+    }
+    
     if (!IsMatch(tree, head->data, data))
     {
         head->child[idx] = RemoveNode(head->child[idx], tree, data);
@@ -222,6 +227,9 @@ static avl_node_t *RemoveNode(avl_node_t *head, avl_t *tree, void *data)
         found_node = (NULL != head->child[BEFORE]) ? head->child[BEFORE] : head->child[AFTER];
         free(head);
     }
+
+    UpdateHeight(head);
+    found_node = FindAndFixRotation(head, tree);
 
     return found_node;
 }
@@ -331,7 +339,7 @@ avl_node_t *GetLOCALMaxNode(avl_node_t *head)
 {
     if (NULL == head->child[AFTER])
     {
-        return NULL;
+        return head;
     }
     
     return GetLOCALMaxNode(head->child[AFTER]);
@@ -341,7 +349,7 @@ avl_node_t *GetLOCALMinNode(avl_node_t *head)
 {
     if (NULL == head->child[BEFORE])
     {
-        return NULL;
+        return head;
     }
     
     return GetLOCALMinNode(head->child[BEFORE]);
@@ -422,7 +430,10 @@ void NodeDataSwap(avl_node_t *node1, avl_node_t *node2)
 {
     void *temp = NULL;
     
-    temp = node1->data;
-    node1->data = node2->data;
-    node2->data = temp;
+    if ((NULL != node1) && (NULL != node2))
+    {
+        temp = node1->data;
+        node1->data = node2->data;
+        node2->data = temp;
+    }
 }
