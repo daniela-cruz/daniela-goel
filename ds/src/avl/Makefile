@@ -5,7 +5,7 @@
 ROOT_DIR = ../../..
 
 #PROJ_SRCS = $(shell xmlstarlet select -t -v //Unit/@filename xx.cbp | grep -e '\.c')
-PROJ_SRCS = avl.c avl_test.c
+PROJ_SRCS = avl.c avl_test_h.c
 
 # list of directories containing header files
 PROJ_INC_DIR = 

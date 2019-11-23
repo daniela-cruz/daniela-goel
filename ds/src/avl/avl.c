@@ -1,8 +1,9 @@
 #include <stdlib.h> /* malloc, free */
+#include <stdio.h>  /* printf */
 
 #include "avl.h" /* avl_node_t, avl_t */
 
-typedef enum child_t {BEFORE, AFTER};
+typedef enum child_t {BEFORE, AFTER} child_t;
 
 typedef struct avl_node
 {
@@ -19,36 +20,26 @@ struct avl
 };
 
 /*---------------------------Forward declarations-----------------------------*/
-
 /*****UTILITIES******/
-static avl_node_t *NodeCreate(void *data);
-<<<<<<< HEAD
-int InsertRec(avl_node_t *head, avl_is_before_t func, void *data);
-void NodeFree(avl_node_t *head);
-size_t HeightBalance(avl_node_t *head);
-size_t Counter(avl_node_t *head, size_t counter);
-int ForEachRecursive(avl_node_t *head, avl_action_func_t func, void *param);
-avl_node_t *FindElement(avl_node_t *head, avl_is_before_t func, const void *data);
+avl_node_t *TraverseTreeInOrder(avl_node_t *head, avl_t *tree);
 
-void *GetMaxNode(avl_node_t *head);
-void *GetMinNode(avl_node_t *head);
-void *GetLOCALMaxNode(avl_node_t *head);
-void *GetLOCALMinNode(avl_node_t *head);
-=======
-static int InsertRec(avl_node_t *head, avl_is_before_t func, void *data);
+static avl_node_t *NodeCreate(void *data);
+static avl_node_t *InsertRec(avl_node_t *head, avl_t *tree, void *data);
+static avl_node_t *RemoveNode(avl_node_t *head, avl_t *tree, void *data);
 static avl_node_t *NodeCreate(void *data);
 static void NodeFree(avl_node_t *head);
 static avl_node_t *NodeParentFinder(avl_t *tree, avl_node_t *head, void *data);
-static size_t HeightBalance(avl_node_t *head);
+
+avl_node_t *FindAndFixRotation(avl_node_t *head, avl_t *tree);
+static void UpdateHeight(avl_node_t *head);
 static size_t Counter(avl_node_t *head, size_t counter);
 static int ForEachRecursive(avl_node_t *head, avl_action_func_t func, void *param);
-static avl_node_t *FindElement(avl_node_t *head, avl_is_before_t func, const void *data);
+static void *FindElement(avl_node_t *head, avl_is_before_t func, const void *data);
 
-static avl_node_t *GetMaxNode(avl_node_t *head);
-static avl_node_t *GetMinNode(avl_node_t *head);
+static avl_node_t *GetMaxNode(avl_t *tree);
+static avl_node_t *GetMinNode(avl_t *tree);
 static avl_node_t *GetLOCALMaxNode(avl_node_t *head);
 static avl_node_t *GetLOCALMinNode(avl_node_t *head);
->>>>>>> 707caa2f5e8b620e20afedd3aba109ceea6fea24
 
 /*****ROTATORS******/
 static avl_node_t *RotateLeftLeft(avl_node_t *head);
@@ -65,7 +56,6 @@ static size_t GetHeight(avl_node_t *node);
 avl_t *AVLCreate(avl_is_before_t func, void *param)
 {
     avl_t *tree = NULL;
-    avl_node_t *root = NULL;
 
     tree = malloc(sizeof(*tree));
     if (NULL == tree)
@@ -73,14 +63,7 @@ avl_t *AVLCreate(avl_is_before_t func, void *param)
         return NULL;
     }
 
-    root = NodeCreate(NULL);
-    if (NULL == root)
-    {
-        free(tree);
-        return NULL;
-    }
-    
-    tree->root = root;
+    tree->root = NULL;
     tree->is_before = func;
     tree->param = param;
 
@@ -95,23 +78,23 @@ void AVLDestroy(avl_t *tree)
 
 int AVLInsert(avl_t *tree, void *data)
 {
-    if (AVLIsEmpty(tree))
+    /* if (AVLIsEmpty(tree))
     {
         tree->root = NodeCreate(data);
         return (NULL == tree->root);
-    }
+    } */
     
-    return InsertRec(tree->root, tree->is_before, data);
+    return (NULL == InsertRec(tree->root, tree, data));
 }
 
 void AVLRemove(avl_t *tree, const void *data)
 {
-    RemoveNode(tree->root, data);
+    RemoveNode(tree->root, tree, (void *)data);
 }
 
 int AVLIsEmpty(const avl_t *tree)
 {
-    return (NULL == tree->root->data);
+    return (NULL == tree->root);
 }
 
 size_t AVLHeight(const avl_t *tree)
@@ -131,36 +114,247 @@ int AVLForEach(avl_t *tree, avl_action_func_t func, void *param)
 
 void *AVLFind(const avl_t *tree, const void *data)
 {
-   return FindElement(tree->root, tree->is_before, data)->data;
+   return FindElement(tree->root, tree->is_before, data);
 }
 
-/**********************
- *  ROTATORS          *
-**********************/
-avl_node_t *RotateLeftLeft(avl_node_t *head);
-
-avl_node_t *RotateRightLeft(avl_node_t *head);
-avl_node_t *RotateRightRight(avl_node_t *head);
-
-/* avl_node_t *RotateLeftRight(avl_node_t *head)
-{
-    avl_node_t *new_head;
-
-    new_head = head->child[BEFORE];
-    head->child[BEFORE] = new_head->child[AFTER];
-    new_head->child[AFTER] = head;
-    head->height = GetHeight(head);
-    new_head->height = GetHeight(new_head);
-    
-    return new_head;
-}
-
-
+/*-----------------------------Internal functions-----------------------------*/
 /**********************
  *  Utilities         *
 **********************/
-avl_node_t *GetMaxNode(avl_node_t *head);
-avl_node_t *GetMinNode(avl_node_t *head);
+static size_t GetHeight(avl_node_t *node)
+{
+    size_t left_height = 0, right_height = 0;
+    
+    if (NULL == node)
+    {
+        return 0;
+    }
+
+    if (NULL == node->child[BEFORE])
+    {
+        left_height = 0;
+    }
+    else
+    {
+        left_height = 1 + node->child[BEFORE]->height;
+
+        if(NULL == node->child[AFTER])
+        {
+            right_height = 0;
+        }
+        else
+        {
+            right_height = 1 + node->child[AFTER]->height;
+        }
+    } 
+
+    if(left_height > right_height)
+    {
+        return left_height;
+    }
+
+    return right_height;
+}
+
+avl_node_t *InsertRec(avl_node_t *head, avl_t *tree, void *data)
+{
+    int idx = 0;
+
+    idx = tree->is_before(head->data, data, NULL);
+    
+    if (NULL == head->child[idx])
+    {
+        head->child[idx] = NodeCreate(data);
+       
+        return head;
+    }
+
+    head->child[idx] = InsertRec(head->child[idx], tree, data);
+    UpdateHeight(head);
+    FindAndFixRotation(head,tree);
+
+    return head;
+}
+
+avl_node_t *FindAndFixRotation(avl_node_t *head, avl_t *tree)
+{
+    int balance_factor = GetBalanceFactor(head);
+
+    if (1 < GetBalanceFactor(head))
+    {
+        if (0 > GetBalanceFactor(head->child[BEFORE]))
+        {
+            head->child[BEFORE]->height -= 1;
+            head->child[BEFORE]->child[AFTER] += 1;
+            head->child[BEFORE] = RotateRightRight(head->child[BEFORE]);
+        }
+
+        head->height -= 2;
+        
+        return RotateRightRight(head);
+    }
+    else if (-1 > GetBalanceFactor(head))
+    {
+        if (0 < GetBalanceFactor(head->child[AFTER]))
+        {
+           head->child[AFTER]->height -= 1;
+            head->child[AFTER]->child[BEFORE] += 1;
+            head->child[AFTER] = RotateRightRight(head->child[AFTER]); 
+        }
+        head->height -= 2;
+
+        return RotateRightRight(head);
+    }
+    
+    return head;
+}
+
+static avl_node_t *RemoveNode(avl_node_t *head, avl_t *tree, void *data)
+{
+    int idx = 0;
+    avl_node_t *removable = NULL;
+
+    idx = tree->is_before(data, head->data, tree->param);
+    removable = head->child[idx];
+
+    if ((tree->is_before(data, removable->data, tree->param)) &&
+        (tree->is_before(removable->data, data, tree->param)))
+    {
+        if ((NULL == removable->child[AFTER]) && 
+            (NULL == removable->child[BEFORE]))
+        {
+            return NULL;
+        }
+        else if (NULL != removable->child[AFTER])
+        {
+            if (NULL == removable->child[AFTER]->child[BEFORE])
+            {
+                head->child[idx] = removable->child[AFTER];
+                removable->child[AFTER]->child[BEFORE] = removable->child[BEFORE];
+                head = head->child[AFTER];
+            }
+            else
+            {
+                avl_node_t *max_node = NULL;
+                void *temp_data = NULL;
+
+                max_node = GetLOCALMaxNode(head->child[idx]);
+                temp_data = max_node->data;
+                removable->data = temp_data;
+                
+                removable = max_node;
+            }
+        }
+        else /* removable has only a before node */
+        {
+            head->child[idx] = removable->child[BEFORE];
+            head = head->child[AFTER];
+            
+        }
+        
+        removable->data = NULL; free(removable);
+
+        return head;
+    }
+    
+    return RemoveNode(head->child[idx], tree, data);
+}
+
+static size_t Counter(avl_node_t *head, size_t counter)
+{
+    if (NULL == head)
+    {
+        return 0;
+    }
+
+    return Counter(head->child[BEFORE], counter) + 
+        Counter(head->child[AFTER], counter) + 1; 
+}
+
+int ForEachRecursive(avl_node_t *head, avl_action_func_t func, void *param)
+{
+    int status = 0;
+
+    if (NULL == head)
+    {
+        return 0;
+    }
+    
+    status = ForEachRecursive(head->child[BEFORE], func, param);
+    status += func(head->data, param);
+    status += ForEachRecursive(head->child[AFTER], func, param);
+
+    return status;
+}
+
+void *FindElement(avl_node_t *head, avl_is_before_t func, const void *data)
+{
+    if (NULL == head)
+    {
+        return NULL;
+    }
+    
+    if (1 == func(data, head->data, NULL))
+    {
+         return FindElement(head->child[BEFORE], func, data);
+    }
+    else if (1 == func(head->data, data, NULL))
+    {
+        return FindElement(head->child[AFTER], func, data);
+    }
+    
+    return head->data;
+}
+
+/*-----------------------------Balance tree funcs-----------------------------*/
+/**********************
+ *  Balance funcs     *
+**********************/
+int GetBalanceFactor(avl_node_t *root)
+{
+    int before_height = 0;
+    int after_height = 0;
+
+    before_height = (NULL == root->child[BEFORE]) ? 0 : root->child[BEFORE]->height;
+    after_height = (NULL == root->child[AFTER]) ? 0 : root->child[AFTER]->height;
+
+    return before_height - after_height;
+}
+
+static void UpdateHeight(avl_node_t *head)
+{
+    size_t bef_ht = 0, aft_height = 0;
+
+    if (NULL == head)
+    {
+        return;
+    }
+    
+    bef_ht = (NULL != head->child[BEFORE]) ? head->child[BEFORE]->height : 0;
+    aft_height = (NULL != head->child[AFTER]) ? head->child[AFTER]->height : 0;
+    
+    head->height = (bef_ht < aft_height) ? 1 + aft_height : 1 + bef_ht;
+}
+
+avl_node_t *GetMaxNode(avl_t *tree)
+{
+    if (AVLIsEmpty(tree))
+    {
+        return NULL;
+    }
+    
+    return GetLOCALMaxNode(tree->root);
+}
+
+avl_node_t *GetMinNode(avl_t *tree)
+{
+    if (AVLIsEmpty(tree))
+    {
+        return NULL;
+    }
+    
+    return GetLOCALMinNode(tree->root);
+}
 
 avl_node_t *GetLOCALMaxNode(avl_node_t *head)
 {
@@ -192,200 +386,86 @@ avl_node_t *GetLOCALMinNode(avl_node_t *head)
     return head;
 }
 
-/* size_t GetHeight(avl_node_t *node)
+/**********************
+ *  ROTATORS          *
+**********************/
+/*------------------------------------
+    *
+     \
+      * <- will be parent
+       \
+        *
+-------------------------------------*/
+avl_node_t *RotateLeftLeft(avl_node_t *head)
 {
-    size_t left_height,right_height;
-    
-    if (NULL == node)
-    {
-        return 0;
-    }
+   avl_node_t *parent = NULL;
 
-    if (NULL == node->child[BEFORE])
-    {
-        left_height = 0;
-    }
-    else
-    {
-        left_height = 1 + node->child[BEFORE]->height;
+   parent = head->child[AFTER];
+   parent->child[BEFORE] = head;
 
-        if(NULL == node->child[AFTER])
-        {
-            right_height = 0;
-        }
-        else
-        {
-            right_height = 1 + node->child[AFTER]->height;
-        }
-    } 
-
-    if(left_height > right_height)
-    {
-        return left_height;
-    }
-
-    return right_height;
-}*/
-
-int InsertRec(avl_node_t *head, avl_is_before_t func, void *data)
-{
-    int status = 0;
-    int idx = 0;
-
-    idx = func(head->data, data, NULL);
-    
-    if (NULL == head->child[idx])
-    {
-        head->child[idx] = NodeCreate(data);
-        head->height = HeightBalance(head);
-
-        return (NULL == head->child[idx]);
-    }
-    
-    status = InsertRec(head->child[idx], func, data);
-    head->height = HeightBalance(head);
-
-    return status;
+   return parent;
 }
 
-void RemoveNode(avl_t *tree, void *data)
+/*------------------------------------
+       * <- will be parent
+        \
+         * 
+        /
+       *
+-------------------------------------*/
+avl_node_t *RotateRightLeft(avl_node_t *head)
 {
-    int idx = 0;
-    avl_node_t *head = NULL;
-    avl_node_t *removable = NULL;
+    void *data = NULL;
 
-    head = NodeParentFinder(tree, tree->root, data);
-    idx = tree->is_before(data, head->data, tree->param);
-    removable = head->child[idx];
+    head->child[BEFORE] = head->child[AFTER]->child[BEFORE];
+    data = head->data;
+    head->data = head->child[BEFORE]->data;
+    head->child[BEFORE]->data = data;
 
-    if ((NULL == removable->child[AFTER]) && (NULL == removable->child[BEFORE]))
-    {
-        removable->data = NULL; 
-    }
-    else if (NULL != removable->child[AFTER])
-    {
-        if (NULL == removable->child[AFTER]->child[BEFORE])
-        {
-            head->child[idx] = removable->child[AFTER];
-            removable->child[AFTER]->child[BEFORE] = removable->child[BEFORE];
-        }
-        else
-        {
-            avl_node_t *max_node = NULL;
-
-            head->child[idx] = GetLOCALMinNode(removable);
-            head->child[idx]->child[BEFORE] = removable->child[BEFORE];
-            max_node = GetLOCALMaxNode(head->child[idx]);
-            max_node->child[AFTER] = removable->child[AFTER];
-        }
-    }
-    else /* removable has only a before node */
-    {
-        head->child[idx] = removable->child[BEFORE];
-    }
-    
-    removable->data = NULL; free(removable);
-
-    return;
+    return head;
 }
 
-avl_node_t *NodeParentFinder(avl_t *tree, avl_node_t *head, void *data)
+/*------------------------------------
+    * 
+   /
+  * <- will be parent
+ /
+*
+-------------------------------------*/
+avl_node_t *RotateRightRight(avl_node_t *head)
 {
-    int idx = 0;
-    
-    if (NULL == head)
-    {
-        return NULL;
-    }
-    else if ((NULL == head->child[AFTER]) && (NULL == head->child[AFTER]))
-    {
-        return NULL;
-    }
-    
-    idx = tree->is_before(head, data, tree->param);
+    avl_node_t *parent = NULL;
 
-    if ((!is_before(head->child[idx]->data, data, tree->param)) &&
-        (!is_before(data, head->child[idx]->data, tree->param)))
-    {
-        return head;
-    }
-    
-    return NodeParentFinder(tree, head->child[idx], data);
+    parent = head->child[BEFORE];
+    parent->child[AFTER] = head;
+
+    return parent;
 }
 
-size_t HeightBalance(avl_node_t *head)
+/*------------------------------------
+   * <- will be parent
+  /
+ * 
+  \
+   *
+-------------------------------------*/
+avl_node_t *RotateLeftRight(avl_node_t *head)
 {
-    size_t before = 0, after = 0;
+    avl_node_t *parent = NULL;
+    avl_node_t *temp_nd = NULL;
 
-    before = (NULL != head->child[BEFORE]) ? head->child[BEFORE]->height : 0;
-    after = (NULL != head->child[AFTER]) ? head->child[AFTER]->height : 0;
+    parent = head->child[BEFORE];
+    temp_nd = parent->child[AFTER];
+    parent->child[AFTER] = head;
+    parent->child[BEFORE] = temp_nd;
 
-    return before + after + 1;
+    return parent;
 }
 
-size_t Counter(avl_node_t *head, size_t counter)
-{
-    if (NULL == head)
-    {
-        return 0;
-    }
-
-    return Counter(head->child[BEFORE], counter) + 
-        Counter(head->child[AFTER], counter) + 1; 
-}
-
-ForEachRecursive(avl_node_t *head, avl_action_func_t func, void *param)
-{
-    int status = 0;
-
-    if (NULL == head)
-    {
-        return 0;
-    }
-    
-    status = func(head, param);
-    status += ForEachRecursive(head->child[BEFORE], func, param);
-    status += ForEachRecursive(head->child[AFTER], func, param);
-
-    return status;
-}
-
-avl_node_t *FindElement(avl_node_t *head, avl_is_before_t func, const void *data)
-{
-    if (NULL == head)
-    {
-        return NULL;
-    }
-    
-    if (1 == func(data, head->data, NULL))
-<<<<<<< HEAD
-=======
-    {
-        FindElement(head->child[AFTER], func, data);
-    }
-    else if (1 == func(head->data, data, NULL))
-    {
-        FindElement(head->child[BEFORE], func, data);
-    }
-    else
->>>>>>> 707caa2f5e8b620e20afedd3aba109ceea6fea24
-    {
-        FindElement(head->child[AFTER], func, data);
-    }
-<<<<<<< HEAD
-    
-    else if (1 == func(head->data, data, NULL))
-    {
-        FindElement(head->child[BEFORE], func, data);
-    }
-    else
-    {
-        return head;
-    }
-=======
->>>>>>> 707caa2f5e8b620e20afedd3aba109ceea6fea24
-}
-
+/*--------------------------------Node module---------------------------------*/
+/**********************
+ *  Node funcs        *
+**********************/
 static avl_node_t *NodeCreate(void *data)
 {
     avl_node_t *node = NULL;
@@ -411,11 +491,41 @@ void NodeFree(avl_node_t *head)
         return;
     }
 
-    FreeAll(head->child[BEFORE]);
-    FreeAll(head->child[AFTER]);
+    NodeFree(head->child[BEFORE]);
+    NodeFree(head->child[AFTER]);
     free(head);
-<<<<<<< HEAD
 }
-=======
+
+avl_node_t *NodeParentFinder(avl_t *tree, avl_node_t *head, void *data)
+{
+    int idx = 0;
+    
+    if (NULL == head)
+    {
+        return NULL;
+    }
+    else if ((NULL == head->child[AFTER]) && (NULL == head->child[AFTER]))
+    {
+        return NULL;
+    }
+    
+    idx = tree->is_before(head, data, tree->param);
+
+    if ((!tree->is_before(head->child[idx]->data, data, tree->param)) &&
+        (!tree->is_before(data, head->child[idx]->data, tree->param)))
+    {
+        return head;
+    }
+    
+    return NodeParentFinder(tree, head->child[idx], data);
 }
->>>>>>> 707caa2f5e8b620e20afedd3aba109ceea6fea24
+
+void NodeDataSwap(avl_node_t *node1, avl_node_t *node2)
+{
+    void *temp = node1->data;
+    node1->data = node2->data;
+    node2->data = temp;
+}
+
+/*--------------------------------Test module---------------------------------*/
+
