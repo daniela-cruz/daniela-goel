@@ -20,17 +20,16 @@ static int GetIdx(hash_t *hash, const void *data);
 hash_t *HASHCreate(hash_func_t func, hash_cmp_func_t cmp_func, size_t table_size)
 {
     hash_t *hash = NULL;
-
     do
     {
         int i = 0;
 
-        hash = malloc(sizeof(*hash));
+        hash = malloc(sizeof(*hash) + (sizeof(dll_t *) * table_size));
         if (NULL == hash)
         {
             break;
         }
-
+        
         for ( i = 0; i < table_size; i++)
         {
             hash->table[i] = DLLCreate();
@@ -51,12 +50,6 @@ hash_t *HASHCreate(hash_func_t func, hash_cmp_func_t cmp_func, size_t table_size
         hash->size = table_size;
 
     } while (0);
-    
-    /* cleanup */
-    if (NULL == hash->table[0])
-    {
-        free(hash); hash = NULL;
-    }
 
     return hash;
 } 
