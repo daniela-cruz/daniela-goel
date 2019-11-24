@@ -9,7 +9,7 @@ int ActionFunc(void *data, void *param);
 static void HashTest();
 
 
-static int arr[100];
+static int arr[100] = {0};
 
 int main()
 {
@@ -42,16 +42,20 @@ static void HashTest()
     printf("Size counted is: %ld, size expected is 100\n", HASHSize(hash));
     (0 == HASHIsEmpty(hash)) ? printf("") : printf("Returned empty but hahs is full\n");
 
-    HASHForEach(hash, ActionFunc, NULL);
-    
+    for ( i = 0; i < 100; i++)
+    {
+        printf("%d\n", *(int*)HASHFind(hash, &arr[i]));
+    }
+
     printf("Removing some items\n");
     for ( i = 0; i < 50; i++)
     {
-        HASHRemove(hash, &arr[i+20]);
+        HASHRemove(hash, &arr[i + 20]);
     }
     
     printf("Size counted is: %ld, size expected is 50\n", HASHSize(hash));
 
+    
 
     HASHDestroy(hash);
 
@@ -61,7 +65,7 @@ size_t HashFunc(const void* key)
 {
     if(0 > *(int *)key)
     {
-        return -(*(int *)key % 7);
+        return -(*(int *)key % 10);
     }
 
     return *(int *)key % 10;

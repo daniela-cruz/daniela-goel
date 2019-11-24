@@ -129,12 +129,16 @@ int HASHForEach(hash_t *hash, hash_action_func_t action_func, void *param)
     dll_iter_t it_begin, it_end;
 
 
-    for ( i = 0; i < hash->size && status; i++)
+    for ( i = 0; (i < hash->size) && (!status) ; i++)
     {
-        it_begin = DLLBegin(hash->table[i]);
-        it_end = DLLEnd(hash->table[i]);
+        if (!DLLIsEmpty(hash->table[i]))
+        {
+            it_begin = DLLBegin(hash->table[i]);
+            it_end = DLLEnd(hash->table[i]);
 
-        status = DLLForEach(it_begin, it_end, action_func, param);
+            status = DLLForEach(it_begin, it_end, action_func, param);
+        }
+        
     }
     
     return status;
