@@ -1,11 +1,11 @@
 #include <stdlib.h> /* malloc, free */
+#include <stdio.h>
 
 #include "heap.h"   /* all below */
 #include "vector.h" /* store queue in dynamic vector */
 
 struct heap
 {
-    int root_idx;
     is_before_t is_before;
     void *param;
     vector_t *vector;
@@ -30,16 +30,16 @@ heap_t *HEAPCreate(is_before_t func, void *param)
     {
         return NULL;
     }
-    
+
     heap->vector = VectorCreate(sizeof(size_t *), 1);
     if (NULL == heap->vector)
     {
-        free(heap); heap = NULL;
+        free(heap);
+        heap = NULL;
         return NULL;
     }
 
     heap->is_before = func;
-    heap->root_idx = 0;
     heap->param = param;
 
     return heap;
@@ -48,7 +48,8 @@ heap_t *HEAPCreate(is_before_t func, void *param)
 void HEAPDestroy(heap_t *heap)
 {
     VectorDestroy(heap->vector);
-    free(heap); heap = NULL;
+    free(heap);
+    heap = NULL;
 }
 
 int HEAPPush(heap_t *heap, const void *data)
@@ -59,45 +60,63 @@ int HEAPPush(heap_t *heap, const void *data)
 
     if (0 == status)
     {
-        Heapify(heap, VectorSize(heap->vector) - 1);
+        Heapify(heap, FindParentIdx(HEAPSize(heap)));
     }
-    
+
     return status;
 }
 
-void HEAPPop(heap_t *heap);
+void HEAPPop(heap_t *heap)
+{
+    VectorPopBack(heap->vector);
+}
 
 void *HEAPPeek(heap_t *heap)
 {
     return VectorGetItemAddress(heap->vector, VectorSize(heap->vector) - 1);
 }
 
-size_t HEAPSize(const heap_t *heap);
+size_t HEAPSize(const heap_t *heap)
+{
+    return VectorSize(heap->vector);
+}
 
-int HEAPIsEmpty(const heap_t *heap);
+int HEAPIsEmpty(const heap_t *heap)
+{
+    return (1 == VectorSize(heap->vector));
+}
 
 /*******************************Internal function******************************/
 void Heapify(heap_t *heap, int idx)
 {
     int largest_idx = idx;
+    int left = 0, right = 0;
     void *element = NULL;
     void *element_left_chld = NULL, *element_right_chld = NULL;
     size_t vec_size = 0;
 
-    vec_size = VectorSize(heap->vector);
+    vec_size = VectorSize(heap->vector) - 1;
+    left = FindLeftChildIdx(idx);
+    right = FindRightChildIdx(idx);
 
     element = VectorGetItemAddress(heap->vector, idx);
-    element_left_chld = VectorGetItemAddress(heap->vector, FindLeftChildIdx(idx));
-    element_right_chld = VectorGetItemAddress(heap->vector, FindRightChildIdx(idx));
+    element_left_chld = VectorGetItemAddress(heap->vector, left);
 
-    if ((FindLeftChildIdx(idx) < vec_size) && heap->is_before(element, element_left_chld, heap->param))
+    if ((NULL != element_left_chld) && ((left < vec_size)))
     {
-        largest_idx = FindLeftChildIdx(idx);
-    }
+        if (heap->is_before(element, element_left_chld, heap->param))
+        {
+            largest_idx = left;
+        }
 
-    if ((FindRightChildIdx(idx) < vec_size) && heap->is_before(element, element_right_chld, heap->param))
-    {
-        largest_idx = FindRightChildIdx(idx);
+        element_right_chld = VectorGetItemAddress(heap->vector, right);
+        if (NULL != element_right_chld)
+        {
+            if ((right < vec_size) && heap->is_before(element, element_right_chld, heap->param))
+            {
+                largest_idx = right;
+            }
+        }
     }
 
     if (idx != largest_idx)
@@ -109,23 +128,39 @@ void Heapify(heap_t *heap, int idx)
 
 int FindParentIdx(int i)
 {
-    return (i - 1) / 2;
+    if (1 >= i)
+    {
+        return 1;
+    }
+    
+    
+    return ((i - 1) / 2) + 1;
 }
 
 int FindLeftChildIdx(int i)
 {
-    return (2 * i) + 1;
+    if (i <= 1)
+    {
+        return 2;
+    }
+
+    return (2 * i);
 }
 
 int FindRightChildIdx(int i)
 {
-    return (2 * i) + 2;
+    if (i <= 1)
+    {
+        return 3;
+    }
+
+    return (2 * i) + 1;
 }
 
 void SwapData(heap_t *heap, int idx1, int idx2)
 {
-    SwapHelper(VectorGetItemAddress(heap->vector, idx1), 
-        VectorGetItemAddress(heap->vector, idx2));
+    SwapHelper(VectorGetItemAddress(heap->vector, idx1),
+               VectorGetItemAddress(heap->vector, idx2));
 }
 
 void SwapHelper(void *data1, void *data2)
@@ -135,4 +170,13 @@ void SwapHelper(void *data1, void *data2)
     temp_data = *(size_t *)data1;
     *(size_t *)data1 = *(size_t *)data2;
     *(size_t *)data2 = temp_data;
+}
+
+void PrintHeap(heap_t *heap)
+{
+    size_t i = 0;
+    for (i = 0; i < VectorSize(heap->vector); ++i)
+    {
+        printf("%lu - %d\n", i, *(int *)VectorGetItemAddress(heap->vector, i));
+    }
 }

@@ -5,7 +5,7 @@
 ROOT_DIR = ../../..
 
 #PROJ_SRCS = $(shell xmlstarlet select -t -v //Unit/@filename xx.cbp | grep -e '\.c')
-PROJ_SRCS = heap.c heap_test.c
+PROJ_SRCS = vector.c heap.c heap_test_s.c
 
 # list of directories containing header files
 PROJ_INC_DIR = ../vector
@@ -19,7 +19,7 @@ PROJ_CFLAGS = -Wunused-but-set-variable
 #PROJ_MACROS = _BSD_SOURCE
 
 # additional object files (created by other projects)
-PROJ_ADD_OBJS = vector.o
+# PROJ_ADD_OBJS = vector.o
 
 # additional libraries
 PROJ_LIBS =
@@ -28,6 +28,6 @@ PROJ_LIBS =
 PROJ_LDFLAGS =
 
 # list of projects (makefiles) this project depends on
-#PROJ_DEPENDS  = ../dll/Makefile
+# PROJ_DEPENDS  = ../vector/Makefile
 
 include $(ROOT_DIR)/Make/Project.mak

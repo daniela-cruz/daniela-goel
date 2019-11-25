@@ -22,5 +22,7 @@ size_t HEAPSize(const heap_t *heap);
 
 int HEAPIsEmpty(const heap_t *heap);
 
+void PrintHeap(heap_t *heap);
+
 /********************************************************/
 #endif /*__HEAP_H__*/
