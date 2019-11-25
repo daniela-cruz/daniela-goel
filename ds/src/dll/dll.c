@@ -229,6 +229,7 @@ int DLLForEach(dll_iter_t from, dll_iter_t to, dll_act_func_t func, void *param)
 		{
 			return 1;
 		}
+		
 	}
 	
 	return 0;
