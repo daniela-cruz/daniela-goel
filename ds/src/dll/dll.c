@@ -139,20 +139,34 @@ size_t DLLSize(const dll_t *dll)
 }
 
 /******ITERATOR functions:******/
-dll_iter_t DLLIterNext(dll_iter_t iterator)
+/*dll_iter_t DLLIterNext(dll_iter_t iterator)
 {
 	dll_node_t *prev_n = iterator.curr_node;
 	
 	if (iterator.curr_node == &iterator.list->last)
 	{
-		return DLLEnd(iterator.list);;
+		return DLLEnd(iterator.list);
 	}
 	
 	iterator.curr_node = NodeXOR(iterator.prev, iterator.curr_node->npx);
 	iterator.prev = prev_n;
 	
 	return iterator;
+}*/
+
+dll_iter_t DLLIterNext(dll_iter_t iter)
+{
+	dll_node_t *temp = iter.prev;
+	
+	if (!DLLIterIsEqual(iter,DLLEnd(iter.list)))
+	{
+		iter.prev = iter.curr_node;
+		iter.curr_node = NodeXOR(temp, (iter.curr_node)->npx);
+	}
+	
+	return iter;
 }
+
 
 dll_iter_t DLLIterPrev(dll_iter_t iterator)
 {
