@@ -124,6 +124,7 @@ void *HASHFind(const hash_t *hash, const void *data)
 
 int HASHForEach(hash_t *hash, hash_action_func_t action_func, void *param)
 {
+<<<<<<< HEAD
     size_t i = 0;
 	int status = 0;
 
@@ -136,6 +137,26 @@ int HASHForEach(hash_t *hash, hash_action_func_t action_func, void *param)
 	}
 
 	return status;
+=======
+    int i = 0;
+    int status = 0;
+    dll_iter_t it_begin, it_end;
+
+
+    for ( i = 0; (i < hash->size) && (!status) ; i++)
+    {
+        if (!DLLIsEmpty(hash->table[i]))
+        {
+            it_begin = DLLBegin(hash->table[i]);
+            it_end = DLLEnd(hash->table[i]);
+
+            status = DLLForEach(it_begin, it_end, action_func, param);
+        }
+        
+    }
+    
+    return status;
+>>>>>>> 67aafab24d19a1283ecd9f30e9810fe3e92ef02f
 }
 
 /*------------------------------Internal funcs--------------------------------*/
