@@ -86,6 +86,22 @@ int HEAPIsEmpty(const heap_t *heap)
     return (1 == VectorSize(heap->vector));
 }
 
+void HEAPSort(heap_t *heap, size_t size) 
+{ 
+    int i = 0;
+
+    for (i = ((size - 1) / 2) - 1; 0 <= i; i--)
+    {
+        Heapify(heap, i); 
+    } 
+  
+    for (i = size - 1; 0 <= i; i--) 
+    { 
+        SwapData(heap, 1, i); 
+        Heapify(heap, i); 
+    } 
+} 
+
 /*******************************Internal function******************************/
 void Heapify(heap_t *heap, int idx)
 {

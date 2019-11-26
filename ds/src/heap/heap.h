@@ -16,6 +16,8 @@ int HEAPPush(heap_t *heap, const void *data);
 
 void HEAPPop(heap_t *heap);
 
+void HEAPSort(heap_t *heap, size_t size);
+
 void *HEAPPeek(heap_t *heap);
 
 size_t HEAPSize(const heap_t *heap);
