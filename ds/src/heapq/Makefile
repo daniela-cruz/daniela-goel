@@ -19,7 +19,7 @@ PROJ_CFLAGS = -Wunused-but-set-variable
 #PROJ_MACROS = _BSD_SOURCE
 
 # additional object files (created by other projects)
-# PROJ_ADD_OBJS = heap.o vector.o
+PROJ_ADD_OBJS = heap.o vector.o
 
 # additional libraries
 PROJ_LIBS =

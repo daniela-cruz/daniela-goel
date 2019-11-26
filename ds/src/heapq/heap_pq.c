@@ -4,7 +4,7 @@
 #include "heap.h"
 #include "pq.h"
 
-struct pq
+struct heap_q
 {
 	heap_t *heap;
 };
@@ -20,8 +20,7 @@ heap_q_t *HeapQCreate(heapq_is_before_t func, void *func_param)
 	heap_q->heap = HEAPCreate(func, func_param);
 	if(NULL == heap_q->heap)
 	{
-		free(heap_q);
-
+		free(heap_q); heap_q = NULL;
 		return NULL;
 	}
 
@@ -49,9 +48,26 @@ void *HeapQDequeue(heap_q_t *queue)
 	return data;
 }
 
-void *HeapQRemove(heap_q_t *queue, heapq_is_match_t func, void *func_param)
+void *HeapQRemove(heap_q_t *queue, heapq_is_match_t func, void *param)
 {
+	void *removable = NULL;
+	int i = 0;
+	size_t size = 0;
 
+	size = HeapQCount(queue);
+
+	for ( i = 0; i < size; i++)
+	{
+		removable = HeapQPeek(queue);
+		if (func(removable, param))
+		{
+			break;
+		}
+		
+	}
+	
+	
+	return NULL;
 }
 
 int HeapQIsEmpty(const heap_q_t *queue)
