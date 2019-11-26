@@ -15,7 +15,7 @@ struct vector
 	void *items;
 };
  
-vector_t *VectorCreate(size_t num_of_items, size_t item_size)
+vector_t *VectorCreate(size_t item_size, size_t num_of_items)
 {
 	vector_t *vector = (vector_t *)malloc(sizeof(*vector));
 	if(NULL == vector)
