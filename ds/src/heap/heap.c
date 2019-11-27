@@ -20,7 +20,9 @@ int FindParentIdx(int i);
 int FindLeftChildIdx(int i);
 int FindRightChildIdx(int i);
 
-/******************************************************************************/
+/************************
+ *      FUNCTIONS     	*
+************************/
 heap_t *HEAPCreate(is_before_t func, void *param)
 {
     heap_t *heap = NULL;
@@ -150,7 +152,8 @@ void Heapify(heap_t *heap, int idx)
         element_right_chld = VectorGetItemAddress(heap->vector, right);
         if (NULL != element_right_chld)
         {
-            if ((right < vec_size) && heap->is_before(element, element_right_chld, heap->param))
+            if ((right < vec_size) && heap->is_before(element, 
+            	element_right_chld, heap->param))
             {
                 largest_idx = right;
             }
