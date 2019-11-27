@@ -143,9 +143,14 @@ dll_iter_t DLLIterNext(dll_iter_t iterator)
 {
 	dll_node_t *prev_n = iterator.curr_node;
 	
-	if (iterator.curr_node == &iterator.list->last)
+	/*if (iterator.curr_node == &iterator.list->last)
 	{
-		return DLLEnd(iterator.list);;
+		return DLLEnd(iterator.list);
+	}*/
+	
+	if (DLLIterIsEqual(iterator, DLLEnd(iterator.list)))
+	{
+		return DLLEnd(iterator.list);
 	}
 	
 	iterator.curr_node = NodeXOR(iterator.prev, iterator.curr_node->npx);

@@ -24,7 +24,7 @@ hash_t *HASHCreate(hash_func_t func, hash_cmp_func_t cmp_func, size_t table_size
     {
         int i = 0;
 
-        hash = malloc(sizeof(*hash) + (sizeof(dll_t *) * table_size));
+        hash = malloc(sizeof(*hash) + (sizeof(dll_t *) * (table_size - 1)));
         if (NULL == hash)
         {
             break;
@@ -34,23 +34,29 @@ hash_t *HASHCreate(hash_func_t func, hash_cmp_func_t cmp_func, size_t table_size
         {
             hash->table[i] = DLLCreate();
             
-            if (NULL == hash->table[i])
-            {
-                for ( ; 0 < i; --i)
-                {
-                    DLLDestroy(hash->table[i]);
-                }
-                
-                break;
-            }
         }
-        
+        if (i != table_size)
+        {
+            for ( ; 0 < i; --i)
+            {
+                DLLDestroy(hash->table[i]);
+            }
+            
+            break;
+        }
+
         hash->cmp = cmp_func;
         hash->hash_func = func;
         hash->size = table_size;
 
     } while (0);
 
+    /* cleanup */
+    if (NULL == hash->table[0])
+    {
+        free(hash); hash = NULL;
+    }
+    
     return hash;
 } 
 
@@ -72,10 +78,6 @@ int HASHInsert(hash_t *hash, const void* data)
     dll_iter_t iter;
 
     idx = GetIdx(hash, data);
-    if (NULL == hash->table[idx])
-    {
-        hash->table[idx] = DLLCreate();
-    }
     
     iter = DLLPushFront(hash->table[idx], data);
     if (NULL == iter.curr_node)
@@ -83,7 +85,7 @@ int HASHInsert(hash_t *hash, const void* data)
         return 1;
     }
 
-    return (NULL == iter.curr_node) || (NULL == DLLGetData(iter));
+    return 0;
 }
 
 void HASHRemove(hash_t *hash, const void *data)
@@ -106,15 +108,15 @@ size_t HASHSize(const hash_t *hash)
 
 int HASHIsEmpty(const hash_t *hash)
 {
-    size_t counter = 0;
+    int is_empty = 1;
     int i = 0;
 
-    for ( i = 0; i < hash->size; i++)
+    for (i = 0; (i < hash->size) && (1 == is_empty); i++)
     {
-        counter += DLLIsEmpty(hash->table[i]);
+        is_empty = DLLIsEmpty(hash->table[i]);
     }
     
-    return (counter == hash->size);
+    return is_empty;
 }
 
 void *HASHFind(const hash_t *hash, const void *data)

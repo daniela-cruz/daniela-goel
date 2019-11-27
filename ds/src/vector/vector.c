@@ -32,7 +32,7 @@ vector_t *VectorCreate(size_t element_size, size_t num_of_elements)
 	
 	vector->element_size = element_size;
 	vector->capacity = num_of_elements;
-	vector->size = num_of_elements;
+	vector->size = 0;
 	
 	return vector;
 }
