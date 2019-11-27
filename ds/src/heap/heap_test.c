@@ -37,13 +37,12 @@ static void HeapTest()
     printf("Heap is empty? 0 for no: %d\n", HEAPIsEmpty(heap));
     printf("\n");
 
-    for ( i = size - 1; 0 < i; --i)
+    for ( i = size - 1; 0 <= i; --i)
     {
-        printf("Peek %d is: %ld\n", i, *(size_t *)HEAPPeek(heap));
+        printf("Peek %d is: %ld\n", i + 1, *(size_t *)HEAPPeek(heap));
         HEAPPop(heap);
     }
     
-
     HEAPDestroy(heap);
 }
 
@@ -51,5 +50,5 @@ int IsBefore(const void *data1, const void *data2, void *param)
 {
     (void)param;
 
-    return *(int *)data1 < *(int*)data2;
+    return **(int **)data1 < **(int**)data2;
 }

@@ -91,7 +91,7 @@ void HEAPRemove(heap_t *heap, void *data)
         }
     }
 
-    SwapHelper(removable, VectorGetItemAddress(heap->vector, size - 1));
+    SwapHelper(removable, HEAPPeek(heap));
     HEAPPop(heap);
     Heapify(heap, size - i - 1);
 }
@@ -182,11 +182,11 @@ void SiftUp(heap_t *heap)
 
     curr = HEAPSize(heap) - 1;
     curr_item = VectorGetItemAddress(heap->vector, curr);
-
-    parent = FindParentIdx(curr);
+    
+    parent = (0 < curr ) ? FindParentIdx(curr) : 0;
     parent_item = VectorGetItemAddress(heap->vector, parent);
 
-    while (0 < curr)
+    while ((0 < curr) && (*parent_item != *curr_item))
     {
         if (heap->is_before(curr_item, parent_item, heap->param))
         {
@@ -205,10 +205,10 @@ int FindParentIdx(int i)
 {
     if (1 >= i)
     {
-        return 1;
+        return 0;
     }
 
-    return ((i - 1) / 2) + 1;
+    return ((i - 1) / 2);
 }
 
 int FindLeftChildIdx(int i)
