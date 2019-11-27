@@ -74,7 +74,7 @@ void HEAPPop(heap_t *heap)
     VectorPopBack(heap->vector);
 }
 
-void HEAPRemove(heap_t *heap, void *data)
+void HEAPErase(heap_t *heap, heap_is_match_t func, void *data)
 {
     int i = 0;
     size_t size = 1;
@@ -85,15 +85,15 @@ void HEAPRemove(heap_t *heap, void *data)
     for (i = size - 1; 0 < i; --i)
     {
         removable = VectorGetItemAddress(heap->vector, i);
-        if (*(void **)removable == data)
+        if (func(removable, data))
         {
             break;
         }
     }
 
-    SwapHelper(removable, HEAPPeek(heap));
+    SwapHelper(removable, VectorGetItemAddress(heap->vector, VectorSize(heap->vector) - 1));
     HEAPPop(heap);
-    Heapify(heap, size - i - 1);
+    SiftUp(heap);
 }
 
 void *HEAPPeek(heap_t *heap)
@@ -255,4 +255,16 @@ void PrintHeap(heap_t *heap)
     {
         printf("%lu - %d\n", i + 1, **(int **)VectorGetItemAddress(heap->vector, i));
     }
+}
+
+void PrintHeapVec(heap_t *heap)
+{
+	size_t i = 0;
+
+	for (i = 0; i < VectorSize(heap->vector) ; ++i)
+	{
+		printf("%d ", **(int **)VectorGetItemAddress(heap->vector, i));
+	}
+
+    printf("\n");
 }
