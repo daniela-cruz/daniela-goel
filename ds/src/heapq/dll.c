@@ -301,4 +301,3 @@ static dll_node_t *NodeXOR(dll_node_t *a, dll_node_t *b)
 {
 	return (dll_node_t *)((uintptr_t)a ^ (uintptr_t)b);
 }
-

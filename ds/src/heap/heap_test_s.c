@@ -8,22 +8,30 @@ int main()
 {
     int arr[] = {12, 13, 80, 20, 90, 70, 0, 21, -31, 22, -19};
     size_t i = 0;
+    size_t size = 11;
     heap_t *heap1 = NULL;
 
     heap1 = HEAPCreate(IsBefore, NULL);
-    for (i = 0; i < 11 ;++i)
+    for (i = 0; i < size ;++i)
     {
         HEAPPush(heap1, &arr[i]);
     }
+
     PrintHeap(heap1);
-    printf("\n%lu - size \n", HEAPSize(heap1));
+    printf("size is %lu\n", HEAPSize(heap1));
+
+    printf("\nRemove test:\n");
+    HEAPRemove(heap1, &arr[4]);
+
+    PrintHeap(heap1);
+    printf("size is %lu\n", HEAPSize(heap1));
 
     HEAPPop(heap1);
     HEAPPop(heap1);
     HEAPPop(heap1);
 
     PrintHeap(heap1);
-    printf("\n%lu - size \n", HEAPSize(heap1));
+    printf("size is %lu\n", HEAPSize(heap1));
 
     HEAPDestroy(heap1);
 
