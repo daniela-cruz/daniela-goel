@@ -27,7 +27,7 @@ int TimeIsBefore(void *new_task, void *first_task, void *param)
 {
 	(void)param;
 	
-	return ((sched_task_t *)new_task)->execute_time < ((sched_task_t *)first_task)->execute_time;
+	return ((sched_task_t *)new_task)->execute_time > ((sched_task_t *)first_task)->execute_time;
 }
 
 int TimeDifference(sched_task_t *task)

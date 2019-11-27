@@ -50,7 +50,7 @@ void *HeapQDequeue(heap_q_t *queue)
 
 void *HeapQRemove(heap_q_t *queue, heapq_is_match_t func, void *param)
 {
-	void **removable = NULL;
+	void *removable = NULL;
 	void *popped_data = NULL;
 	int i = 0;
 	size_t size = 0;
@@ -58,10 +58,10 @@ void *HeapQRemove(heap_q_t *queue, heapq_is_match_t func, void *param)
 	size = HeapQCount(queue);
 	for (i = size - 1; 0 < i; --i)
 	{
-		removable = HeapQPeek(queue->heap);
+		removable = HEAPPeek(queue->heap);
 		if (func(removable, param))
 		{
-			popped_data = *removable;
+			popped_data = removable;
 			HEAPRemove(queue->heap, removable);
 			break;
 		}

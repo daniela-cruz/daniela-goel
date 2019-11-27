@@ -11,8 +11,6 @@ typedef struct heap heap_t;
     and must return a boolean value             */
 typedef int (*is_before_t)(const void *data1, const void *data2, void *param);
 
-typedef int (*heap_is_match_t)(const void *data1, const void *data2);
-
 /*************************************************
  *      FUNCTIONS                                *
 *************************************************/
@@ -34,7 +32,7 @@ void HEAPPop(heap_t *heap);
 
 /*  Selected data will be removed with a 
     complexity of O(n)                          */
-void HEAPErase(heap_t *heap, heap_is_match_t func, void *data);
+void HEAPRemove(heap_t *heap, void *data);
 
 void HEAPSort(heap_t *heap, size_t size);
 

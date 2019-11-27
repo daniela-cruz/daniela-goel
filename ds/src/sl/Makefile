@@ -28,6 +28,6 @@ PROJ_LIBS =
 PROJ_LDFLAGS =
 
 # list of projects (makefiles) this project depends on
-#PROJ_DEPENDS  = ../dll/Makefile
+# PROJ_DEPENDS  = ../dll/Makefile
 
 include $(ROOT_DIR)/Make/Project.mak

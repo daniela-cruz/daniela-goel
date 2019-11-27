@@ -65,7 +65,7 @@ int HEAPPush(heap_t *heap, const void *data)
 
     if (0 == status)
     {
-        SiftUp(heap, HEAPSize(heap) - 1);
+        SiftDown(heap, HEAPSize(heap) - 1);
     }
 
     return status;
@@ -74,7 +74,7 @@ int HEAPPush(heap_t *heap, const void *data)
 void HEAPPop(heap_t *heap)
 {
     VectorPopBack(heap->vector);
-    SiftDown(heap, HEAPSize(heap) - 1);
+    SiftUp(heap, HEAPSize(heap) - 1);
 }
 
 void HEAPErase(heap_t *heap, heap_is_match_t func, void *data)

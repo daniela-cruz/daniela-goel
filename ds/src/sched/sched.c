@@ -42,8 +42,8 @@ sched_t *SchedCreate()
 	return new_scheduler;
 }
 
-ilrd_uid_t 
-SchedAddTask(sched_t *scheduler, operation_func_t func, size_t interval_in_seconds, void *param)
+ilrd_uid_t SchedAddTask(sched_t *scheduler, operation_func_t func, 
+	size_t interval_in_seconds, void *param)
 {
 	sched_task_t *new_task = TaskCreate(func, interval_in_seconds, param);
 	
