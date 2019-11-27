@@ -13,9 +13,10 @@ struct heap
 
 /****************************Forward declarations******************************/
 void Heapify(heap_t *heap, int idx);
-void SiftUp(heap_t *heap);
+void SiftUp(heap_t *heap, int idx);
+void SiftDown(heap_t *heap, int idx);
 void SwapData(heap_t *heap, int idx1, int idx2);
-void SwapHelper(void **data1, void **data2);
+void SwapHelper(void *data1, void *data2);
 
 int FindParentIdx(int i);
 int FindLeftChildIdx(int i);
@@ -34,11 +35,12 @@ heap_t *HEAPCreate(is_before_t func, void *param)
         return NULL;
     }
 
-    heap->vector = VectorCreate(sizeof(size_t *), 1);
+    heap->vector = VectorCreate(sizeof(void *), 1);
     if (NULL == heap->vector)
     {
         free(heap);
         heap = NULL;
+
         return NULL;
     }
 
@@ -63,7 +65,7 @@ int HEAPPush(heap_t *heap, const void *data)
 
     if (0 == status)
     {
-        SiftUp(heap);
+        SiftUp(heap, HEAPSize(heap) - 1);
     }
 
     return status;
@@ -72,20 +74,21 @@ int HEAPPush(heap_t *heap, const void *data)
 void HEAPPop(heap_t *heap)
 {
     VectorPopBack(heap->vector);
+    SiftDown(heap, HEAPSize(heap) - 1);
 }
 
 void HEAPErase(heap_t *heap, heap_is_match_t func, void *data)
 {
     int i = 0;
     size_t size = 1;
-    void **removable = NULL;
+    void *removable = NULL;
 
     size = HEAPSize(heap);
 
     for (i = size - 1; 0 < i; --i)
     {
         removable = VectorGetItemAddress(heap->vector, i);
-        if (func(removable, data))
+        if (func(*(void **)removable, data))
         {
             break;
         }
@@ -93,7 +96,7 @@ void HEAPErase(heap_t *heap, heap_is_match_t func, void *data)
 
     SwapHelper(removable, VectorGetItemAddress(heap->vector, VectorSize(heap->vector) - 1));
     HEAPPop(heap);
-    SiftUp(heap);
+    SiftDown(heap, HEAPSize(heap) - 1);
 }
 
 void *HEAPPeek(heap_t *heap)
@@ -127,7 +130,7 @@ void HEAPSort(heap_t *heap, size_t size)
 
     for (i = size - 1; 0 <= i; i--)
     {
-        /* SwapData(heap, 1, i);  */
+        SwapData(heap, 1, i);
         Heapify(heap, i);
     }
 }
@@ -150,7 +153,7 @@ void Heapify(heap_t *heap, int idx)
 
     if ((NULL != element_left_chld) && ((left < vec_size)))
     {
-        if (heap->is_before(element, element_left_chld, heap->param))
+        if (heap->is_before(*(void **)element, *(void **)element_left_chld, heap->param))
         {
             largest_idx = left;
         }
@@ -158,8 +161,8 @@ void Heapify(heap_t *heap, int idx)
         element_right_chld = VectorGetItemAddress(heap->vector, right);
         if (NULL != element_right_chld)
         {
-            if ((right < vec_size) && heap->is_before(element,
-                                                      element_right_chld, heap->param))
+            if ((right < vec_size) && heap->is_before(*(void **)element,
+                                                      *(void **)element_right_chld, heap->param))
             {
                 largest_idx = right;
             }
@@ -173,30 +176,56 @@ void Heapify(heap_t *heap, int idx)
     }
 }
 
-void SiftUp(heap_t *heap)
+void SiftDown(heap_t *heap, int idx)
 {
-    int curr = 0;
-    int parent = 0;
-    void **curr_item = NULL;
-    void **parent_item = NULL;
+    int right_child_idx = 0;
+    void *right_child = NULL;
 
-    curr = HEAPSize(heap) - 1;
-    curr_item = VectorGetItemAddress(heap->vector, curr);
-    
-    parent = (0 < curr ) ? FindParentIdx(curr) : 0;
-    parent_item = VectorGetItemAddress(heap->vector, parent);
+    right_child_idx = FindRightChildIdx(idx);
 
-    while ((0 < curr) && (*parent_item != *curr_item))
+    if (HEAPSize(heap) - 1 >= right_child_idx)
     {
-        if (heap->is_before(curr_item, parent_item, heap->param))
+        right_child = VectorGetItemAddress(heap->vector, idx);
+        
+        if (heap->is_before(*(void **)VectorGetItemAddress(heap->vector,
+            right_child_idx), *(void **)VectorGetItemAddress(heap->vector, idx),
+            heap->param))
         {
-            SwapHelper(parent_item, curr_item);
-            curr = parent;
-            parent = FindParentIdx(curr);
+            return;
         }
         else
         {
-            break;
+            SwapHelper(right_child, VectorGetItemAddress(heap->vector, idx));
+            SiftDown(heap, right_child_idx);
+        }
+    }
+}
+
+void SiftUp(heap_t *heap, int idx)
+{
+    void *curr = NULL;
+    int parent_idx = 0;
+
+    parent_idx = FindParentIdx(idx);
+
+    if (1 >= HEAPSize(heap))
+    {
+        return;
+    }
+
+    curr = VectorGetItemAddress(heap->vector, idx);
+
+    if (0 != idx)
+    {
+        if (heap->is_before(*(void **)curr, *(void **)VectorGetItemAddress(heap->vector, 
+            parent_idx), heap->param))
+        {
+            return;
+        }
+        else
+        {
+            SwapHelper(curr, VectorGetItemAddress(heap->vector, parent_idx));
+            SiftUp(heap, FindParentIdx(parent_idx));
         }
     }
 }
@@ -237,13 +266,13 @@ void SwapData(heap_t *heap, int idx1, int idx2)
                VectorGetItemAddress(heap->vector, idx2));
 }
 
-void SwapHelper(void **data1, void **data2)
+void SwapHelper(void *data1, void *data2)
 {
-    void *temp_data = 0;
+    size_t temp_data = 0;
 
-    temp_data = *data1;
-    *data1 = *data2;
-    *data2 = temp_data;
+    temp_data = *(size_t *)data1;
+    *(size_t *)data1 = *(size_t *)data2;
+    *(size_t *)data2 = temp_data;
 }
 
 void PrintHeap(heap_t *heap)
@@ -259,12 +288,12 @@ void PrintHeap(heap_t *heap)
 
 void PrintHeapVec(heap_t *heap)
 {
-	size_t i = 0;
+    size_t i = 0;
 
-	for (i = 0; i < VectorSize(heap->vector) ; ++i)
-	{
-		printf("%d ", **(int **)VectorGetItemAddress(heap->vector, i));
-	}
+    for (i = 0; i < VectorSize(heap->vector) - 1; ++i)
+    {
+        printf("%d ", **(int **)VectorGetItemAddress(heap->vector, i));
+    }
 
     printf("\n");
 }
