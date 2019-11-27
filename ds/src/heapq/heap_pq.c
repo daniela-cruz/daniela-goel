@@ -56,13 +56,17 @@ void *HeapQRemove(heap_q_t *queue, heapq_is_match_t func, void *param)
 
 	size = HeapQCount(queue);
 
-	for ( i = 0; i < size; i++)
+	/* for ( i = 0; i < size; i++)
 	{
 		removable = HeapQPeek(queue);
 		if (func(removable, param))
 		{
 			break;
 		}
+		
+	} */
+	for (i = size - 1; 0 < i; --i)
+	{
 		
 	}
 	
