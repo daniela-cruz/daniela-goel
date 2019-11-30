@@ -5,7 +5,7 @@
 ROOT_DIR = ../../..
 
 #PROJ_SRCS = $(shell xmlstarlet select -t -v //Unit/@filename xx.cbp | grep -e '\.c')
-PROJ_SRCS = vector.c heap.c heap_test_m.c
+PROJ_SRCS = vector.c heap.c heap_test.c
 
 # list of directories containing header files
 PROJ_INC_DIR = ../vector
