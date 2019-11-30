@@ -32,6 +32,39 @@ void *BinSearchRec(void *arr, int last_idx, size_t ele_size,
     }
 }
 
+void *BinarySearch(void *arr, int last_idx, size_t ele_size,
+    void *key, srch_cmp_func_t cmp_func) 
+{ 
+    int result = -1;
+    void *first_ptr = NULL;
+    void *last_ptr = NULL;
+
+    first_ptr = GetAddr(arr, ele_size, last_idx / 2);
+    last_ptr = GetAddr(arr, ele_size, last_idx);
+
+    while (first_ptr <= last_ptr) 
+    { 
+        result = cmp_func(first_ptr, key);
+        if (0 == result)
+        {
+            return first_ptr; 
+        } 
+  
+        if (0 > result) 
+        {
+            first_ptr = GetAddr(first_ptr, ele_size, last_idx - (last_idx / 2));
+        }
+  
+        else
+        {
+            last_idx /= 2;
+            first_ptr = GetAddr(arr, last_idx, ele_size);
+        } 
+    } 
+  
+    return NULL; 
+} 
+
 void *JumpSearch(void *arr, int last_idx, size_t ele_size,
     void *key, srch_cmp_func_t cmp_func)
 {
