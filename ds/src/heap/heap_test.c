@@ -4,6 +4,7 @@
 
 static void HeapTest();
 int IsBefore(const void *data1, const void *data2, void *param);
+int IsMatchInt(const void *data1, const void *data2);
 
 static size_t arr[10] = {20, -10, 30, 50, 100, 40, 60, 80, 90, 70};
 
@@ -31,12 +32,16 @@ static void HeapTest()
     }
     
     printf("Printing heap:\n");
-    PrintHeap(heap);
+    PrintHeapVec(heap);
 
     printf("Heap size is: %ld\n", HEAPSize(heap));
     printf("Heap is empty? 0 for no: %d\n", HEAPIsEmpty(heap));
     printf("\n");
 
+    HEAPErase(heap, IsMatchInt, &arr[6]);
+    PrintHeapVec(heap);
+
+    size = HEAPSize(heap);
     for ( i = size - 1; 0 <= i; --i)
     {
         printf("Peek %d is: %ld\n", i + 1, *(size_t *)HEAPPeek(heap));
@@ -51,4 +56,9 @@ int IsBefore(const void *data1, const void *data2, void *param)
     (void)param;
 
     return *(int *)data1 > *(int*)data2;
+}
+
+int IsMatchInt(const void *data1, const void *data2)
+{
+    return *(int *)data1 == *(int *)data2;
 }
