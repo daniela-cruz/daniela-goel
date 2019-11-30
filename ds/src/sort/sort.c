@@ -7,6 +7,7 @@
 
 /*************INTERNAL:**************/
 static void Swap(int *data1, int *data2);
+void GenSwap(void *a, void *b, size_t ele_size);
 
 static void RadixCountingSort(unsigned int *arr, size_t size, int *histogram, size_t n_bits, 
 	size_t iteration, unsigned int *dest);
@@ -23,6 +24,45 @@ static void *GetAddr(void *arr, size_t idx, size_t element_size);
 static const size_t bits_num = sizeof(size_t) * __CHAR_BIT__;
 
 /********IMPLEMENTATION:*********/
+void QuickSortRec(void *arr, int left_idx, int right_idx, size_t ele_size, is_before_t func)
+{
+    void *pivot = NULL;
+
+    int i = 0,  j = 0;
+	
+	 j = left_idx -1;
+	 
+    if (1 > right_idx - left_idx)
+    {
+        return;
+    }
+
+    pivot = GetPivot(arr, left_idx, right_idx, ele_size);
+    GenSwap(pivot, GetAddr(arr, right_idx, ele_size), ele_size);
+    pivot = GetAddr(arr, right_idx, ele_size);
+
+    for (i = left_idx; i<right_idx; ++i)
+    {
+        if (func(GetAddr(arr, i, ele_size), pivot, NULL))
+        {
+            ++j;
+            GenSwap(GetAddr(arr, i, ele_size), GetAddr(arr, j, ele_size), ele_size);
+        }
+    }
+
+    GenSwap(GetAddr(arr, j + 1, ele_size), pivot, ele_size);
+
+    QuickSortRec(arr ,left_idx, j, ele_size, func);
+    QuickSortRec(arr , j+2 , right_idx, ele_size, func);
+}
+
+void *GetPivot(void *arr, int min, int max, size_t ele_size)
+{
+    size_t inx = rand() % (max + 1 - min) + min;
+
+    return GetAddr(arr, inx, ele_size);
+}
+
 void MergeSort(void *arr, size_t element_size, size_t arr_size, 
     cmp_func_t func, void *param)
 {
@@ -341,4 +381,17 @@ static void RadixCountingSort(unsigned int *arr, size_t size, int *histogram, si
     }
 
     memcpy(arr, dest, size * sizeof(int));
+}
+
+void GenSwap(void *a, void *b, size_t ele_size)
+{
+    char temp = 0;
+    size_t i = 0;
+
+    for (i = 0; i < ele_size; i++)
+    {
+        temp = *((char *)a + i);
+        *((char *)a + i) = *((char *)b + i);
+        *((char *)b + i) = temp;
+    }
 }
