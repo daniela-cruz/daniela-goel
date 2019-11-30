@@ -27,7 +27,7 @@ void TestCreate()
 void TestPush()
 {
     heap_t *heap = NULL;
-    int data[] = {3, 4, 5, 2, 10, 2, 2, 1, 5};
+    int data[] = {3, 4, 5, 2, 10, 2, 2, -1, 5};
     int push_status = 0;
 
     heap = HEAPCreate(IsBeforeInt, NULL);
@@ -53,7 +53,6 @@ void TestPush()
     HEAPPush(heap, &data[6]);
     HEAPPush(heap, &data[7]);
     HEAPPush(heap, &data[8]);
-    HEAPPop(heap);
 
     printf("exp:\n5 4 2 3 2 2 1\nres:\n");
     PrintHeapVec(heap);

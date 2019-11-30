@@ -50,5 +50,5 @@ int IsBefore(const void *data1, const void *data2, void *param)
 {
     (void)param;
 
-    return **(int **)data1 > **(int**)data2;
+    return *(int *)data1 > *(int*)data2;
 }
