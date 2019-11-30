@@ -24,11 +24,11 @@ void *BinSearchRec(void *arr, int last_idx, size_t ele_size,
     }
     else if (0 < result)
     {
-        BinSearchRec(element, last_idx, ele_size, key, cmp_func);
+        BinSearchRec(arr, last_idx / 2, ele_size, key, cmp_func);
     }
     else
     {
-        BinSearchRec(arr, last_idx / 2, ele_size, key, cmp_func);
+        BinSearchRec(element, last_idx - (last_idx / 2), ele_size, key, cmp_func);
     }
 }
 
