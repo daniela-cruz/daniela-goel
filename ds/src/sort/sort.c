@@ -7,7 +7,7 @@
 
 /*************INTERNAL:**************/
 static void Swap(int *data1, int *data2);
-void GenSwap(void *a, void *b, size_t ele_size);
+void SwapAnyType(void *a, void *b, size_t ele_size);
 
 static void RadixCountingSort(unsigned int *arr, size_t size, int *histogram, size_t n_bits, 
 	size_t iteration, unsigned int *dest);
@@ -38,7 +38,7 @@ void QuickSortRec(void *arr, int left_idx, int right_idx, size_t ele_size, is_be
     }
 
     pivot = GetPivot(arr, left_idx, right_idx, ele_size);
-    GenSwap(pivot, GetAddr(arr, right_idx, ele_size), ele_size);
+    SwapAnyType(pivot, GetAddr(arr, right_idx, ele_size), ele_size);
     pivot = GetAddr(arr, right_idx, ele_size);
 
     for (i = left_idx; i<right_idx; ++i)
@@ -46,11 +46,11 @@ void QuickSortRec(void *arr, int left_idx, int right_idx, size_t ele_size, is_be
         if (func(GetAddr(arr, i, ele_size), pivot, NULL))
         {
             ++j;
-            GenSwap(GetAddr(arr, i, ele_size), GetAddr(arr, j, ele_size), ele_size);
+            SwapAnyType(GetAddr(arr, i, ele_size), GetAddr(arr, j, ele_size), ele_size);
         }
     }
 
-    GenSwap(GetAddr(arr, j + 1, ele_size), pivot, ele_size);
+    SwapAnyType(GetAddr(arr, j + 1, ele_size), pivot, ele_size);
 
     QuickSortRec(arr ,left_idx, j, ele_size, func);
     QuickSortRec(arr , j+2 , right_idx, ele_size, func);
@@ -383,7 +383,7 @@ static void RadixCountingSort(unsigned int *arr, size_t size, int *histogram, si
     memcpy(arr, dest, size * sizeof(int));
 }
 
-void GenSwap(void *a, void *b, size_t ele_size)
+void SwapAnyType(void *a, void *b, size_t ele_size)
 {
     char temp = 0;
     size_t i = 0;
