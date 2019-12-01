@@ -3,6 +3,7 @@
 #include "search.h"
 
 static void BinaryRecTest();
+static void BinaryTest();
 static void JumpTest();
 
 int CmpFunc(const void *data1, const void *data2);
@@ -16,7 +17,8 @@ static int ele_size = sizeof(int);
 int main()
 {
     /* BinaryRecTest(); */
-    JumpTest();
+    BinaryTest();
+    /* JumpTest(); */
     return 0;
 }
 
@@ -41,6 +43,30 @@ static void BinaryRecTest()
 
     key = GetAddress(arr, 8);
      element = BinSearchRec(arr, size, sizeof(int), key, CmpFunc);
+    (111 == *(int *)element) ? printf ("SUCCESS\n") : printf("FAILURE\n");
+}
+
+static void BinaryTest()
+{
+    int* element = NULL;
+    void* key = NULL;
+
+    printf("\nBinary search test\n");
+
+    key = GetAddress(arr, 0);
+    element = BinarySearch(arr, size, sizeof(int), key, CmpFunc);
+    (-12 == *(int *)element) ? printf ("SUCCESS\n") : printf("FAILURE\n");
+
+    key = GetAddress(arr, size -1);
+    element = BinarySearch(arr, size, sizeof(int), key, CmpFunc);
+    (1200 == *(int *)element) ? printf ("SUCCESS\n") : printf("FAILURE\n");
+
+    key = GetAddress(arr, 5);
+     element = BinarySearch(arr, size, sizeof(int), key, CmpFunc);
+    (31 == *(int *)element) ? printf ("SUCCESS\n") : printf("FAILURE\n");
+
+    key = GetAddress(arr, 8);
+     element = BinarySearch(arr, size, sizeof(int), key, CmpFunc);
     (111 == *(int *)element) ? printf ("SUCCESS\n") : printf("FAILURE\n");
 }
 

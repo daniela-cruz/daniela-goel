@@ -33,40 +33,43 @@ void *BinSearchRec(void *arr, int last_idx, size_t ele_size,
 }
 
 void *BinarySearch(void *arr, int last_idx, size_t ele_size,
-    void *key, srch_cmp_func_t cmp_func) 
-{ 
+                   void *key, srch_cmp_func_t cmp_func)
+{
     int result = -1;
+    int mid = 0;
     void *first_ptr = NULL;
     void *last_ptr = NULL;
 
-    first_ptr = GetAddr(arr, ele_size, last_idx / 2);
-    last_ptr = GetAddr(arr, ele_size, last_idx);
+    mid = (last_idx / 2) - 1;
+    first_ptr = GetAddr(arr, ele_size, mid);
+    last_ptr = GetAddr(arr, ele_size, last_idx - 1);
 
-    while (first_ptr <= last_ptr) 
-    { 
+    while (first_ptr <= last_ptr)
+    {
         result = cmp_func(first_ptr, key);
         if (0 == result)
         {
-            return first_ptr; 
-        } 
-  
-        if (0 > result) 
-        {
-            first_ptr = GetAddr(first_ptr, ele_size, last_idx - (last_idx / 2));
+            return first_ptr;
         }
-  
+
+        mid = (((char *)last_ptr - (char *)first_ptr) / ele_size) / 2;
+        if (0 < result)
+        {
+            last_ptr = first_ptr;
+            first_ptr = GetAddr(arr, ele_size, mid / 2);
+        }
         else
         {
-            last_idx /= 2;
-            first_ptr = GetAddr(arr, last_idx, ele_size);
-        } 
-    } 
-  
-    return NULL; 
-} 
+            first_ptr = GetAddr(arr, ele_size, 
+                (((char *)last_ptr - (char *)arr) / ele_size) - mid);
+        }
+    }
+
+    return NULL;
+}
 
 void *JumpSearch(void *arr, int last_idx, size_t ele_size,
-    void *key, srch_cmp_func_t cmp_func)
+                 void *key, srch_cmp_func_t cmp_func)
 {
     int i = 0;
     void *element = NULL;
