@@ -77,17 +77,19 @@ void HEAPPop(heap_t *heap)
     SiftUp(heap, HEAPSize(heap) - 1);
 }
 
-void HEAPErase(heap_t *heap, heap_is_match_t func, void *data)
+void *HEAPErase(heap_t *heap, heap_is_match_t func, void *data)
 {
     int i = 0;
     size_t size = 1;
     void *removable = NULL;
+    void *popped_data = NULL;
 
     size = HEAPSize(heap);
 
     for (i = size - 1; 0 < i; --i)
     {
         removable = VectorGetItemAddress(heap->vector, i);
+        popped_data = removable;
         if (func(*(void **)removable, data))
         {
             break;
@@ -97,6 +99,8 @@ void HEAPErase(heap_t *heap, heap_is_match_t func, void *data)
     SwapHelper(removable, VectorGetItemAddress(heap->vector, HEAPSize(heap) - 1));
     HEAPPop(heap);
     SiftDown(heap, i - 1);
+
+    return popped_data;
 }
 
 void *HEAPPeek(heap_t *heap)

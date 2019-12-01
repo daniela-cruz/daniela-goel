@@ -34,7 +34,7 @@ void HEAPPop(heap_t *heap);
 
 /*  Selected data will be removed with a 
     complexity of O(n)                          */
-void HEAPErase(heap_t *heap, heap_is_match_t func, void *data);
+void *HEAPErase(heap_t *heap, heap_is_match_t func, void *data);
 
 void HEAPSort(heap_t *heap, size_t size);
 
